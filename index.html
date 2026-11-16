@@ -16,7 +16,7 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .layer{position:absolute;left:8.33%;width:83.34%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.08;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-shadow:0 1px 5px #0003}.layer:active{cursor:grabbing}.layer.selected{outline:1px dashed var(--gold);outline-offset:5px}.layer.editing{cursor:text;touch-action:auto;user-select:text;-webkit-user-select:text;outline:1px solid var(--apricot);outline-offset:5px}
 .kicker{font-size:2.5cqw;color:var(--gold)}.heading{font-size:5.6cqw;color:var(--apricot);line-height:.98}.script{font-family:Alexandra,cursive;color:var(--terra);font-size:13cqw;line-height:.8}.body{font-size:2.8cqw;color:var(--cream);line-height:1.12}.footer{position:absolute;left:8.33%;right:8.33%;bottom:4%;display:flex;justify-content:space-between;font-size:1.8cqw;letter-spacing:.28em;pointer-events:none}
 .standard .heading{font-size:5.8cqw}.standard .layer[data-id="body"]{line-height:1.15}
-.cinema .poster{position:absolute;left:31%;top:8%;width:38%;height:37%;object-fit:cover;border:3px solid var(--gold);border-radius:14px;display:none}.cinema .heading{font-size:5cqw}.recipe .heading{font-size:5.2cqw}.recipe .script{font-size:10cqw}.recipe .layer[data-id="ingredients"]{max-width:84%;}
+.cinema .poster{position:absolute;left:28.7%;top:7.7%;width:42.6%;height:47.8%;object-fit:cover;border:3px solid var(--gold);border-radius:18px;display:none;box-sizing:border-box}.cinema .kicker,.cinema .heading{display:none}.cinema .script{font-size:10.5cqw;line-height:.9}.cinema .layer[data-id="body"]{font-size:2.8cqw;line-height:1.28}.cinema .layer[data-id="ingredients"]{display:block!important;font-size:2.55cqw;line-height:1.3;white-space:pre-wrap;background:rgba(76,31,17,.42);border-left:4px solid var(--terra);padding:2.2% 3.5%;box-sizing:border-box}.recipe .heading{font-size:5.2cqw}.recipe .script{font-size:10cqw}.recipe .layer[data-id="ingredients"]{max-width:84%;}
 .recipe .layer[data-id="ingredients"]{font-size:2.75cqw;line-height:1.6;border-top:1px solid #76502b;border-bottom:1px solid #76502b;padding:2% 0}
 .recipe .layer[data-id="body"]{font-size:2.55cqw}
 .story-repost .repost-card{position:absolute;left:8%;top:22%;width:84%;height:58%;border:1px solid #9a6b42;background:#21150f;box-shadow:0 12px 30px #0008;overflow:hidden;border-radius:4px}
@@ -83,7 +83,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
  <label>Подпись / CTA</label><input id="ctaInput" type="text" value="[ сохрани на вечер ]">
  <h2 style="margin-top:18px">4. Фотографии</h2><p class="hint">Для шаблона «Видео · PNG без фона» фотография не нужна: экспортируется только надпись с прозрачностью.</p>
  <label>Основное фото</label><input type="file" id="photoInput" accept="image/*">
- <label>Постер фильма (для шаблона «Кино»)</label><input type="file" id="posterInput" accept="image/*">
+ <label>Постер фильма (для шаблона «Кино»)</label><input type="file" id="posterInput" accept="image/*"><label>Размер постера фильма</label><input type="range" id="posterSize" min="70" max="130" value="100">
  <label>Фото для репоста сториз</label><input type="file" id="repostInput" accept="image/*">
  <div class="controls" style="margin-top:8px"><button class="btn" id="removePhoto">Убрать фото</button></div>
  <h2 style="margin-top:18px">5. Цвета и типографика</h2>
@@ -103,17 +103,17 @@ const $=id=>document.getElementById(id);
 const defaults={brand:'INNA.BRY',footer:'ЛИСТАЙ →',meta:'01 / 06',kicker:'[ уютный гайд ]',heading:'маленькие радости ноября',script:'ноябрь',body:'Идеи для тёплых вечеров, когда за окном темнеет раньше.',ingredients:'чай · 2 ч. л.\\nапельсин · 2 кружочка\\nкорица · 1 палочка\\nмёд · по вкусу',cta:'[ сохрани на вечер ]'};
 let format='post',template='standard',slides=[],index=0,photoData='',posterData='',repostData='',selected='heading';
 const ids=['kicker','heading','script','body','ingredients','cta'];
-const basePos={kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredients:[8,38],cta:[8,88]};
+const basePos={kicker:[8,64],heading:[8,67],script:[11,72],body:[8,81],ingredients:[8,38],cta:[8,88]};
 const templatePositions={
- standard:{kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredients:[8,38],cta:[8,88]},
- recipe:{kicker:[8,12],heading:[8,17],script:[11,26],ingredients:[8,39],body:[8,73],cta:[8,88]},
- cinema:{kicker:[8,49],heading:[8,54],script:[11,62],body:[8,74],ingredients:[8,38],cta:[8,88]},
+ standard:{kicker:[8,64],heading:[8,67],script:[11,72],body:[8,81],ingredients:[8,38],cta:[8,88]},
+ recipe:{kicker:[8,10.5],heading:[8,14],script:[11,18],ingredients:[8,27.5],body:[8,68],cta:[8,88]},
+ cinema:{kicker:[8,49],heading:[8,54],script:[11,56.7],body:[8,66],ingredients:[8,77],cta:[8,88]},
  'story-repost':{kicker:[8,12],heading:[8,18],script:[11,27],body:[8,78],ingredients:[8,38],cta:[8,86]},
  final:{kicker:[8,56],heading:[8,62],script:[11,70],body:[8,80],ingredients:[8,38],cta:[8,88]},
  'video-overlay':{kicker:[8,30],heading:[8,38],script:[8,50],body:[8,65],ingredients:[8,38],cta:[8,88]}
 };
 function positionsFor(t){return JSON.parse(JSON.stringify(templatePositions[t]||basePos))}
-function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:positionsFor(template)}}
+function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',posterScale:100,repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:positionsFor(template)}}
 slides=[makeSlide()];
 function current(){return slides[index]}
 function saveState(){persistCurrent();try{localStorage.setItem('innaBryStudioV2',JSON.stringify({slides,index}))}catch(e){$('status').textContent='Не удалось сохранить проект в памяти браузера.'}}
@@ -130,7 +130,8 @@ function update(){
  $('artboard').style.setProperty('--cream',s.colors.text);$('artboard').style.setProperty('--apricot',s.colors.title);$('artboard').style.setProperty('--terra',s.colors.script);$('artboard').style.setProperty('--gold',s.colors.accent);
  $('brandPreview').textContent=s.values.brand||'INNA.BRY';$('metaPreview').textContent=s.values.meta;$('footerBrand').textContent=s.values.brand||'INNA.BRY';
  if(!document.activeElement?.classList?.contains('editing')){$('l-kicker').textContent=s.values.kicker;$('l-heading').textContent=s.values.heading;$('l-script').textContent=s.values.script;$('l-body').textContent=s.values.body;$('l-ingredients').textContent=s.values.ingredients;$('l-cta').textContent=s.values.cta;}
- $('l-ingredients').style.display=template==='recipe'?'block':'none';$('l-cta').style.display=template==='story-repost'?'block':'none';
+ $('l-ingredients').style.display=(template==='recipe'||template==='cinema')?'block':'none';$('l-cta').style.display=template==='story-repost'?'block':'none';
+ $('poster').style.left=(28.7-21.3*(1-(s.posterScale||100)/100))+'%';$('poster').style.top=(7.7-23.9*(1-(s.posterScale||100)/100))+'%';$('poster').style.width=(42.6*(s.posterScale||100)/100)+'%';$('poster').style.height=(47.8*(s.posterScale||100)/100)+'%';
  $('subscribe').style.display=template==='final'?'block':'none';$('subscribe').textContent='[ подписаться на @inna.bry ]';$('subscribe').style.background=s.colors.button;
  $('repostCard').style.display=template==='story-repost'?'block':'none';setImage($('repostPhoto'),repostData);
  setImage($('bgPhoto'),photoData);setImage($('poster'),posterData);
@@ -147,11 +148,11 @@ function update(){
 }
 function renderStrip(){$('slideStrip').innerHTML='';slides.forEach((s,i)=>{let b=document.createElement('button');b.className='thumb'+(i===index?' active':'');b.textContent='Слайд '+(i+1);b.onclick=()=>{persistCurrent();index=i;loadCurrent();};$('slideStrip').appendChild(b)})}
 function persistCurrent(){let s=current();s.format=format;s.template=template;s.photo=photoData;s.poster=posterData;s.repost=repostData;s.values={...defaults,...s.values,meta:$('meta').value,kicker:$('kickerInput').value,heading:$('headingInput').value,script:$('scriptInput').value,body:$('bodyInput').value,ingredients:$('ingredientsInput').value,cta:$('ctaInput').value};}
-function loadCurrent(){let s=current();format=s.format||'post';template=s.template||'standard';photoData=s.photo||'';posterData=s.poster||'';repostData=s.repost||'';applyValuesToInputs();update()}
+function loadCurrent(){let s=current();format=s.format||'post';template=s.template||'standard';photoData=s.photo||'';posterData=s.poster||'';repostData=s.repost||'';$('posterSize').value=s.posterScale||100;applyValuesToInputs();update()}
 function inputChange(){let s=current();s.values={meta:$('meta').value,kicker:$('kickerInput').value,heading:$('headingInput').value,script:$('scriptInput').value,body:$('bodyInput').value,ingredients:$('ingredientsInput').value,cta:$('ctaInput').value};update()}
 ['meta','kickerInput','headingInput','scriptInput','bodyInput','ingredientsInput','ctaInput'].forEach(id=>$(id).addEventListener('input',inputChange));
 [['bgColor','bg'],['textColor','text'],['titleColor','title'],['scriptColor','script'],['accentColor','accent'],['buttonColor','button']].forEach(([id,key])=>$(id).addEventListener('input',()=>{current().colors[key]=$(id).value;update()}));
-['titleSize','scriptSize','darken'].forEach(id=>$(id).addEventListener('input',update));
+['titleSize','scriptSize','darken','posterSize'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='posterSize')current().posterScale=+$('posterSize').value;update()}));
 document.querySelectorAll('[data-format]').forEach(b=>b.onclick=()=>{format=b.dataset.format;if(format==='story'&&template==='standard'){}update()});
 document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{persistCurrent();template=b.dataset.template;current().positions=positionsFor(template);if(template==='story-repost'||template==='video-overlay')format='story';update()});
 function readFile(file,cb){if(!file)return;let r=new FileReader();r.onload=()=>{cb(r.result);};r.onerror=()=>{$('status').textContent='Не удалось прочитать файл. Попробуй JPG или PNG.'};r.readAsDataURL(file)}
@@ -228,7 +229,7 @@ async function exportPNG(){
  if(template!=='video-overlay'){ctx.fillStyle=s.colors.bg;ctx.fillRect(0,0,W,H)}
  const load=src=>new Promise(resolve=>{if(!src)return resolve(null);let im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src});
  let bg=template==='video-overlay'?null:await load(photoData);if(bg){let scale=Math.max(W/bg.width,H/bg.height),ww=bg.width*scale,hh=bg.height*scale;ctx.drawImage(bg,(W-ww)/2,(H-hh)/2,ww,hh);let gr=ctx.createLinearGradient(0,H*.25,0,H);gr.addColorStop(0,'rgba(20,13,10,.04)');gr.addColorStop(.55,`rgba(20,13,10,${$('darken').value/100})`);gr.addColorStop(1,'rgba(20,13,10,.96)');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H)}
- if(template==='cinema'){let im=await load(posterData||photoData);if(im){let x=302,y=115,w=476,h=690,sc=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.clip();ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,im.height*sc);ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.strokeRect(x,y,w,h)}}
+ if(template==='cinema'){let im=await load(posterData||photoData);if(im){let pr=$('poster').getBoundingClientRect(),ar=$('artboard').getBoundingClientRect(),ps=W/ar.width,x=(pr.left-ar.left)*ps,y=(pr.top-ar.top)*ps,w=pr.width*ps,h=pr.height*ps,sc=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.clip();ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,im.height*sc);ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.stroke()}}
  if(template==='story-repost'){let im=await load(repostData);if(im){let x=85,y=430,w=910,h=1080,sc=Math.max(w/im.width,h/im.height);ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,h)}}
  if(template!=='video-overlay'){ctx.fillStyle=s.colors.text;ctx.font='300 22px Overpass';ctx.letterSpacing='7px';ctx.fillText(s.values.brand||'INNA.BRY',90,80);ctx.textAlign='right';ctx.fillText(s.values.meta,990,80);ctx.textAlign='left';ctx.letterSpacing='0px';}
  let stage=$('stage').getBoundingClientRect(),art=$('artboard').getBoundingClientRect(),scale=W/art.width;
