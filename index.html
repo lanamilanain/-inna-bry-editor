@@ -16,7 +16,7 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .layer{position:absolute;left:8.33%;width:83.34%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.08;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-shadow:0 1px 5px #0003}.layer:active{cursor:grabbing}.layer.selected{outline:1px dashed var(--gold);outline-offset:5px}.layer.editing{cursor:text;touch-action:auto;user-select:text;-webkit-user-select:text;outline:1px solid var(--apricot);outline-offset:5px}
 .kicker{font-size:2.5cqw;color:var(--gold)}.heading{font-size:5.6cqw;color:var(--apricot);line-height:.98}.script{font-family:Alexandra,cursive;color:var(--terra);font-size:13cqw;line-height:.8}.body{font-size:2.8cqw;color:var(--cream);line-height:1.12}.footer{position:absolute;left:8.33%;right:8.33%;bottom:4%;display:flex;justify-content:space-between;font-size:1.8cqw;letter-spacing:.28em;pointer-events:none}
 .standard .heading{font-size:5.8cqw}.standard .layer[data-id="body"]{line-height:1.15}
-.cinema .poster{position:absolute;left:28.7%;top:7.7%;width:42.6%;height:47.8%;object-fit:cover;border:3px solid var(--gold);border-radius:18px;display:none;box-sizing:border-box}.cinema .kicker,.cinema .heading{display:none}.cinema .script{font-size:10.5cqw;line-height:.9}.cinema .layer[data-id="body"]{font-size:2.8cqw;line-height:1.28}.cinema .layer[data-id="ingredients"]{display:block!important;font-size:2.55cqw;line-height:1.3;white-space:pre-wrap;background:rgba(76,31,17,.42);border-left:4px solid var(--terra);padding:2.2% 3.5%;box-sizing:border-box}.recipe .heading{font-size:5.2cqw}.recipe .script{font-size:10cqw}.recipe .layer[data-id="ingredients"]{max-width:84%;}
+.cinema .poster{position:absolute;left:28.7%;top:7.7%;width:42.6%;height:47.8%;object-fit:cover;border:3px solid var(--gold);border-radius:18px;display:none;box-sizing:border-box;z-index:2;cursor:pointer;pointer-events:auto}.poster-placeholder{position:absolute;left:28.7%;top:7.7%;width:42.6%;height:47.8%;border:3px solid var(--gold);border-radius:18px;background:rgba(76,31,17,.28);color:var(--cream);font:2.1cqw Overpass,sans-serif;letter-spacing:.04em;display:none;align-items:center;justify-content:center;text-align:center;padding:5%;box-sizing:border-box;z-index:2;cursor:pointer;touch-action:manipulation}.cinema .poster-placeholder{display:flex}.cinema .kicker,.cinema .heading{display:none}.cinema .script{font-size:10.5cqw;line-height:.9}.cinema .layer[data-id="body"]{font-size:2.8cqw;line-height:1.28}.cinema .layer[data-id="ingredients"]{display:block!important;font-size:2.55cqw;line-height:1.3;white-space:pre-wrap;background:rgba(76,31,17,.42);border-left:4px solid var(--terra);padding:2.2% 3.5%;box-sizing:border-box}.recipe .heading{font-size:5.2cqw}.recipe .script{font-size:10cqw}.recipe .layer[data-id="ingredients"]{max-width:84%;}
 .recipe .layer[data-id="ingredients"]{font-size:2.75cqw;line-height:1.6;border-top:1px solid #76502b;border-bottom:1px solid #76502b;padding:2% 0}
 .recipe .layer[data-id="body"]{font-size:2.55cqw}
 .story-repost .repost-card{position:absolute;left:8%;top:22%;width:84%;height:58%;border:1px solid #9a6b42;background:#21150f;box-shadow:0 12px 30px #0008;overflow:hidden;border-radius:4px}
@@ -47,7 +47,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
   <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div>
   <div class="topline"><span id="brandPreview">INNA.BRY</span><span id="metaPreview">01 / 06</span></div>
   <div class="repost-card" id="repostCard" style="display:none"><img id="repostPhoto"><div class="repost-overlay"></div></div>
-  <img class="poster" id="poster">
+  <img class="poster" id="poster"><button type="button" class="poster-placeholder" id="posterPlaceholder">нажми, чтобы добавить афишу</button>
   <div class="layer kicker" data-id="kicker" id="l-kicker">[ уютный гайд ]</div>
   <div class="layer heading" data-id="heading" id="l-heading">маленькие радости ноября</div>
   <div class="layer script" data-id="script" id="l-script">ноябрь</div>
@@ -131,13 +131,13 @@ function update(){
  $('brandPreview').textContent=s.values.brand||'INNA.BRY';$('metaPreview').textContent=s.values.meta;$('footerBrand').textContent=s.values.brand||'INNA.BRY';
  if(!document.activeElement?.classList?.contains('editing')){$('l-kicker').textContent=s.values.kicker;$('l-heading').textContent=s.values.heading;$('l-script').textContent=s.values.script;$('l-body').textContent=s.values.body;$('l-ingredients').textContent=s.values.ingredients;$('l-cta').textContent=s.values.cta;}
  $('l-ingredients').style.display=(template==='recipe'||template==='cinema')?'block':'none';$('l-cta').style.display=template==='story-repost'?'block':'none';
- $('poster').style.left=(28.7-21.3*(1-(s.posterScale||100)/100))+'%';$('poster').style.top=(7.7-23.9*(1-(s.posterScale||100)/100))+'%';$('poster').style.width=(42.6*(s.posterScale||100)/100)+'%';$('poster').style.height=(47.8*(s.posterScale||100)/100)+'%';
+ $('poster').style.left=(28.7-21.3*(1-(s.posterScale||100)/100))+'%';$('poster').style.top=(7.7-23.9*(1-(s.posterScale||100)/100))+'%';$('poster').style.width=(42.6*(s.posterScale||100)/100)+'%';$('poster').style.height=(47.8*(s.posterScale||100)/100)+'%';$('posterPlaceholder').style.left=$('poster').style.left;$('posterPlaceholder').style.top=$('poster').style.top;$('posterPlaceholder').style.width=$('poster').style.width;$('posterPlaceholder').style.height=$('poster').style.height;
  $('subscribe').style.display=template==='final'?'block':'none';$('subscribe').textContent='[ подписаться на @inna.bry ]';$('subscribe').style.background=s.colors.button;
  $('repostCard').style.display=template==='story-repost'?'block':'none';setImage($('repostPhoto'),repostData);
  setImage($('bgPhoto'),photoData);setImage($('poster'),posterData);
  if(template==='cinema'&&!posterData&&photoData)setImage($('poster'),photoData);
  $('shade').style.background=`linear-gradient(to bottom,rgba(20,13,10,.05) 20%,rgba(20,13,10,${$('darken').value/100}) 55%,rgba(20,13,10,.96) 100%)`;
- $('poster').style.display=(template==='cinema'&&(posterData||photoData))?'block':'none';
+ $('poster').style.display=(template==='cinema'&&(posterData||photoData))?'block':'none';$('posterPlaceholder').style.display=(template==='cinema'&&!(posterData||photoData))?'flex':'none';
  ids.forEach(id=>{let el=$('l-'+id),p=s.positions[id]||basePos[id];el.style.left=p[0]+'%';el.style.top=p[1]+'%';el.style.color=id==='kicker'||id==='cta'?s.colors.accent:id==='heading'?s.colors.title:id==='script'?s.colors.script:s.colors.text;el.classList.toggle('selected',selected===id)});
  $('l-heading').style.fontSize=$('titleSize').value/1080*100+'cqw';$('l-script').style.fontSize=$('scriptSize').value/1080*100+'cqw';
  $('footerText').textContent=s.values.footer|| (template==='final'?'СПАСИБО, ЧТО ТЫ ЗДЕСЬ':'ЛИСТАЙ →');
@@ -171,7 +171,7 @@ chromeTextIds.forEach(id=>{
  el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');update()});
 });
 $('bgPhoto').addEventListener('click',()=>{if(photoData)$('photoInput').click()});
-$('poster').addEventListener('click',()=>{$('posterInput').click()});
+$('poster').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});$('posterPlaceholder').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});
 $('repostPhoto').addEventListener('click',()=>{$('repostInput').click()});
 function beginInlineEdit(id){let el=$('l-'+id);if(!el||el.contentEditable==='true')return;selectLayer(id);el.contentEditable='true';el.classList.add('editing');el.focus();let range=document.createRange();range.selectNodeContents(el);range.collapse(false);let sel=window.getSelection();sel.removeAllRanges();sel.addRange(range)}
 ids.forEach(id=>{let el=$('l-'+id);el.addEventListener('input',()=>syncInlineText(id,el));el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');syncInlineText(id,el);update()});el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();el.blur()}if(e.key==='Enter'&&id!=='body'&&id!=='ingredients'){e.preventDefault();el.blur()}})});
