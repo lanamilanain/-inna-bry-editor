@@ -124,7 +124,7 @@ function refreshHistoryButtons(){$('undoBtn').disabled=!undoStack.length;$('redo
 function saveState(){
  persistCurrent();let snap=JSON.stringify({slides,index});
  if(historyReady&&!historyApplying&&lastHistorySnapshot!==null&&snap!==lastHistorySnapshot){
-  const now=Date.now();if(now-lastHistoryAt>700){undoStack.push(lastHistorySnapshot);if(undoStack.length>30)undoStack.shift();redoStack=[]}
+  const now=Date.now();if(now-lastHistoryAt>700){undoStack.push(lastHistorySnapshot);if(undoStack.length>12)undoStack.shift();redoStack=[]}
   lastHistoryAt=now;
  }
  lastHistorySnapshot=snap;
