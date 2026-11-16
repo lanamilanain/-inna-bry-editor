@@ -12,7 +12,7 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .previewHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.stage{width:min(100%,520px);margin:auto;aspect-ratio:3/4;background:repeating-conic-gradient(#4a403a 0% 25%,#302822 0% 50%) 50%/24px 24px;overflow:hidden;position:relative;box-shadow:0 8px 24px #0008;touch-action:pan-y}
 .artboard{container-type:inline-size;position:absolute;inset:0;overflow:hidden;background:var(--bg);color:var(--cream);font-family:Overpass,sans-serif}
 .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:0}.photo-add{position:absolute;z-index:3;left:50%;top:43%;transform:translate(-50%,-50%);border:1px solid var(--gold);border-radius:999px;padding:10px 17px;background:rgba(20,13,10,.72);color:var(--cream);font:2.1cqw Overpass,sans-serif;letter-spacing:.06em;cursor:pointer;touch-action:manipulation;white-space:nowrap}.shade{z-index:1;position:absolute;inset:0;background:linear-gradient(to bottom,rgba(20,13,10,.08) 22%,rgba(20,13,10,.24) 48%,rgba(20,13,10,.94) 100%);pointer-events:none}
-.topline{position:absolute;z-index:3;left:8.33%;right:8.33%;top:4.2%;display:flex;justify-content:space-between;font-size:1.95cqw;letter-spacing:.32em;pointer-events:auto}.topline span,.footer span{pointer-events:auto;cursor:text}.photo,.poster,.repost-card img{cursor:pointer;pointer-events:auto}
+.topline{position:absolute;z-index:3;left:8.33%;right:8.33%;top:4.2%;display:flex;justify-content:space-between;font-size:1.95cqw;letter-spacing:.32em;pointer-events:auto}.topline span,.footer span{pointer-events:auto;cursor:text}.photo,.poster,.repost-card img{cursor:default;pointer-events:none}
 .layer{position:absolute;z-index:4;left:8.33%;width:83.34%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.08;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-shadow:0 1px 5px #0003}.layer:active{cursor:grabbing}.layer.selected{outline:1px dashed var(--gold);outline-offset:5px}.layer.editing{cursor:text;touch-action:auto;user-select:text;-webkit-user-select:text;outline:1px solid var(--apricot);outline-offset:5px}
 .kicker{font-size:2.5cqw;color:var(--gold)}.heading{font-size:5.6cqw;color:var(--apricot);line-height:.98}.script{font-family:Alexandra,cursive;color:var(--terra);font-size:13cqw;line-height:.8}.body{font-size:2.8cqw;color:var(--cream);line-height:1.12}.footer{position:absolute;left:8.33%;right:8.33%;bottom:4%;display:flex;justify-content:space-between;font-size:1.8cqw;letter-spacing:.28em;pointer-events:none}
 .standard .heading{font-size:5.8cqw}.standard .layer[data-id="body"]{line-height:1.15}
@@ -39,7 +39,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
 .status{font-size:12px;color:#e8b65c;min-height:18px;margin-top:8px}
 .project-dialog{width:min(92vw,520px);max-height:82vh;overflow:auto;background:#211914;color:#f6e5c8;border:1px solid #806044;border-radius:16px;padding:20px;box-shadow:0 18px 60px #0009}.project-dialog::backdrop{background:#080504bb}.project-dialog h2{margin:0 0 12px;color:#ffaf46;font-size:18px}.project-list{display:grid;gap:8px;margin-top:14px}.project-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid #594333;border-radius:10px;background:#1a120e}.project-row small{display:block;color:#bba58e;margin-top:3px}.project-row .controls{flex-wrap:nowrap}.project-row .btn{padding:7px 9px;font-size:12px}.history-btn{min-width:44px;padding:8px 10px}.history-btn:disabled{opacity:.35;cursor:default}
 @media(max-width:760px){main{display:flex;flex-direction:column;padding:8px}.previewPanel{width:100%}.editor{width:100%}.stage{width:min(100%,460px)}header{padding-top:max(12px,env(safe-area-inset-top))}.btn{min-height:44px}.sub{max-width:130px;text-align:right}}
-</style></head><body>
+.palette{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:8px 0 14px}.palette button{height:34px;border:1px solid #ffffff55;border-radius:8px;position:relative}.palette button.active:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;text-shadow:0 1px 4px #000;font-weight:bold}</style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
 <section class="panel previewPanel">
@@ -91,6 +91,11 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
  <h2 style="margin-top:18px">5. Цвета и типографика</h2>
  <div class="grid"><div><label>Фон</label><input type="color" id="bgColor" value="#140d0a"></div><div><label>Основной текст</label><input type="color" id="textColor" value="#f6e5c8"></div><div><label>Заголовок</label><input type="color" id="titleColor" value="#ffaf46"></div><div><label>Рукописный</label><input type="color" id="scriptColor" value="#b75b29"></div><div><label>Акцент / скобки</label><input type="color" id="accentColor" value="#dca83b"></div><div><label>Кнопка подписки</label><input type="color" id="buttonColor" value="#ffaf46"></div></div>
  <label>Размер заголовка</label><input type="range" id="titleSize" min="36" max="88" value="60">
+ <label>Размер выбранной надписи</label><input type="range" id="layerScale" min="50" max="220" value="100">
+ <label>Ширина текстового блока</label><input type="range" id="layerWidth" min="12" max="100" value="83">
+ <div class="controls"><button class="btn" id="alignLeft">По левому краю</button><button class="btn" id="alignCenter">По центру</button></div>
+ <label>Цвет выбранной надписи</label><input type="color" id="layerColor" value="#f6e5c8">
+ <div id="brandPalette" class="palette"></div>
  <label>Размер рукописного текста</label><input type="range" id="scriptSize" min="100" max="250" value="140">
  <label>Затемнение фото</label><input type="range" id="darken" min="0" max="90" value="45">
  <h2 style="margin-top:18px">6. Положение выбранной надписи</h2>
@@ -115,7 +120,7 @@ const templatePositions={
  'video-overlay':{kicker:[8,30],heading:[8,38],script:[8,50],body:[8,65],ingredients:[8,38],cta:[8,88]}
 };
 function positionsFor(t){return JSON.parse(JSON.stringify(templatePositions[t]||basePos))}
-function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',posterScale:100,repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:positionsFor(template)}}
+function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',posterScale:100,repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},layerStyles:{},positions:positionsFor(template)}}
 slides=[makeSlide()];
 function current(){return slides[index]}
 let undoStack=[],redoStack=[],lastHistorySnapshot=null,lastHistoryAt=0,historyReady=false,historyApplying=false,activeProjectId=null;
@@ -145,8 +150,10 @@ function update(){
  $('artboard').className='artboard '+template;
  $('artboard').style.setProperty('--bg',s.colors.bg);$('artboard').style.background=s.colors.bg;
  $('artboard').style.setProperty('--cream',s.colors.text);$('artboard').style.setProperty('--apricot',s.colors.title);$('artboard').style.setProperty('--terra',s.colors.script);$('artboard').style.setProperty('--gold',s.colors.accent);
+ $('photoTap').textContent=photoData?'↻ заменить фото':'＋ добавить фото';
  $('brandPreview').textContent=s.values.brand||'INNA.BRY';$('metaPreview').textContent=s.values.meta;$('footerBrand').textContent=s.values.brand||'INNA.BRY';
  if(!document.activeElement?.classList?.contains('editing')){$('l-kicker').textContent=s.values.kicker;$('l-heading').textContent=s.values.heading;$('l-script').textContent=s.values.script;$('l-body').textContent=s.values.body;$('l-ingredients').textContent=s.values.ingredients;$('l-cta').textContent=s.values.cta;}
+ ids.forEach(id=>{const el=$('l-'+id),st=(s.layerStyles||{})[id]||{};el.style.transform=`scale(${st.scale||1})`;el.style.transformOrigin='top left';el.style.width=(st.width||83.34)+'%';el.style.textAlign=st.align||'left';el.style.color=st.color||'';});
  $('l-ingredients').style.display=(template==='recipe'||template==='cinema')?'block':'none';$('l-cta').style.display=template==='story-repost'?'block':'none';
  $('poster').style.left=(s.posterLeft??(28.7-21.3*(1-(s.posterScale||100)/100)))+'%';$('poster').style.top=(s.posterTop??(7.7-23.9*(1-(s.posterScale||100)/100)))+'%';$('poster').style.width=(42.6*(s.posterScale||100)/100)+'%';$('poster').style.height=(47.8*(s.posterScale||100)/100)+'%';$('posterPlaceholder').style.left=$('poster').style.left;$('posterPlaceholder').style.top=$('poster').style.top;$('posterPlaceholder').style.width=$('poster').style.width;$('posterPlaceholder').style.height=$('poster').style.height;$('posterResize').style.left=(parseFloat($('poster').style.left)+parseFloat($('poster').style.width)-1.2)+'%';$('posterResize').style.top=(parseFloat($('poster').style.top)+parseFloat($('poster').style.height)-1.2)+'%';
  $('subscribe').style.display=template==='final'?'block':'none';$('subscribe').textContent='[ подписаться на @inna.bry ]';$('subscribe').style.background=s.colors.button;
@@ -177,7 +184,7 @@ $('photoInput').onchange=e=>readFile(e.target.files[0],d=>{photoData=d;update();
 $('posterInput').onchange=e=>readFile(e.target.files[0],d=>{posterData=d;update();$('status').textContent='Постер загружен.'});
 $('repostInput').onchange=e=>readFile(e.target.files[0],d=>{repostData=d;update();$('status').textContent='Фото для репоста загружено.'});
 $('removePhoto').onclick=()=>{photoData='';posterData='';repostData='';$('photoInput').value='';$('posterInput').value='';$('repostInput').value='';update();$('status').textContent='Фотографии убраны.'};
-function selectLayer(id){selected=id;$('selectedName').textContent='Выбрано: '+({kicker:'метка',heading:'заголовок',script:'рукописный акцент',body:'основной текст',ingredients:'список / ингредиенты',cta:'подпись'}[id]||id);updatePositionControls();update()}
+function selectLayer(id){selected=id;$('layerScale').value=Math.round(((current().layerStyles||{})[id]?.scale||1)*100);$('layerWidth').value=Math.round((current().layerStyles||{})[id]?.width||83.34);$('layerColor').value=(current().layerStyles||{})[id]?.color||'#f6e5c8';$('selectedName').textContent='Выбрано: '+({kicker:'метка',heading:'заголовок',script:'рукописный акцент',body:'основной текст',ingredients:'список / ингредиенты',cta:'подпись'}[id]||id);updatePositionControls();update()}
 function syncInlineText(id,el){let key={kicker:'kicker',heading:'heading',script:'script',body:'body',ingredients:'ingredients',cta:'cta'}[id];if(!key)return;current().values[key]=el.innerText.replace(/\r/g,'');let input=$({kicker:'kickerInput',heading:'headingInput',script:'scriptInput',body:'bodyInput',ingredients:'ingredientsInput',cta:'ctaInput'}[id]);if(input)input.value=current().values[key];saveState()}
 const chromeTextIds=['brandPreview','metaPreview','footerBrand','footerText'];
 const chromeKeys={brandPreview:'brand',footerBrand:'brand',metaPreview:'meta',footerText:'footer'};
@@ -187,8 +194,8 @@ chromeTextIds.forEach(id=>{
  el.addEventListener('input',()=>{current().values[chromeKeys[id]]=el.innerText.replace(/\r/g,'');if(id==='brandPreview'||id==='footerBrand'){ $('brandPreview').textContent=current().values.brand;$('footerBrand').textContent=current().values.brand }if(id==='metaPreview')$('meta').value=current().values.meta;saveState()});
  el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');update()});
 });
-$('bgPhoto').addEventListener('click',()=>{$('photoInput').click()});$('photoTap').addEventListener('click',e=>{e.stopPropagation();$('photoInput').click()});
-$('poster').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});
+// Фото меняется только центральной кнопкой «добавить/заменить фото».$('photoTap').addEventListener('click',e=>{e.stopPropagation();$('photoInput').click()});
+// Постер меняется через поле загрузки постера, а не по нажатию на изображение.
 const posterPointers=new Map();let posterGesture=null,posterWasMoved=false,suppressPosterClick=false;
 function posterPointCenter(){const a=[...posterPointers.values()];return a.length?{x:a.reduce((v,p)=>v+p.x,0)/a.length,y:a.reduce((v,p)=>v+p.y,0)/a.length}:null}
 function posterDistance(){const a=[...posterPointers.values()];return a.length>1?Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y):0}
@@ -272,6 +279,17 @@ ids.forEach(id=>{
  el.addEventListener('pointercancel',e=>finish(e,true));
 });
 
+
+const brandColors=['#140d0a','#211914','#30251f','#f6e5c8','#ead6b5','#dca83b','#ffaf46','#e88936','#b75b29','#963f25','#6e2d20','#fff8ed'];
+$('brandPalette').innerHTML='';
+brandColors.forEach(c=>{const b=document.createElement('button');b.type='button';b.style.background=c;b.title=c;b.onclick=()=>{$('layerColor').value=c;applyLayerColor(c);$('brandPalette').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b))};$('brandPalette').appendChild(b)});
+function layerStyle(){current().layerStyles=current().layerStyles||{};return current().layerStyles[selected]||(current().layerStyles[selected]={scale:1,width:83.34,align:'left',color:''})}
+function applyLayerColor(c){layerStyle().color=c;$('l-'+selected).style.color=c;saveState()}
+$('layerScale').oninput=()=>{layerStyle().scale=+$('layerScale').value/100;$('l-'+selected).style.transform='scale('+layerStyle().scale+')';saveState()};
+$('layerWidth').oninput=()=>{layerStyle().width=+$('layerWidth').value;$('l-'+selected).style.width=layerStyle().width+'%';saveState()};
+$('layerColor').oninput=()=>applyLayerColor($('layerColor').value);
+$('alignLeft').onclick=()=>{layerStyle().align='left';$('l-'+selected).style.textAlign='left';saveState()};
+$('alignCenter').onclick=()=>{layerStyle().align='center';$('l-'+selected).style.textAlign='center';saveState()};
 $('posX').oninput=()=>{let p=current().positions[selected];p[0]=+$('posX').value;$('l-'+selected).style.left=p[0]+'%';saveState()};
 $('posY').oninput=()=>{let p=current().positions[selected];p[1]=+$('posY').value;$('l-'+selected).style.top=p[1]+'%';saveState()};
 $('resetPosition').onclick=()=>{current().positions=JSON.parse(JSON.stringify(basePos));update()};
