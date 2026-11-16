@@ -95,6 +95,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
  <label>Ширина текстового блока</label><input type="range" id="layerWidth" min="12" max="100" value="83">
  <div class="controls"><button class="btn" id="alignLeft">По левому краю</button><button class="btn" id="alignCenter">По центру</button></div>
  <label>Цвет выбранной надписи</label><input type="color" id="layerColor" value="#f6e5c8">
+ <div class="controls"><button class="btn" id="deleteTextLayer">Удалить выбранную надпись</button></div>
  <div id="brandPalette" class="palette"></div>
  <label>Размер рукописного текста</label><input type="range" id="scriptSize" min="100" max="250" value="140">
  <label>Затемнение фото</label><input type="range" id="darken" min="0" max="90" value="45">
@@ -108,7 +109,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
 <script>
 const $=id=>document.getElementById(id);
 const defaults={brand:'INNA.BRY',footer:'ЛИСТАЙ →',meta:'01 / 06',kicker:'[ уютный гайд ]',heading:'маленькие радости ноября',script:'ноябрь',body:'Идеи для тёплых вечеров, когда за окном темнеет раньше.',ingredients:'чай · 2 ч. л.\\nапельсин · 2 кружочка\\nкорица · 1 палочка\\nмёд · по вкусу',cta:'[ сохрани на вечер ]'};
-let format='post',template='standard',slides=[],index=0,photoData='',posterData='',repostData='',selected='heading';
+let format='post',template='standard',slides=[],index=0,photoData='',posterData='',repostData='',selected='heading',selectedChrome='';
 const ids=['kicker','heading','script','body','ingredients','cta'];
 const basePos={kicker:[8,64],heading:[8,67],script:[11,72],body:[8,81],ingredients:[8,38],cta:[8,88]};
 const templatePositions={
@@ -152,8 +153,9 @@ function update(){
  $('artboard').style.setProperty('--cream',s.colors.text);$('artboard').style.setProperty('--apricot',s.colors.title);$('artboard').style.setProperty('--terra',s.colors.script);$('artboard').style.setProperty('--gold',s.colors.accent);
  $('photoTap').textContent=photoData?'↻ заменить фото':'＋ добавить фото';
  $('brandPreview').textContent=s.values.brand||'INNA.BRY';$('metaPreview').textContent=s.values.meta;$('footerBrand').textContent=s.values.brand||'INNA.BRY';
+ const hidden=s.chromeHidden||{};['brandPreview','metaPreview','footerBrand','footerText'].forEach(id=>$(id).style.display=hidden[id]?'none':'');
  if(!document.activeElement?.classList?.contains('editing')){$('l-kicker').textContent=s.values.kicker;$('l-heading').textContent=s.values.heading;$('l-script').textContent=s.values.script;$('l-body').textContent=s.values.body;$('l-ingredients').textContent=s.values.ingredients;$('l-cta').textContent=s.values.cta;}
- ids.forEach(id=>{const el=$('l-'+id),st=(s.layerStyles||{})[id]||{};el.style.transform=`scale(${st.scale||1})`;el.style.transformOrigin='top left';el.style.width=(st.width||83.34)+'%';el.style.textAlign=st.align||'left';el.style.color=st.color||'';});
+ ids.forEach(id=>{const el=$('l-'+id),st=(s.layerStyles||{})[id]||{};el.style.display=(s.hiddenLayers||{})[id]?'none':'';el.style.transform=`scale(${st.scale||1})`;el.style.transformOrigin='top left';el.style.width=(st.width||83.34)+'%';el.style.textAlign=st.align||'left';el.style.color=st.color||'';});
  $('l-ingredients').style.display=(template==='recipe'||template==='cinema')?'block':'none';$('l-cta').style.display=template==='story-repost'?'block':'none';
  $('poster').style.left=(s.posterLeft??(28.7-21.3*(1-(s.posterScale||100)/100)))+'%';$('poster').style.top=(s.posterTop??(7.7-23.9*(1-(s.posterScale||100)/100)))+'%';$('poster').style.width=(42.6*(s.posterScale||100)/100)+'%';$('poster').style.height=(47.8*(s.posterScale||100)/100)+'%';$('posterPlaceholder').style.left=$('poster').style.left;$('posterPlaceholder').style.top=$('poster').style.top;$('posterPlaceholder').style.width=$('poster').style.width;$('posterPlaceholder').style.height=$('poster').style.height;$('posterResize').style.left=(parseFloat($('poster').style.left)+parseFloat($('poster').style.width)-1.2)+'%';$('posterResize').style.top=(parseFloat($('poster').style.top)+parseFloat($('poster').style.height)-1.2)+'%';
  $('subscribe').style.display=template==='final'?'block':'none';$('subscribe').textContent='[ подписаться на @inna.bry ]';$('subscribe').style.background=s.colors.button;
@@ -190,6 +192,7 @@ const chromeTextIds=['brandPreview','metaPreview','footerBrand','footerText'];
 const chromeKeys={brandPreview:'brand',footerBrand:'brand',metaPreview:'meta',footerText:'footer'};
 chromeTextIds.forEach(id=>{
  const el=$(id);let last=0;
+ el.addEventListener('click',()=>{selectedChrome=id;$('selectedName').textContent='Выбрана мелкая подпись: '+id;$('deleteTextLayer').textContent='Удалить выбранную надпись';});
  el.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){const now=Date.now();if(now-last<450){last=0;e.preventDefault();el.contentEditable='true';el.classList.add('editing');el.focus();const r=document.createRange();r.selectNodeContents(el);r.collapse(false);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r)}else last=now}});
  el.addEventListener('input',()=>{current().values[chromeKeys[id]]=el.innerText.replace(/\r/g,'');if(id==='brandPreview'||id==='footerBrand'){ $('brandPreview').textContent=current().values.brand;$('footerBrand').textContent=current().values.brand }if(id==='metaPreview')$('meta').value=current().values.meta;saveState()});
  el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');update()});
@@ -290,6 +293,7 @@ $('layerWidth').oninput=()=>{layerStyle().width=+$('layerWidth').value;$('l-'+se
 $('layerColor').oninput=()=>applyLayerColor($('layerColor').value);
 $('alignLeft').onclick=()=>{layerStyle().align='left';$('l-'+selected).style.textAlign='left';saveState()};
 $('alignCenter').onclick=()=>{layerStyle().align='center';$('l-'+selected).style.textAlign='center';saveState()};
+$('deleteTextLayer').onclick=()=>{if(selectedChrome){current().chromeHidden=current().chromeHidden||{};current().chromeHidden[selectedChrome]=true;$(selectedChrome).style.display='none';$('status').textContent='Мелкая надпись скрыта.';selectedChrome='';saveState();return}const el=$('l-'+selected);el.style.display='none';current().hiddenLayers=current().hiddenLayers||{};current().hiddenLayers[selected]=true;$('status').textContent='Надпись скрыта.';saveState()};
 $('posX').oninput=()=>{let p=current().positions[selected];p[0]=+$('posX').value;$('l-'+selected).style.left=p[0]+'%';saveState()};
 $('posY').oninput=()=>{let p=current().positions[selected];p[1]=+$('posY').value;$('l-'+selected).style.top=p[1]+'%';saveState()};
 $('resetPosition').onclick=()=>{current().positions=JSON.parse(JSON.stringify(basePos));update()};
