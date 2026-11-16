@@ -11,8 +11,8 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .panel h2{font-size:12px;letter-spacing:.13em;color:#e8b65c;text-transform:uppercase;margin:3px 0 12px}
 .previewHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.stage{width:min(100%,520px);margin:auto;aspect-ratio:3/4;background:repeating-conic-gradient(#4a403a 0% 25%,#302822 0% 50%) 50%/24px 24px;overflow:hidden;position:relative;box-shadow:0 8px 24px #0008;touch-action:pan-y}
 .artboard{container-type:inline-size;position:absolute;inset:0;overflow:hidden;background:var(--bg);color:var(--cream);font-family:Overpass,sans-serif}
-.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.shade{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(20,13,10,.08) 22%,rgba(20,13,10,.24) 48%,rgba(20,13,10,.94) 100%);pointer-events:none}
-.topline{position:absolute;left:8.33%;right:8.33%;top:4.2%;display:flex;justify-content:space-between;font-size:1.95cqw;letter-spacing:.32em;pointer-events:auto}.topline span,.footer span{pointer-events:auto;cursor:text}.photo,.poster,.repost-card img{cursor:pointer;pointer-events:auto}
+.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:0}.photo-tap{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;padding:0;z-index:1;cursor:pointer;touch-action:manipulation}.shade{z-index:1;position:absolute;inset:0;background:linear-gradient(to bottom,rgba(20,13,10,.08) 22%,rgba(20,13,10,.24) 48%,rgba(20,13,10,.94) 100%);pointer-events:none}
+.topline{position:absolute;z-index:3;left:8.33%;right:8.33%;top:4.2%;display:flex;justify-content:space-between;font-size:1.95cqw;letter-spacing:.32em;pointer-events:auto}.topline span,.footer span{pointer-events:auto;cursor:text}.photo,.poster,.repost-card img{cursor:pointer;pointer-events:auto}
 .layer{position:absolute;left:8.33%;width:83.34%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.08;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-shadow:0 1px 5px #0003}.layer:active{cursor:grabbing}.layer.selected{outline:1px dashed var(--gold);outline-offset:5px}.layer.editing{cursor:text;touch-action:auto;user-select:text;-webkit-user-select:text;outline:1px solid var(--apricot);outline-offset:5px}
 .kicker{font-size:2.5cqw;color:var(--gold)}.heading{font-size:5.6cqw;color:var(--apricot);line-height:.98}.script{font-family:Alexandra,cursive;color:var(--terra);font-size:13cqw;line-height:.8}.body{font-size:2.8cqw;color:var(--cream);line-height:1.12}.footer{position:absolute;left:8.33%;right:8.33%;bottom:4%;display:flex;justify-content:space-between;font-size:1.8cqw;letter-spacing:.28em;pointer-events:none}
 .standard .heading{font-size:5.8cqw}.standard .layer[data-id="body"]{line-height:1.15}
@@ -44,7 +44,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
 <section class="panel previewPanel">
  <div class="previewHead"><h2>Предпросмотр · двигай надписи пальцем</h2><div class="controls"><button class="btn" id="prev">←</button><span id="count" style="font-size:12px;align-self:center">1 / 1</span><button class="btn" id="next">→</button></div></div>
  <div class="stage" id="stage"><div class="artboard standard" id="artboard">
-  <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div>
+  <img class="photo" id="bgPhoto"><button type="button" class="photo-tap" id="photoTap" aria-label="Добавить или заменить фото"></button><div class="shade" id="shade"></div>
   <div class="topline"><span id="brandPreview">INNA.BRY</span><span id="metaPreview">01 / 06</span></div>
   <div class="repost-card" id="repostCard" style="display:none"><img id="repostPhoto"><div class="repost-overlay"></div></div>
   <img class="poster" id="poster"><button type="button" class="poster-placeholder" id="posterPlaceholder">нажми, чтобы добавить афишу</button>
@@ -170,9 +170,9 @@ chromeTextIds.forEach(id=>{
  el.addEventListener('input',()=>{current().values[chromeKeys[id]]=el.innerText.replace(/\r/g,'');if(id==='brandPreview'||id==='footerBrand'){ $('brandPreview').textContent=current().values.brand;$('footerBrand').textContent=current().values.brand }if(id==='metaPreview')$('meta').value=current().values.meta;saveState()});
  el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');update()});
 });
-$('bgPhoto').addEventListener('click',()=>{if(photoData)$('photoInput').click()});
+$('bgPhoto').addEventListener('click',()=>{$('photoInput').click()});$('photoTap').addEventListener('click',e=>{e.stopPropagation();$('photoInput').click()});
 $('poster').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});$('posterPlaceholder').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});
-$('repostPhoto').addEventListener('click',()=>{$('repostInput').click()});
+$('repostPhoto').addEventListener('click',e=>{e.stopPropagation();$('repostInput').click()});$('repostCard').addEventListener('click',e=>{e.stopPropagation();$('repostInput').click()});
 function beginInlineEdit(id){let el=$('l-'+id);if(!el||el.contentEditable==='true')return;selectLayer(id);el.contentEditable='true';el.classList.add('editing');el.focus();let range=document.createRange();range.selectNodeContents(el);range.collapse(false);let sel=window.getSelection();sel.removeAllRanges();sel.addRange(range)}
 ids.forEach(id=>{let el=$('l-'+id);el.addEventListener('input',()=>syncInlineText(id,el));el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');syncInlineText(id,el);update()});el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();el.blur()}if(e.key==='Enter'&&id!=='body'&&id!=='ingredients'){e.preventDefault();el.blur()}})});
 function updatePositionControls(){let p=current().positions[selected]||[8,55];$('posX').value=p[0];$('posY').value=p[1]}
