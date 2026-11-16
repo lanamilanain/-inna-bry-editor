@@ -73,6 +73,14 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
   <button class="btn" data-template="story-repost">Репост сториз</button>
   <button class="btn" data-template="final">Финальный · подписка</button><button class="btn" data-template="video-overlay">Видео · PNG без фона</button>
  </div>
+ <h2 style="margin-top:18px">Композиция INNA.BRY</h2>
+ <p class="hint">Выбери расположение текста под свою фотографию. Шрифты и фирменная палитра сохраняются.</p>
+ <div class="grid" id="compositionPresets">
+  <button class="btn" type="button" data-composition="editorial">Журнальная</button>
+  <button class="btn" type="button" data-composition="cover">Обложка</button>
+  <button class="btn" type="button" data-composition="quiet">Спокойная</button>
+  <button class="btn" type="button" data-composition="minimal">Минимализм</button>
+ </div>
  <h2 style="margin-top:18px">3. Текст</h2>
  <label>Рубрика / номер</label><input id="meta" type="text" value="01 / 06">
  <label>Метка в скобках</label><input id="kickerInput" type="text" value="[ уютный гайд ]">
@@ -150,6 +158,19 @@ $('photoInput').onchange=e=>readFile(e.target.files[0],d=>{photoData=d;update();
 $('posterInput').onchange=e=>readFile(e.target.files[0],d=>{posterData=d;update();$('status').textContent='Постер загружен.'});
 $('repostInput').onchange=e=>readFile(e.target.files[0],d=>{repostData=d;update();$('status').textContent='Фото для репоста загружено.'});
 $('removePhoto').onclick=()=>{photoData='';posterData='';repostData='';$('photoInput').value='';$('posterInput').value='';$('repostInput').value='';update();$('status').textContent='Фотографии убраны.'};
+function applyComposition(name){
+ const layouts={
+  editorial:{kicker:[8,17],heading:[8,25],script:[10,43],body:[8,58],ingredients:[8,68],cta:[8,88]},
+  cover:{kicker:[8,14],heading:[8,23],script:[8,42],body:[8,59],ingredients:[8,68],cta:[8,88]},
+  quiet:{kicker:[8,64],heading:[8,70],script:[10,81],body:[8,90],ingredients:[8,44],cta:[8,94]},
+  minimal:{kicker:[8,24],heading:[8,34],script:[8,50],body:[8,66],ingredients:[8,44],cta:[8,88]}
+ };
+ const layout=layouts[name];if(!layout)return;
+ current().positions=JSON.parse(JSON.stringify(layout));
+ update();
+ $('status').textContent='Композиция применена. Можно дополнительно передвинуть любую надпись пальцем.';
+}
+document.querySelectorAll('[data-composition]').forEach(b=>b.addEventListener('click',()=>applyComposition(b.dataset.composition)));
 function selectLayer(id){selected=id;$('selectedName').textContent='Выбрано: '+({kicker:'метка',heading:'заголовок',script:'рукописный акцент',body:'основной текст',ingredients:'список / ингредиенты',cta:'подпись'}[id]||id);updatePositionControls();update()}
 function updatePositionControls(){let p=current().positions[selected]||[8,55];$('posX').value=p[0];$('posY').value=p[1]}
 ids.forEach(id=>{$('l-'+id).addEventListener('pointerdown',e=>{e.preventDefault();selectLayer(id);let startX=e.clientX,startY=e.clientY,stage=$('stage').getBoundingClientRect(),p=current().positions[id]||[8,55],orig=[...p];function move(ev){let dx=(ev.clientX-startX)/stage.width*100,dy=(ev.clientY-startY)/stage.height*100;current().positions[id]=[Math.max(0,Math.min(90,orig[0]+dx)),Math.max(0,Math.min(95,orig[1]+dy))];let pp=current().positions[id];$('l-'+id).style.left=pp[0]+'%';$('l-'+id).style.top=pp[1]+'%';updatePositionControls()}function end(){window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);saveState()}window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true})})});
