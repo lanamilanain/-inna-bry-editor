@@ -29,6 +29,18 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .video-overlay .layer{ text-shadow:0 2px 12px rgba(0,0,0,.18) }
 .video-overlay .kicker{font-size:2.3cqw}
 .video-overlay .heading{font-size:7cqw}
+.notebook{background:#f2eadb!important;color:#39271f}
+.notebook .photo{left:10%;top:22%;width:37%;height:58%;inset:auto;object-fit:cover;border:1px solid #b99d79;padding:1.1%;background:#f8f3e9;box-shadow:0 5px 18px #2a1b151f;display:block}
+.notebook .shade{display:none}
+.notebook .topline{color:#76563d;top:6%;left:10%;right:8%;font-size:1.8cqw;letter-spacing:.25em}
+.notebook:before{content:"";position:absolute;z-index:4;left:3.2%;top:0;bottom:0;width:4.4%;background:radial-gradient(ellipse at center,#f8f5ed 0 20%,#9b8b79 22% 29%,#4b4035 31% 35%,transparent 38%) center 4%/100% 11.5% repeat-y;pointer-events:none}
+.notebook:after{content:"";position:absolute;z-index:0;right:6%;top:13%;width:39%;height:69%;border:1px solid #d4c2a8;box-shadow:0 0 0 7px #f8f3e9,0 0 0 8px #d4c2a8;transform:rotate(2deg);pointer-events:none}
+.notebook .kicker{left:54%!important;top:24%!important;width:38%;font-size:2.2cqw}
+.notebook .heading{left:54%!important;top:30%!important;width:38%;font-size:5.2cqw}
+.notebook .script{left:56%!important;top:43%!important;width:38%;font-size:11cqw}
+.notebook .body{left:54%!important;top:56%!important;width:37%;font-size:2.65cqw;color:#39271f;line-height:1.25}
+.notebook .layer{z-index:2;text-shadow:none}
+.notebook .footer{color:#76563d;bottom:5%;font-size:1.65cqw}
 .video-overlay .script{font-size:15cqw}
 .video-overlay .body,.video-overlay #l-ingredients,.video-overlay #l-cta{display:none!important}
 .final .subscribe{position:absolute;left:8.33%;top:70%;background:var(--apricot);color:#21130b;border-radius:50px;padding:2.2% 5%;font-size:2.9cqw;max-width:83%;text-align:center}
@@ -85,7 +97,7 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
  <div class="grid">
   <button class="btn active" data-template="standard">Стандарт</button>
   <button class="btn" data-template="cinema">Кино</button>
-  <button class="btn" data-template="recipe">Рецепты</button>
+  <button class="btn" data-template="recipe">Рецепты</button><button class="btn" data-template="notebook">Блокнот</button>
   <button class="btn" data-template="story-repost">Репост сториз</button>
   <button class="btn" data-template="final">Финальный · подписка</button><button class="btn" data-template="video-overlay">Видео · PNG без фона</button>
  </div>
@@ -166,7 +178,7 @@ function inputChange(){let s=current();s.values={meta:$('meta').value,kicker:$('
 [['bgColor','bg'],['textColor','text'],['titleColor','title'],['scriptColor','script'],['accentColor','accent'],['buttonColor','button']].forEach(([id,key])=>$(id).addEventListener('input',()=>{current().colors[key]=$(id).value;update()}));
 ['titleSize','scriptSize','darken'].forEach(id=>$(id).addEventListener('input',update));
 document.querySelectorAll('[data-format]').forEach(b=>b.onclick=()=>{format=b.dataset.format;if(format==='story'&&template==='standard'){}update()});
-document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{template=b.dataset.template;if(template==='story-repost'||template==='video-overlay')format='story';update()});
+document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{template=b.dataset.template;if(template==='story-repost'||template==='video-overlay')format='story';if(template==='notebook'){format='post';current().colors={...current().colors,bg:'#f2eadb',text:'#39271f',title:'#6b3d2b',script:'#a85f3c',accent:'#bd8b4e',button:'#bd8b4e'};}update()});
 function readFile(file,cb){if(!file)return;let r=new FileReader();r.onload=()=>{cb(r.result);};r.onerror=()=>{$('status').textContent='Не удалось прочитать файл. Попробуй JPG или PNG.'};r.readAsDataURL(file)}
 $('photoInput').onchange=e=>readFile(e.target.files[0],d=>{photoData=d;update();$('status').textContent='Основное фото загружено.'});
 $('posterInput').onchange=e=>readFile(e.target.files[0],d=>{posterData=d;update();$('status').textContent='Постер загружен.'});
@@ -189,7 +201,7 @@ async function exportPNG(){
  if(template!=='video-overlay'){ctx.fillStyle=s.colors.bg;ctx.fillRect(0,0,W,H)}
  const load=src=>new Promise(resolve=>{if(!src)return resolve(null);let im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src});
  let bg=template==='video-overlay'?null:await load(photoData);if(bg){let scale=Math.max(W/bg.width,H/bg.height),ww=bg.width*scale,hh=bg.height*scale;ctx.drawImage(bg,(W-ww)/2,(H-hh)/2,ww,hh);let gr=ctx.createLinearGradient(0,H*.25,0,H);gr.addColorStop(0,'rgba(20,13,10,.04)');gr.addColorStop(.55,`rgba(20,13,10,${$('darken').value/100})`);gr.addColorStop(1,'rgba(20,13,10,.96)');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H)}
- if(template==='cinema'){let im=await load(posterData||photoData);if(im){let x=302,y=115,w=476,h=690,sc=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.clip();ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,im.height*sc);ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.strokeRect(x,y,w,h)}}
+ if(template==='notebook'){ctx.fillStyle='#f2eadb';ctx.fillRect(0,0,W,H);let im=await load(photoData);if(im){let x=108,y=317,w=400,h=835,sc=Math.max(w/im.width,h/im.height);ctx.save();ctx.fillStyle='#f8f3e9';ctx.shadowColor='rgba(45,30,20,.13)';ctx.shadowBlur=18;ctx.fillRect(x-12,y-12,w+24,h+24);ctx.shadowBlur=0;ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,h*sc);ctx.strokeStyle='#b99d79';ctx.lineWidth=2;ctx.strokeRect(x-10,y-10,w+20,h+20);ctx.restore()}ctx.fillStyle='#8e7d69';for(let yy=70;yy<1400;yy+=165){ctx.beginPath();ctx.ellipse(38,yy,23,14,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e9e1d4';ctx.lineWidth=7;ctx.stroke()}ctx.strokeStyle='#d4c2a8';ctx.lineWidth=2;ctx.strokeRect(600,190,410,1040);ctx.strokeStyle='#faf6ed';ctx.lineWidth=13;ctx.strokeRect(592,182,426,1056)}if(template==='cinema'){let im=await load(posterData||photoData);if(im){let x=302,y=115,w=476,h=690,sc=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.clip();ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,im.height*sc);ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.strokeRect(x,y,w,h)}}
  if(template==='story-repost'){let im=await load(repostData);if(im){let x=85,y=430,w=910,h=1080,sc=Math.max(w/im.width,h/im.height);ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,h)}}
  if(template!=='video-overlay'){ctx.fillStyle=s.colors.text;ctx.font='300 22px Overpass';ctx.letterSpacing='7px';ctx.fillText('INNA.BRY',90,80);ctx.textAlign='right';ctx.fillText(s.values.meta,990,80);ctx.textAlign='left';ctx.letterSpacing='0px';}
  let stage=$('stage').getBoundingClientRect(),art=$('artboard').getBoundingClientRect(),scale=W/art.width;
