@@ -282,7 +282,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  function finish(e){if(!gesture)return;pts.delete(e.pointerId);if(!pts.size){const g=gesture;gesture=null;if(g.id!=='photo'&&!g.moved&&!pageLocked&&!locked[g.id])openEditor(g.id);saveState()}}
  art.addEventListener('pointerup',finish,true);art.addEventListener('pointercancel',finish,true);
  $e('deleteTextBlock').onclick=()=>{if(locked[active])return;hidden[active]=true;const n=idNode(active);if(n)n.style.display='none';saveState()};
- $e('addTextBlock').onclick=()=>{const id='extra_'+Date.now();const n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=id;n.textContent='Новый текст';n.style.left='8%';n.style.top='45%';n.style.fontSize='3.2cqw';art.appendChild(n);extra.push({id,text:'Новый текст',x:8,y:45,size:3.2});current().extraTexts=extra;select(id);openEditor(id)};
+ $e('addTextBlock').onclick=()=>{const id='extra_'+Date.now();const n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=id;n.textContent='Новый текст';n.style.left='8%';n.style.top='45%';n.style.fontSize='3.2cqw';art.appendChild(n);current().extraTexts=current().extraTexts||[];current().extraTexts.push({id,text:'Новый текст',x:8,y:45,size:3.2});select(id);openEditor(id)};
  $e('pageLock').onclick=()=>{pageLocked=!pageLocked;$e('pageLock').classList.toggle('active',pageLocked);$e('pageLock').textContent=pageLocked?'Открепить макет':'Закрепить макет'};
  // Color swatches change the selected text color. Native color input remains available in the palette panel.
  palette.forEach(c=>{const b=document.createElement('button');b.className='paletteDot';b.style.background=c;b.title=c;b.onclick=()=>applyColor(c);$e('paletteRow').appendChild(b)});
