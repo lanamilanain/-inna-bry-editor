@@ -37,10 +37,24 @@ label{display:block;font-size:12px;color:#d1bda7;margin:11px 0 5px}input[type=te
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-size:11px;color:#bba58e;line-height:1.45;margin-top:8px}.slideStrip{display:flex;gap:7px;overflow-x:auto;padding:10px 0}.thumb{flex:none;border:1px solid #806044;background:#21150f;color:#e9d4b6;border-radius:8px;padding:8px 12px}.thumb.active{border:2px solid var(--gold)}
 fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;padding-top:12px;margin-top:12px}summary{cursor:pointer;color:#e8b65c;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 .status{font-size:12px;color:#e8b65c;min-height:18px;margin-top:8px}
-@media(max-width:760px){main{display:flex;flex-direction:column;padding:8px}.previewPanel{width:100%}.editor{width:100%}.stage{width:min(100%,460px)}header{padding-top:max(12px,env(safe-area-inset-top))}.btn{min-height:44px}.sub{max-width:130px;text-align:right}}
+@media(max-width:760px){main{display:flex;flex-direction:column;padding:8px}.previewPanel{width:100%}.editor{width:100%}.stage{width:min(100%,460px)}.dashboard{grid-column:1/-1;background:#fff;color:#171411;border:1px solid #e7e5e2;border-radius:28px;padding:clamp(18px,4vw,34px);margin-bottom:14px;box-shadow:0 8px 28px rgba(30,20,12,.04)}.dashHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}.dashBrand{font-size:clamp(22px,4vw,34px);font-weight:700;letter-spacing:-.04em;color:#171411}.dashTag{background:#d9f1e4;color:#18834b;border-radius:30px;padding:9px 16px;font-size:13px;font-weight:600}.dashGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dashTile{appearance:none;text-align:left;border:0;border-radius:24px;background:#f1f1f1;color:#171411;padding:clamp(16px,3vw,26px);min-height:148px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px;cursor:pointer;transition:background .18s,transform .18s}.dashTile:active{transform:scale(.985);background:#e9e9e9}.dashTile svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.dashTitle{font-size:clamp(18px,3vw,25px);font-weight:650;letter-spacing:-.025em}.dashDesc{font-size:clamp(14px,2.4vw,19px);line-height:1.35;color:#666}.dashboard .dashFoot{border-top:1px solid #e8e8e8;margin-top:24px;padding-top:15px;color:#777;font-size:12px}@media(max-width:760px){.dashboard{border-radius:24px;padding:18px}.dashGrid{gap:10px}.dashTile{min-height:142px;border-radius:21px;padding:16px}.dashDesc{font-size:14px}.dashTitle{font-size:18px}}header{padding-top:max(12px,env(safe-area-inset-top))}.btn{min-height:44px}.sub{max-width:130px;text-align:right}}
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
+<section class="dashboard" id="dashboard">
+ <div class="dashHead"><div class="dashBrand">INNA.BRY STUDIO</div><div class="dashTag">Твоя студия</div></div>
+ <div class="dashGrid">
+  <button class="dashTile" data-go="new"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="dashTitle">Новый дизайн</span><span class="dashDesc">Посты и Stories</span></button>
+  <button class="dashTile" data-go="carousel"><svg viewBox="0 0 24 24"><path d="M4 5h16M3 9h18M5 13h14M7 17h10M9 21h6"/></svg><span class="dashTitle">Карусели</span><span class="dashDesc">Многостраничные посты</span></button>
+  <button class="dashTile" data-go="type"><svg viewBox="0 0 24 24"><path d="M3 5h18M12 5v15M8 20h8"/></svg><span class="dashTitle">Типографика</span><span class="dashDesc">Текст и композиция</span></button>
+  <button class="dashTile" data-go="styles"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 1.5-3.3c-.7-.8-.1-2.2 1-2.2H18a3 3 0 0 0 3-3c0-5.2-4-9.5-9-9.5Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="15" cy="8" r="1"/></svg><span class="dashTitle">Мои стили</span><span class="dashDesc">Шрифты и цвета</span></button>
+  <button class="dashTile" data-go="templates"><svg viewBox="0 0 24 24"><path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4Z"/><path d="M4 16H2v4a2 2 0 0 0 2 2h13v-2"/><path d="m16 10 1.5 1.5L20 9"/></svg><span class="dashTitle">Мои шаблоны</span><span class="dashDesc">Готовые макеты</span></button>
+  <button class="dashTile" data-go="video"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 3v18M16 3v18M3 8h18M3 16h18"/></svg><span class="dashTitle">Видео</span><span class="dashDesc">Текстовые оверлеи</span></button>
+  <button class="dashTile" data-go="media"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="15" height="15" rx="2"/><path d="m6 16 4-4 3 3 2-2 3 3M8 2h12a2 2 0 0 1 2 2v12"/></svg><span class="dashTitle">Медиатека</span><span class="dashDesc">Мои фотографии</span></button>
+  <button class="dashTile" data-go="preview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="dashTitle">Предпросмотр</span><span class="dashDesc">Проверка макета</span></button>
+ </div>
+ <div class="dashFoot">INNA.BRY · DESIGN WORKSPACE</div>
+</section>
 <section class="panel previewPanel">
  <div class="previewHead"><h2>Предпросмотр · двигай надписи пальцем</h2><div class="controls"><button class="btn" id="prev">←</button><span id="count" style="font-size:12px;align-self:center">1 / 1</span><button class="btn" id="next">→</button></div></div>
  <div class="stage" id="stage"><div class="artboard standard" id="artboard">
@@ -72,14 +86,6 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
   <button class="btn" data-template="recipe">Рецепты</button>
   <button class="btn" data-template="story-repost">Репост сториз</button>
   <button class="btn" data-template="final">Финальный · подписка</button><button class="btn" data-template="video-overlay">Видео · PNG без фона</button>
- </div>
- <h2 style="margin-top:18px">Композиция INNA.BRY</h2>
- <p class="hint">Выбери расположение текста под свою фотографию. Шрифты и фирменная палитра сохраняются.</p>
- <div class="grid" id="compositionPresets">
-  <button class="btn" type="button" data-composition="editorial">Журнальная</button>
-  <button class="btn" type="button" data-composition="cover">Обложка</button>
-  <button class="btn" type="button" data-composition="quiet">Спокойная</button>
-  <button class="btn" type="button" data-composition="minimal">Минимализм</button>
  </div>
  <h2 style="margin-top:18px">3. Текст</h2>
  <label>Рубрика / номер</label><input id="meta" type="text" value="01 / 06">
@@ -158,19 +164,6 @@ $('photoInput').onchange=e=>readFile(e.target.files[0],d=>{photoData=d;update();
 $('posterInput').onchange=e=>readFile(e.target.files[0],d=>{posterData=d;update();$('status').textContent='Постер загружен.'});
 $('repostInput').onchange=e=>readFile(e.target.files[0],d=>{repostData=d;update();$('status').textContent='Фото для репоста загружено.'});
 $('removePhoto').onclick=()=>{photoData='';posterData='';repostData='';$('photoInput').value='';$('posterInput').value='';$('repostInput').value='';update();$('status').textContent='Фотографии убраны.'};
-function applyComposition(name){
- const layouts={
-  editorial:{kicker:[8,17],heading:[8,25],script:[10,43],body:[8,58],ingredients:[8,68],cta:[8,88]},
-  cover:{kicker:[8,14],heading:[8,23],script:[8,42],body:[8,59],ingredients:[8,68],cta:[8,88]},
-  quiet:{kicker:[8,64],heading:[8,70],script:[10,81],body:[8,90],ingredients:[8,44],cta:[8,94]},
-  minimal:{kicker:[8,24],heading:[8,34],script:[8,50],body:[8,66],ingredients:[8,44],cta:[8,88]}
- };
- const layout=layouts[name];if(!layout)return;
- current().positions=JSON.parse(JSON.stringify(layout));
- update();
- $('status').textContent='Композиция применена. Можно дополнительно передвинуть любую надпись пальцем.';
-}
-document.querySelectorAll('[data-composition]').forEach(b=>b.addEventListener('click',()=>applyComposition(b.dataset.composition)));
 function selectLayer(id){selected=id;$('selectedName').textContent='Выбрано: '+({kicker:'метка',heading:'заголовок',script:'рукописный акцент',body:'основной текст',ingredients:'список / ингредиенты',cta:'подпись'}[id]||id);updatePositionControls();update()}
 function updatePositionControls(){let p=current().positions[selected]||[8,55];$('posX').value=p[0];$('posY').value=p[1]}
 ids.forEach(id=>{$('l-'+id).addEventListener('pointerdown',e=>{e.preventDefault();selectLayer(id);let startX=e.clientX,startY=e.clientY,stage=$('stage').getBoundingClientRect(),p=current().positions[id]||[8,55],orig=[...p];function move(ev){let dx=(ev.clientX-startX)/stage.width*100,dy=(ev.clientY-startY)/stage.height*100;current().positions[id]=[Math.max(0,Math.min(90,orig[0]+dx)),Math.max(0,Math.min(95,orig[1]+dy))];let pp=current().positions[id];$('l-'+id).style.left=pp[0]+'%';$('l-'+id).style.top=pp[1]+'%';updatePositionControls()}function end(){window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);saveState()}window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true})})});
@@ -200,6 +193,16 @@ async function exportPNG(){
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'INNA.BRY'});$('status').textContent='Открылось меню iPhone: выбери «Сохранить изображение».';return}}catch(e){if(e.name==='AbortError')return}
  let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);$('status').textContent='PNG создан. Если Safari открыл картинку, удерживай её и выбери «Сохранить в Фото».';
 }
+function goToSection(target){
+ const editor=document.querySelector('.editor'),preview=document.querySelector('.previewPanel');
+ if(target==='new'||target==='carousel'||target==='preview'){(target==='preview'?preview:editor).scrollIntoView({behavior:'smooth',block:'start'});if(target==='carousel'&&slides.length===1){$('status').textContent='Добавь страницы кнопкой «+ Слайд», чтобы собрать карусель.'}return}
+ if(target==='type'){$('headingInput').scrollIntoView({behavior:'smooth',block:'center'});$('headingInput').focus();return}
+ if(target==='styles'){$('bgColor').scrollIntoView({behavior:'smooth',block:'center'});return}
+ if(target==='templates'){document.querySelector('[data-template="standard"]').scrollIntoView({behavior:'smooth',block:'center'});return}
+ if(target==='video'){format='story';template='video-overlay';update();preview.scrollIntoView({behavior:'smooth',block:'start'});return}
+ if(target==='media'){$('photoInput').scrollIntoView({behavior:'smooth',block:'center'});return}
+}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>goToSection(b.dataset.go)));
 $('export').onclick=exportPNG;
 loadState();loadCurrent();
 </script></body></html>
