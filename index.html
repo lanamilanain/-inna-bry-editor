@@ -53,6 +53,8 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
  <label>Фото-референс</label><input type="file" id="referenceInput" accept="image/*">
  <div id="referencePreview" style="display:none;margin-top:10px"><img id="referenceImage" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:12px"><button class="btn" id="removeReference" type="button">Убрать референс</button></div>
  <label>Что важно повторить из референса</label><textarea id="referenceNotes" placeholder="Например: сохранить расположение заголовка, поля, сочетание шрифтов и общую композицию"></textarea>
+ <div class="controls" style="margin-top:10px"><button class="btn" id="downloadReference" type="button">Скачать референс</button><button class="btn primary" id="prepareBrief" type="button">Подготовить задание для ChatGPT</button></div>
+ <div class="hint">После этого прикрепи скачанный референс в чат ChatGPT. Я разберу его и подготовлю точную схему слайдов и оформления для редактора.</div>
  <div class="hint" id="projectStatus">Проекты хранятся в памяти этого браузера на устройстве.</div>
 </section>
 <section class="panel previewPanel">
@@ -206,6 +208,9 @@ $('deleteProject').onclick=()=>{if(projectItems.length===1){$('projectStatus').t
 $('referenceNotes').oninput=saveProjects;
 $('referenceInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let fr=new FileReader();fr.onload=()=>{let im=new Image();im.onload=()=>{let max=1100,sc=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);referenceData=c.toDataURL('image/jpeg',.78);$('referenceImage').src=referenceData;$('referencePreview').style.display='block';saveProjects();$('projectStatus').textContent='Референс добавлен к проекту.'};im.src=fr.result};fr.readAsDataURL(f)};
 $('removeReference').onclick=()=>{referenceData='';$('referenceInput').value='';$('referencePreview').style.display='none';saveProjects()};
+$('downloadReference').onclick=()=>{if(!referenceData){$('projectStatus').textContent='Сначала загрузи референс.';return}let a=document.createElement('a');a.href=referenceData;a.download=(projectItems.find(p=>p.id===activeProjectId)?.name||'reference').replace(/[^a-zа-я0-9_-]/gi,'_')+'-reference.jpg';a.click()};
+$('prepareBrief').onclick=async()=>{let p=projectItems.find(x=>x.id===activeProjectId);let brief='Проект INNA.BRY Studio: '+(p?.name||'Без названия')+'\\nЗадача: проанализировать прикреплённый референс и повторить его композицию максимально близко, используя мои фотографии и тексты.\\nСохранить: геометрию и расположение блоков, иерархию текста, поля, интервалы, масштаб и баланс. Не придумывать декор. Использовать только утверждённые шрифты INNA.BRY и не менять их.\\nПожелания: '+($('referenceNotes').value||'определи по изображению')+'\\nПодготовь структуру карусели по слайдам и точные параметры макета для переноса в редактор.';try{await navigator.clipboard.writeText(brief);$('projectStatus').textContent='Задание скопировано. Прикрепи скачанный референс в этот чат.'}catch(e){$('projectStatus').textContent=brief}};
+
 $('export').onclick=exportPNG;
 initProjects();
 </script></body></html>
