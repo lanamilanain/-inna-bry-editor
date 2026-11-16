@@ -21,7 +21,7 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .recipe .layer[data-id="body"]{font-size:2.55cqw}
 .story-repost .repost-card{position:absolute;left:8%;top:22%;width:84%;height:58%;border:1px solid #9a6b42;background:#21150f;box-shadow:0 12px 30px #0008;overflow:hidden;border-radius:4px}
 .story-repost .repost-card img{width:100%;height:100%;object-fit:cover;opacity:.84;display:none}
-.story-repost .repost-overlay{position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(20,13,10,.75))}
+.story-repost .repost-overlay{position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(20,13,10,.75));pointer-events:none}
 .story-repost .heading{font-size:5cqw}
 .video-overlay{background:transparent!important}
 .video-overlay .topline,.video-overlay .footer{display:none}
@@ -157,7 +157,7 @@ const chromeKeys={brandPreview:'brand',footerBrand:'brand',metaPreview:'meta',fo
 chromeTextIds.forEach(id=>{
  const el=$(id);let last=0;
  el.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){const now=Date.now();if(now-last<450){last=0;e.preventDefault();el.contentEditable='true';el.classList.add('editing');el.focus();const r=document.createRange();r.selectNodeContents(el);r.collapse(false);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r)}else last=now}});
- el.addEventListener('input',()=>{current().values[chromeKeys[id]]=el.innerText.replace(/\r/g,'');if(id==='brandPreview'||id==='footerBrand'){ $('brandPreview').textContent=current().values.brand;$('footerBrand').textContent=current().values.brand }saveState()});
+ el.addEventListener('input',()=>{current().values[chromeKeys[id]]=el.innerText.replace(/\r/g,'');if(id==='brandPreview'||id==='footerBrand'){ $('brandPreview').textContent=current().values.brand;$('footerBrand').textContent=current().values.brand }if(id==='metaPreview')$('meta').value=current().values.meta;saveState()});
  el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');update()});
 });
 $('bgPhoto').addEventListener('click',()=>{if(photoData)$('photoInput').click()});
@@ -221,11 +221,11 @@ async function exportPNG(){
  let bg=template==='video-overlay'?null:await load(photoData);if(bg){let scale=Math.max(W/bg.width,H/bg.height),ww=bg.width*scale,hh=bg.height*scale;ctx.drawImage(bg,(W-ww)/2,(H-hh)/2,ww,hh);let gr=ctx.createLinearGradient(0,H*.25,0,H);gr.addColorStop(0,'rgba(20,13,10,.04)');gr.addColorStop(.55,`rgba(20,13,10,${$('darken').value/100})`);gr.addColorStop(1,'rgba(20,13,10,.96)');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H)}
  if(template==='cinema'){let im=await load(posterData||photoData);if(im){let x=302,y=115,w=476,h=690,sc=Math.max(w/im.width,h/im.height);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,18);ctx.clip();ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,im.height*sc);ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.strokeRect(x,y,w,h)}}
  if(template==='story-repost'){let im=await load(repostData);if(im){let x=85,y=430,w=910,h=1080,sc=Math.max(w/im.width,h/im.height);ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,h)}}
- if(template!=='video-overlay'){ctx.fillStyle=s.colors.text;ctx.font='300 22px Overpass';ctx.letterSpacing='7px';ctx.fillText('INNA.BRY',90,80);ctx.textAlign='right';ctx.fillText(s.values.meta,990,80);ctx.textAlign='left';ctx.letterSpacing='0px';}
+ if(template!=='video-overlay'){ctx.fillStyle=s.colors.text;ctx.font='300 22px Overpass';ctx.letterSpacing='7px';ctx.fillText(s.values.brand||'INNA.BRY',90,80);ctx.textAlign='right';ctx.fillText(s.values.meta,990,80);ctx.textAlign='left';ctx.letterSpacing='0px';}
  let stage=$('stage').getBoundingClientRect(),art=$('artboard').getBoundingClientRect(),scale=W/art.width;
  for(let id of ids){let el=$('l-'+id);if(el.style.display==='none'||getComputedStyle(el).display==='none')continue;if(id==='ingredients'&&template!=='recipe')continue;if(id==='cta'&&template!=='story-repost')continue;let r=el.getBoundingClientRect(),x=(r.left-art.left)*scale,y=(r.top-art.top)*scale+parseFloat(getComputedStyle(el).fontSize)*scale*.8,style=getComputedStyle(el),fontSize=parseFloat(style.fontSize)*scale,color=style.color,font=id==='script'?'Alexandra':'Overpass';ctx.fillStyle=color;ctx.font=`300 ${fontSize}px ${font}`;let maxW=r.width*scale;drawWrapped(ctx,el.textContent,x,y,maxW,fontSize*1.12)}
  if(template==='final'){ctx.fillStyle=s.colors.button;ctx.beginPath();ctx.roundRect(90,H*.70,780,85,45);ctx.fill();ctx.fillStyle='#21130b';ctx.font='300 32px Overpass';ctx.fillText('[ подписаться на @inna.bry ]',135,H*.70+55)}
- if(template!=='video-overlay'){ctx.fillStyle=s.colors.text;ctx.font='300 21px Overpass';ctx.letterSpacing='5px';ctx.fillText('INNA.BRY',90,H-55);ctx.textAlign='right';ctx.letterSpacing='0px';ctx.fillText(template==='final'?'СПАСИБО, ЧТО ТЫ ЗДЕСЬ':'ЛИСТАЙ →',990,H-55);ctx.textAlign='left';}
+ if(template!=='video-overlay'){ctx.fillStyle=s.colors.text;ctx.font='300 21px Overpass';ctx.letterSpacing='5px';ctx.fillText(s.values.brand||'INNA.BRY',90,H-55);ctx.textAlign='right';ctx.letterSpacing='0px';ctx.fillText(s.values.footer||(template==='final'?'СПАСИБО, ЧТО ТЫ ЗДЕСЬ':'ЛИСТАЙ →'),990,H-55);ctx.textAlign='left';}
  let blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob){$('status').textContent='Safari не смог создать PNG. Попробуй ещё раз.';return}
  let file=new File([blob],`INNABRY-${template==='video-overlay'?'video-overlay':'slide'}-${String(index+1).padStart(2,'0')}.png`,{type:'image/png'});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'INNA.BRY'});$('status').textContent='Открылось меню iPhone: выбери «Сохранить изображение».';return}}catch(e){if(e.name==='AbortError')return}
