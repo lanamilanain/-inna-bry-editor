@@ -37,6 +37,7 @@ label{display:block;font-size:12px;color:#d1bda7;margin:11px 0 5px}input[type=te
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-size:11px;color:#bba58e;line-height:1.45;margin-top:8px}.slideStrip{display:flex;gap:7px;overflow-x:auto;padding:10px 0}.thumb{flex:none;border:1px solid #806044;background:#21150f;color:#e9d4b6;border-radius:8px;padding:8px 12px}.thumb.active{border:2px solid var(--gold)}
 fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;padding-top:12px;margin-top:12px}summary{cursor:pointer;color:#e8b65c;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 .status{font-size:12px;color:#e8b65c;min-height:18px;margin-top:8px}
+.project-dialog{width:min(92vw,520px);max-height:82vh;overflow:auto;background:#211914;color:#f6e5c8;border:1px solid #806044;border-radius:16px;padding:20px;box-shadow:0 18px 60px #0009}.project-dialog::backdrop{background:#080504bb}.project-dialog h2{margin:0 0 12px;color:#ffaf46;font-size:18px}.project-list{display:grid;gap:8px;margin-top:14px}.project-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid #594333;border-radius:10px;background:#1a120e}.project-row small{display:block;color:#bba58e;margin-top:3px}.project-row .controls{flex-wrap:nowrap}.project-row .btn{padding:7px 9px;font-size:12px}.history-btn{min-width:44px;padding:8px 10px}.history-btn:disabled{opacity:.35;cursor:default}
 @media(max-width:760px){main{display:flex;flex-direction:column;padding:8px}.previewPanel{width:100%}.editor{width:100%}.stage{width:min(100%,460px)}header{padding-top:max(12px,env(safe-area-inset-top))}.btn{min-height:44px}.sub{max-width:130px;text-align:right}}
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
@@ -58,10 +59,11 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
   <div class="footer"><span id="footerBrand">INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
  <div class="slideStrip" id="slideStrip"></div>
- <div class="controls"><button class="btn primary" id="export">Скачать PNG</button><button class="btn" id="addSlide">+ Слайд</button><button class="btn" id="duplicate">Дублировать</button><button class="btn" id="delete">Удалить</button></div>
+ <div class="controls"><button class="btn" id="undoBtn" aria-label="Отменить" title="Отменить последнее действие">↶</button><button class="btn" id="redoBtn" aria-label="Повторить" title="Повторить действие">↷</button><button class="btn primary" id="export">Скачать PNG</button><button class="btn" id="addSlide">+ Слайд</button><button class="btn" id="duplicate">Дублировать</button><button class="btn" id="delete">Удалить</button></div><div class="controls" style="margin-top:8px"><button class="btn" id="openProjects">Мои проекты</button><button class="btn" id="saveProject">Сохранить проект</button><button class="btn" id="newProject">Новый проект</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
 </section>
+<dialog class="project-dialog" id="projectDialog"><h2>Библиотека проектов</h2><label for="projectName">Название проекта</label><input id="projectName" type="text" placeholder="Например, осенняя карусель"><div class="controls" style="margin-top:12px"><button class="btn primary" id="saveProjectConfirm">Сохранить</button><button class="btn" id="closeProjects">Закрыть</button></div><div class="project-list" id="projectList"></div></dialog>
 <section class="panel editor">
  <h2>1. Формат макета</h2>
  <div class="grid"><button class="btn active" data-format="post">Пост · 3:4</button><button class="btn" data-format="story">Сториз · 9:16</button></div>
@@ -116,7 +118,22 @@ function positionsFor(t){return JSON.parse(JSON.stringify(templatePositions[t]||
 function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',posterScale:100,repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:positionsFor(template)}}
 slides=[makeSlide()];
 function current(){return slides[index]}
-function saveState(){persistCurrent();try{localStorage.setItem('innaBryStudioV2',JSON.stringify({slides,index}))}catch(e){$('status').textContent='Не удалось сохранить проект в памяти браузера.'}}
+let undoStack=[],redoStack=[],lastHistorySnapshot=null,lastHistoryAt=0,historyReady=false,historyApplying=false,activeProjectId=null;
+function stateSnapshot(){persistCurrent();return JSON.stringify({slides,index})}
+function refreshHistoryButtons(){$('undoBtn').disabled=!undoStack.length;$('redoBtn').disabled=!redoStack.length}
+function saveState(){
+ persistCurrent();let snap=JSON.stringify({slides,index});
+ if(historyReady&&!historyApplying&&lastHistorySnapshot!==null&&snap!==lastHistorySnapshot){
+  const now=Date.now();if(now-lastHistoryAt>700){undoStack.push(lastHistorySnapshot);if(undoStack.length>30)undoStack.shift();redoStack=[]}
+  lastHistoryAt=now;
+ }
+ lastHistorySnapshot=snap;
+ try{localStorage.setItem('innaBryStudioV2',snap)}catch(e){$('status').textContent='Не удалось сохранить автосохранение. Возможно, фотографии слишком большие.'}
+ refreshHistoryButtons();
+}
+function restoreHistory(snap){historyApplying=true;let d=JSON.parse(snap);slides=d.slides;index=Math.max(0,Math.min(d.index||0,slides.length-1));loadCurrent();historyApplying=false;lastHistorySnapshot=JSON.stringify({slides,index});lastHistoryAt=Date.now();try{localStorage.setItem('innaBryStudioV2',lastHistorySnapshot)}catch(e){}refreshHistoryButtons()}
+function undoAction(){if(!undoStack.length)return;const now=stateSnapshot();redoStack.push(now);restoreHistory(undoStack.pop());$('status').textContent='Последнее действие отменено.'}
+function redoAction(){if(!redoStack.length)return;const now=stateSnapshot();undoStack.push(now);restoreHistory(redoStack.pop());$('status').textContent='Действие повторено.'}
 function loadState(){try{let d=JSON.parse(localStorage.getItem('innaBryStudioV2'));if(d&&d.slides?.length){slides=d.slides;index=Math.min(d.index||0,slides.length-1);let s=current();format=s.format;template=s.template;photoData=s.photo||'';posterData=s.poster||'';repostData=s.repost||''}}catch(e){}}
 function setImage(el,src){if(src){el.src=src;el.style.display='block'}else{el.removeAttribute('src');el.style.display='none'}}
 function applyValuesToInputs(){let v=current().values; $('meta').value=v.meta;$('kickerInput').value=v.kicker;$('headingInput').value=v.heading;$('scriptInput').value=v.script;$('bodyInput').value=v.body;$('ingredientsInput').value=v.ingredients;$('ctaInput').value=v.cta;['bgColor','textColor','titleColor','scriptColor','accentColor','buttonColor'].forEach((id,i)=>$(id).value=Object.values(current().colors)[i])}
@@ -282,5 +299,27 @@ async function exportPNG(){
  let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);$('status').textContent='PNG создан. Если Safari открыл картинку, удерживай её и выбери «Сохранить в Фото».';
 }
 $('export').onclick=exportPNG;
-localStorage.removeItem('innaBryProjectsV1');loadState();loadCurrent();
+$('undoBtn').onclick=undoAction;$('redoBtn').onclick=redoAction;
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redoAction():undoAction()}});
+let projectDbPromise=null;
+function projectDB(){if(projectDbPromise)return projectDbPromise;projectDbPromise=new Promise((resolve,reject)=>{const req=indexedDB.open('INNABRYProjectLibrary',1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('projects'))db.createObjectStore('projects',{keyPath:'id'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});return projectDbPromise}
+async function projectRequest(mode,fn){const db=await projectDB();return new Promise((resolve,reject)=>{const tx=db.transaction('projects',mode),store=tx.objectStore('projects');let req=fn(store);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function listProjects(){return projectRequest('readonly',st=>st.getAll())}
+async function putProject(p){return projectRequest('readwrite',st=>st.put(p))}
+async function deleteProject(id){return projectRequest('readwrite',st=>st.delete(id))}
+function makeProjectId(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function projectData(){persistCurrent();return {slides:JSON.parse(JSON.stringify(slides)),index}}
+async function renderProjects(){
+ const list=$('projectList');list.innerHTML='<div class="hint">Загружаю проекты…</div>';
+ try{const items=(await listProjects()).sort((a,b)=>b.updatedAt-a.updatedAt);list.innerHTML='';
+  if(!items.length){list.innerHTML='<div class="hint">Пока нет сохранённых проектов. Введи название выше и нажми «Сохранить».</div>';return}
+  items.forEach(p=>{const row=document.createElement('div');row.className='project-row';const info=document.createElement('div');const name=document.createElement('strong');name.textContent=p.name;const meta=document.createElement('small');meta.textContent=new Date(p.updatedAt).toLocaleString('ru-RU')+' · '+p.slides.length+' слайд.';info.append(name,meta);const actions=document.createElement('div');actions.className='controls';const open=document.createElement('button');open.className='btn';open.textContent='Открыть';open.onclick=()=>{if(!confirm('Открыть проект «'+p.name+'»? Текущая работа останется в автосохранении браузера.'))return;slides=p.slides;index=Math.max(0,Math.min(p.index||0,slides.length-1));activeProjectId=p.id;undoStack=[];redoStack=[];loadCurrent();lastHistorySnapshot=JSON.stringify({slides,index});refreshHistoryButtons();$('projectDialog').close();$('status').textContent='Открыт проект «'+p.name+'».'};const del=document.createElement('button');del.className='btn';del.textContent='Удалить';del.onclick=async()=>{if(!confirm('Удалить проект «'+p.name+'» из библиотеки?'))return;await deleteProject(p.id);if(activeProjectId===p.id)activeProjectId=null;renderProjects()};actions.append(open,del);row.append(info,actions);list.append(row)})
+ }catch(e){list.innerHTML='<div class="hint">Не удалось открыть библиотеку в этом браузере.</div>'}
+}
+$('openProjects').onclick=()=>{$('projectDialog').showModal();renderProjects()};
+$('saveProject').onclick=()=>{$('projectDialog').showModal();$('projectName').value='';renderProjects();$('projectName').focus()};
+$('closeProjects').onclick=()=>$('projectDialog').close();
+$('saveProjectConfirm').onclick=async()=>{const name=$('projectName').value.trim();if(!name){$('projectName').focus();$('status').textContent='Введи название проекта.';return}try{const id=activeProjectId||makeProjectId(),data=projectData();await putProject({id,name,...data,updatedAt:Date.now()});activeProjectId=id;$('status').textContent='Проект «'+name+'» сохранён в библиотеке.';renderProjects()}catch(e){$('status').textContent='Не удалось сохранить проект. Попробуй уменьшить размер фотографий.'}};
+$('newProject').onclick=()=>{if(!confirm('Создать новый проект? Текущий останется в автосохранении, если ты сохранила его в библиотеку.'))return;slides=[makeSlide()];index=0;activeProjectId=null;undoStack=[];redoStack=[];photoData='';posterData='';repostData='';format='post';template='standard';loadCurrent();lastHistorySnapshot=JSON.stringify({slides,index});refreshHistoryButtons();$('status').textContent='Создан новый проект.'};
+loadState();loadCurrent();lastHistorySnapshot=JSON.stringify({slides,index});historyReady=true;refreshHistoryButtons();
 </script></body></html>
