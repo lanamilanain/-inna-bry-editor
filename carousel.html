@@ -41,13 +41,42 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
 #artboard .layer.selected{z-index:10}
 button{ -webkit-tap-highlight-color:transparent; }
 input,textarea,button{font:inherit}
+
+/* INNA.BRY touch-first editor refinements */
+#stage{touch-action:none!important;overscroll-behavior:contain;overflow:hidden}
+#artboard{touch-action:none;overscroll-behavior:contain}
+#artboard .layer{touch-action:none!important;user-select:none;-webkit-user-select:none}
+#artboard .layer.is-hidden{display:none!important}
+#artboard .topline,#artboard .footer{pointer-events:auto;touch-action:none}
+#artboard .poster{display:none!important}
+.cinema .poster,.recipe .layer[data-id="ingredients"]{border:0!important;background:transparent!important;box-shadow:none!important}
+.recipe .layer[data-id="ingredients"]{padding:0!important}
+#artboard .layer[data-id="cta"]{background:transparent!important;border:0!important;box-shadow:none!important}
+#photoCenter{position:absolute;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #d6a34b;background:#21150de8;color:#f6e5c8;border-radius:999px;padding:13px 20px;font-size:12px;letter-spacing:.12em;white-space:nowrap}
+#photoCenter.has-photo{top:50%;opacity:.9}
+#touchTools{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+#touchTools button{min-height:42px}
+#editSheet{position:fixed;z-index:9999;inset:auto 0 0;background:#211814;color:#f4e8d4;border:1px solid #76583e;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 45px #0009;display:none}
+#editSheet.open{display:block}
+#editSheet textarea{font-size:18px!important;line-height:1.45;min-height:110px;max-height:35vh}
+#editSheet button{min-height:44px}
+#editSheet .sheetActions{display:flex;gap:8px;margin-top:10px}
+#editSheet .sheetActions>*{flex:1}
+#paletteRow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.paletteDot{width:30px;height:30px;border-radius:50%;border:2px solid #fff5;padding:0;min-height:30px!important}
+#pageLock.active{background:#d6a34b;color:#20150e}
+#legacyTextControls,#legacyPhotoControls{display:none!important}
+#artboard .topline span,#artboard .footer span{cursor:pointer;pointer-events:auto}
+#stage.gesture-active{position:relative;touch-action:none}
+@media(max-width:760px){#stage{width:min(100%,460px);touch-action:none!important}#editSheet textarea{font-size:18px!important}body{overscroll-behavior-y:contain}}
+
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
 <section class="panel previewPanel">
  <div class="previewHead"><h2>Предпросмотр · двигай надписи пальцем</h2><div class="controls"><button type="button" class="btn" id="prev">←</button><span id="count" style="font-size:12px;align-self:center">1 / 1</span><button type="button" class="btn" id="next">→</button></div></div>
  <div class="stage" id="stage"><div class="artboard standard" id="artboard">
-  <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div>
+  <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div><button type="button" id="photoCenter">＋ ВЫБРАТЬ ФОТО</button>
   <div class="topline"><span id="brandPreview">INNA.BRY</span><span id="metaPreview">01 / 06</span></div>
   <div class="repost-card" id="repostCard" style="display:none"><img id="repostPhoto"><div class="repost-overlay"></div></div>
   <img class="poster" id="poster">
@@ -60,7 +89,7 @@ input,textarea,button{font:inherit}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div class="slideStrip" id="slideStrip"></div>
+ <div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="pageLock">Закрепить макет</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div id="paletteRow"></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -103,7 +132,7 @@ input,textarea,button{font:inherit}
  <label>По вертикали</label><input type="range" id="posY" min="0" max="95" value="55">
  <div class="controls"><button type="button" class="btn" id="resetPosition">Вернуть положение</button></div>
  <details><summary>Памятка по работе</summary><p class="hint">Формат поста — 1080×1440 px. Сториз — 1080×1920 px. Для перемещения надписи коснись её в макете и перетащи. Цвета можно менять отдельно. Фотографии выбираются прямо из медиатеки iPhone. Проект автоматически сохраняется в этом браузере.</p></details>
-</section></main>
+</section></main><div id="editSheet"><label id="editLabel">Редактировать надпись</label><textarea id="editText" rows="4" autocapitalize="sentences"></textarea><div class="sheetActions"><button type="button" class="btn primary" id="saveText">Сохранить</button><button type="button" class="btn" id="closeText">Закрыть</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const defaults={meta:'01 / 06',kicker:'[ уютный гайд ]',heading:'маленькие радости ноября',script:'ноябрь',body:'Идеи для тёплых вечеров, когда за окном темнеет раньше.',ingredients:'чай · 2 ч. л.\nапельсин · 2 кружочка\nкорица · 1 палочка\nмёд · по вкусу',cta:'[ сохрани на вечер ]'};
@@ -206,4 +235,58 @@ loadState();loadCurrent();
 window.addEventListener('error',e=>{const st=document.getElementById('status');if(st)st.textContent='Ошибка редактора: '+(e.message||'неизвестная ошибка')});
 window.addEventListener('unhandledrejection',e=>{const st=document.getElementById('status');if(st)st.textContent='Ошибка действия: '+(e.reason?.message||'попробуй обновить страницу')});
 $('status').textContent='Редактор запущен. Выбери шаблон или начни редактирование.';
+
+/* Touch-first text/photo editing layer */
+(function(){
+ const $e=id=>document.getElementById(id), art=$e('artboard'), stage=$e('stage');
+ let active='heading', locked={}, hidden={}, extra=[], pageLocked=false, editTarget=null, pickColor=false;
+ const palette=['#f4e8d4','#fff8ed','#d6a34b','#ffaf46','#b75b29','#a95832','#8d9a79','#6f7658','#3b261d','#21150f','#17100d','#d9c4a5','#c58a5c','#8d4c35','#e0b875','#a8a18a','#6b7d6d','#7e3f32','#f0c9a6','#ffffff'];
+ function valFor(id){const map={meta:'meta',kicker:'kicker',heading:'heading',script:'script',body:'body',ingredients:'ingredients',cta:'cta',brand:'brand',footer:'footer'};return map[id]||id}
+ function currentValue(id){if(id==='brand')return 'INNA.BRY';if(id==='footer')return $('footerText').textContent;return current().values[valFor(id)]||''}
+ function setValue(id,v){if(id==='brand'){ $('brandPreview').textContent=v; current().brandText=v;}else if(id==='footer'){$('footerText').textContent=v;current().footerText=v;}else{current().values[valFor(id)]=v;const input=$(id==='meta'?'meta':id+'Input');if(input)input.value=v;} update();}
+ const styleFor=id=>({kicker:'accent',heading:'title',script:'script',body:'text',ingredients:'text',cta:'accent',meta:'text',brand:'text',footer:'text'}[id]||'text');
+ function selectedNode(){return idNode(active)}
+ function idNode(id){return id==='meta'?$('metaPreview'):id==='brand'?$('brandPreview'):id==='footer'?$('footerText'):$('l-'+id)}
+ function select(id){active=id;selected=id;document.querySelectorAll('#artboard .layer').forEach(n=>n.classList.toggle('selected',n.dataset.id===id));$e('deleteTextBlock').disabled=locked[id]===true;$e('pageLock').classList.toggle('active',pageLocked);$e('pageLock').textContent=pageLocked?'Открепить макет':'Закрепить макет';}
+ function openEditor(id){if(locked[id])return;editTarget=id;$e('editLabel').textContent='Текст: '+id;$e('editText').value=currentValue(id);$e('editSheet').classList.add('open');setTimeout(()=>{$e('editText').focus()},120)}
+ $e('saveText').onclick=()=>{if(editTarget){setValue(editTarget,$e('editText').value);$e('editSheet').classList.remove('open');}};
+ $e('closeText').onclick=()=>{$e('editSheet').classList.remove('open');};
+ $e('photoCenter').onclick=()=>{$('photoInput').click()};
+ const oldPhoto=$('photoInput').onchange;
+ $('photoInput').onchange=e=>{oldPhoto&&oldPhoto.call($('photoInput'),e);setTimeout(()=>{const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО'},100)};
+ const oldUpdate=update;
+ update=function(){oldUpdate();const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО';document.querySelectorAll('#artboard .layer').forEach(n=>{const id=n.dataset.id;n.classList.toggle('is-hidden',hidden[id]===true);n.style.opacity=locked[id]?'0.96':''});if(current().brandText)$('brandPreview').textContent=current().brandText;if(current().footerText)$('footerText').textContent=current().footerText;};
+ // Single tap edits, drag moves, pinch resizes. Prevents page scroll while interacting with canvas.
+ let pts=new Map(),gesture=null;
+ function posPct(e){const r=art.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100}}
+ art.addEventListener('pointerdown',e=>{
+  const node=e.target.closest('.layer,.topline span,.footer span');
+  if(!node||e.target.id==='photoCenter')return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const id=node.dataset.id||(node.id==='metaPreview'?'meta':node.id==='brandPreview'?'brand':'footer');
+  select(id);node.setPointerCapture?.(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const p=current().positions[id]||[8,55],rect=art.getBoundingClientRect();
+  gesture={id,node,startX:e.clientX,startY:e.clientY,orig:[...p],startDist:0,startSize:current().sizes?.[id]||parseFloat(getComputedStyle(node).fontSize),moved:false};
+  if(pts.size===2){const a=[...pts.values()];gesture.startDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}
+ },true);
+ art.addEventListener('pointermove',e=>{
+  if(!gesture||!pts.has(e.pointerId))return;e.preventDefault();e.stopImmediatePropagation();pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const id=gesture.id,node=gesture.node,r=art.getBoundingClientRect();
+  if(pts.size>=2){const a=[...pts.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),size=Math.max(10,Math.min(180,gesture.startSize*(d/(gesture.startDist||d))));current().sizes=current().sizes||{};current().sizes[id]=size;node.style.fontSize=(size/r.width*100)+'cqw';gesture.moved=true}
+  else if(!pageLocked&&!locked[id]){const dx=(e.clientX-gesture.startX)/r.width*100,dy=(e.clientY-gesture.startY)/r.height*100;if(Math.abs(dx)+Math.abs(dy)>1.2)gesture.moved=true;if(gesture.moved){const p=[Math.max(0,Math.min(90,gesture.orig[0]+dx)),Math.max(0,Math.min(96,gesture.orig[1]+dy))];current().positions[id]=p;node.style.left=p[0]+'%';node.style.top=p[1]+'%'}}
+ },true);
+ function finish(e){if(!gesture)return;pts.delete(e.pointerId);if(!pts.size){const g=gesture;gesture=null;if(!g.moved&&!pageLocked&&!locked[g.id])openEditor(g.id);saveState()}}
+ art.addEventListener('pointerup',finish,true);art.addEventListener('pointercancel',finish,true);
+ $e('deleteTextBlock').onclick=()=>{if(locked[active])return;hidden[active]=true;const n=idNode(active);if(n)n.style.display='none';saveState()};
+ $e('addTextBlock').onclick=()=>{const id='extra_'+Date.now();const n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=id;n.textContent='Новый текст';n.style.left='8%';n.style.top='45%';n.style.fontSize='3.2cqw';art.appendChild(n);extra.push({id,text:'Новый текст',x:8,y:45,size:3.2});current().extraTexts=extra;select(id);openEditor(id)};
+ $e('pageLock').onclick=()=>{pageLocked=!pageLocked;$e('pageLock').classList.toggle('active',pageLocked);$e('pageLock').textContent=pageLocked?'Открепить макет':'Закрепить макет'};
+ // Color swatches change the selected text color. Native color input remains available in the palette panel.
+ palette.forEach(c=>{const b=document.createElement('button');b.className='paletteDot';b.style.background=c;b.title=c;b.onclick=()=>applyColor(c);$e('paletteRow').appendChild(b)});
+ function applyColor(c){const id=active,key=styleFor(id);if(['meta','brand','footer'].includes(id)){const n=idNode(id);n.style.color=c}else{current().colors[key]=c;update()}saveState()}
+ $e('eyedropperMode').onclick=()=>{pickColor=!pickColor;$e('eyedropperMode').classList.toggle('active',pickColor);$e('eyedropperMode').textContent=pickColor?'Тапни по фото':'Пипетка с фото'};
+ art.addEventListener('click',e=>{if(!pickColor)return;const r=art.getBoundingClientRect(),x=Math.round((e.clientX-r.left)/r.width*$('bgPhoto').naturalWidth),y=Math.round((e.clientY-r.top)/r.height*$('bgPhoto').naturalHeight);try{const c=document.createElement('canvas');c.width=$('bgPhoto').naturalWidth;c.height=$('bgPhoto').naturalHeight;const cx=c.getContext('2d');cx.drawImage($('bgPhoto'),0,0);const d=cx.getImageData(x,y,1,1).data;applyColor('#'+[...d].slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join(''));pickColor=false;$e('eyedropperMode').classList.remove('active');$e('eyedropperMode').textContent='Пипетка с фото'}catch(err){$('status').textContent='Пипетка недоступна для этого фото в Safari.'}},true);
+ // Add a palette color picker for any selected block.
+ const cp=document.createElement('input');cp.type='color';cp.value='#f4e8d4';cp.title='Свой цвет';cp.style.cssText='width:42px;height:34px;background:transparent;border:0';cp.oninput=()=>applyColor(cp.value);$e('paletteRow').appendChild(cp);
+})();
+
 </script></body></html>
