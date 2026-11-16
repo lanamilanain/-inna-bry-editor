@@ -107,6 +107,7 @@ const basePos={kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredien
 function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:JSON.parse(JSON.stringify(basePos))}}
 slides=[makeSlide()];
 function current(){return slides[index]}
+function saveState(){persistCurrent();try{localStorage.setItem('innaBryStudioV2',JSON.stringify({slides,index}))}catch(e){$('status').textContent='Не удалось сохранить проект в памяти браузера.'}}
 function loadState(){try{let d=JSON.parse(localStorage.getItem('innaBryStudioV2'));if(d&&d.slides?.length){slides=d.slides;index=Math.min(d.index||0,slides.length-1);let s=current();format=s.format;template=s.template;photoData=s.photo||'';posterData=s.poster||'';repostData=s.repost||''}}catch(e){}}
 function setImage(el,src){if(src){el.src=src;el.style.display='block'}else{el.removeAttribute('src');el.style.display='none'}}
 function applyValuesToInputs(){let v=current().values; $('meta').value=v.meta;$('kickerInput').value=v.kicker;$('headingInput').value=v.heading;$('scriptInput').value=v.script;$('bodyInput').value=v.body;$('ingredientsInput').value=v.ingredients;$('ctaInput').value=v.cta;['bgColor','textColor','titleColor','scriptColor','accentColor','buttonColor'].forEach((id,i)=>$(id).value=Object.values(current().colors)[i])}
@@ -155,19 +156,44 @@ function beginInlineEdit(id){let el=$('l-'+id);if(!el||el.contentEditable==='tru
 ids.forEach(id=>{let el=$('l-'+id);el.addEventListener('input',()=>syncInlineText(id,el));el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');syncInlineText(id,el);update()});el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();el.blur()}if(e.key==='Enter'&&id!=='body'&&id!=='ingredients'){e.preventDefault();el.blur()}})});
 function updatePositionControls(){let p=current().positions[selected]||[8,55];$('posX').value=p[0];$('posY').value=p[1]}
 const lastTapByLayer={};
-ids.forEach(id=>{$('l-'+id).addEventListener('pointerdown',e=>{
- if(e.pointerType==='mouse'&&e.button!==0)return;
- e.preventDefault();selectLayer(id);
- let el=$('l-'+id),stage=$('stage').getBoundingClientRect(),startX=e.clientX,startY=e.clientY;
- let startPos=[...(current().positions[id]||[8,55])],dragging=e.pointerType==='mouse',moved=false,timer=null,finished=false;
- const move=ev=>{if(finished)return;if(!dragging)return;let dx=(ev.clientX-startX)/stage.width*100,dy=(ev.clientY-startY)/stage.height*100;if(Math.abs(dx)+Math.abs(dy)>.2)moved=true;let pp=[Math.max(0,Math.min(90,startPos[0]+dx)),Math.max(0,Math.min(95,startPos[1]+dy))];current().positions[id]=pp;el.style.left=pp[0]+'%';el.style.top=pp[1]+'%';updatePositionControls()};
- const cleanup=()=>{finished=true;if(timer)clearTimeout(timer);window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);window.removeEventListener('pointercancel',cancel)};
- const end=ev=>{if(finished)return;cleanup();if(dragging&&moved){saveState();return}if(e.pointerType==='mouse'){let now=Date.now();if(lastTapByLayer[id]&&now-lastTapByLayer[id]<420){beginInlineEdit(id);lastTapByLayer[id]=0}else lastTapByLayer[id]=now;return}
- let now=Date.now(),last=lastTapByLayer[id]||0;if(now-last<420){lastTapByLayer[id]=0;beginInlineEdit(id)}else lastTapByLayer[id]=now;saveState()};
- const cancel=()=>{if(finished)return;cleanup();if(moved)saveState()};
- if(e.pointerType!=='mouse'){timer=setTimeout(()=>{dragging=true;startPos=[...(current().positions[id]||startPos)]},380)}
- window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true});window.addEventListener('pointercancel',cancel,{once:true});
- })});
+ids.forEach(id=>{
+ const el=$('l-'+id);
+ let gesture=null;
+ el.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  if(el.contentEditable==='true')return;
+  selectLayer(id);
+  const stage=$('stage').getBoundingClientRect();
+  gesture={pointerId:e.pointerId,type:e.pointerType,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,startPos:[...(current().positions[id]||[8,55])],dragging:e.pointerType==='mouse',moved:false,timer:null};
+  const g=gesture;
+  if(el.setPointerCapture){try{el.setPointerCapture(e.pointerId)}catch(err){}}
+  if(e.pointerType!=='mouse'){
+   g.timer=setTimeout(()=>{if(gesture!==g)return;g.dragging=true;g.startX=g.lastX;g.startY=g.lastY;g.startPos=[...(current().positions[id]||g.startPos)]},280);
+  }
+ });
+ el.addEventListener('pointermove',e=>{
+  const g=gesture;if(!g||g.pointerId!==e.pointerId)return;
+  g.lastX=e.clientX;g.lastY=e.clientY;
+  if(!g.dragging)return;
+  if(e.cancelable)e.preventDefault();
+  const stage=$('stage').getBoundingClientRect();
+  const dx=(e.clientX-g.startX)/stage.width*100,dy=(e.clientY-g.startY)/stage.height*100;
+  if(Math.abs(dx)+Math.abs(dy)>.15)g.moved=true;
+  const p=[Math.max(0,Math.min(90,g.startPos[0]+dx)),Math.max(0,Math.min(95,g.startPos[1]+dy))];
+  current().positions[id]=p;el.style.left=p[0]+'%';el.style.top=p[1]+'%';updatePositionControls();
+ });
+ const finish=(e,cancelled=false)=>{
+  const g=gesture;if(!g||g.pointerId!==e.pointerId)return;
+  gesture=null;if(g.timer)clearTimeout(g.timer);
+  if(g.dragging&&g.moved){saveState();return}
+  if(cancelled)return;
+  const now=Date.now(),last=lastTapByLayer[id]||0;
+  if(now-last<450){lastTapByLayer[id]=0;beginInlineEdit(id)}else lastTapByLayer[id]=now;
+ };
+ el.addEventListener('pointerup',e=>finish(e));
+ el.addEventListener('pointercancel',e=>finish(e,true));
+});
+
 $('posX').oninput=()=>{let p=current().positions[selected];p[0]=+$('posX').value;$('l-'+selected).style.left=p[0]+'%';saveState()};
 $('posY').oninput=()=>{let p=current().positions[selected];p[1]=+$('posY').value;$('l-'+selected).style.top=p[1]+'%';saveState()};
 $('resetPosition').onclick=()=>{current().positions=JSON.parse(JSON.stringify(basePos));update()};
