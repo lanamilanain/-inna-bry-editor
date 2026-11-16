@@ -247,6 +247,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  const styleFor=id=>({kicker:'accent',heading:'title',script:'script',body:'text',ingredients:'text',cta:'accent',meta:'text',brand:'text',footer:'text'}[id]||'text');
  function selectedNode(){return idNode(active)}
  function idNode(id){return id==='meta'?$('metaPreview'):id==='brand'?$('brandPreview'):id==='footer'?$('footerText'):$('l-'+id)}
+ $e('lockTextBlock').onclick=()=>{locked[active]=!locked[active];current().textLocks=current().textLocks||{};current().textLocks[active]=locked[active];$e('lockTextBlock').classList.toggle('active',locked[active]);$e('lockTextBlock').textContent=locked[active]?'Открепить текст':'Закрепить текст';saveState()};
  function select(id){active=id;selected=id;document.querySelectorAll('#artboard .layer').forEach(n=>n.classList.toggle('selected',n.dataset.id===id));$e('deleteTextBlock').disabled=locked[id]===true;$e('pageLock').classList.toggle('active',pageLocked);$e('pageLock').textContent=pageLocked?'Открепить макет':'Закрепить макет';}
  function openEditor(id){if(locked[id])return;editTarget=id;$e('editLabel').textContent='Текст: '+id;$e('editText').value=currentValue(id);$e('editSheet').classList.add('open');setTimeout(()=>{$e('editText').focus()},120)}
  $e('saveText').onclick=()=>{if(editTarget){setValue(editTarget,$e('editText').value);$e('editSheet').classList.remove('open');}};
@@ -255,7 +256,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  const oldPhoto=$('photoInput').onchange;
  $('photoInput').onchange=e=>{oldPhoto&&oldPhoto.call($('photoInput'),e);setTimeout(()=>{const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО'},100)};
  const oldUpdate=update;
- update=function(){oldUpdate();const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО';document.querySelectorAll('#artboard .layer').forEach(n=>{const id=n.dataset.id;n.classList.toggle('is-hidden',hidden[id]===true);n.style.opacity=locked[id]?'0.96':''});if(current().brandText)$('brandPreview').textContent=current().brandText;if(current().footerText)$('footerText').textContent=current().footerText;};
+ update=function(){oldUpdate();const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО';document.querySelectorAll('#artboard .layer').forEach(n=>{const id=n.dataset.id;n.classList.toggle('is-hidden',hidden[id]===true);n.style.opacity=locked[id]?'0.96':''});const s=current();(s.extraTexts||[]).forEach(o=>{let n=document.querySelector('#artboard [data-id="'+o.id+'"]');if(!n){n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=o.id;art.appendChild(n)}n.textContent=o.text||'';n.style.left=(o.x??8)+'%';n.style.top=(o.y??45)+'%';n.style.fontSize=(o.size??3.2)+'cqw';n.style.color=o.color||s.colors.text;n.classList.toggle('is-hidden',hidden[o.id]===true);n.classList.toggle('selected',active===o.id)});Object.entries(s.sizes||{}).forEach(([id,size])=>{const n=document.querySelector('#artboard [data-id="'+id+'"]');if(n)n.style.fontSize=(size/art.clientWidth*100)+'cqw'});Object.entries(s.textLocks||{}).forEach(([id,v])=>{locked[id]=v});if(s.brandText)$('brandPreview').textContent=s.brandText;if(s.footerText)$('footerText').textContent=s.footerText;};
  // Single tap edits, drag moves, pinch resizes. Prevents page scroll while interacting with canvas.
  let pts=new Map(),gesture=null;
  function posPct(e){const r=art.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100}}
@@ -289,27 +290,5 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  const cp=document.createElement('input');cp.type='color';cp.value='#f4e8d4';cp.title='Свой цвет';cp.style.cssText='width:42px;height:34px;background:transparent;border:0';cp.oninput=()=>applyColor(cp.value);$e('paletteRow').appendChild(cp);
 })();
 
-
-/* Persistence, custom layers and per-object lock */
-(function(){
- const old=update;
- update=function(){
-  old();
-  const s=current();
-  (s.extraTexts||[]).forEach(o=>{
-   let n=document.querySelector('#artboard [data-id="'+o.id+'"]');
-   if(!n){n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=o.id;art.appendChild(n)}
-   n.textContent=o.text||'';n.style.left=(o.x??8)+'%';n.style.top=(o.y??45)+'%';
-   n.style.fontSize=(o.size??3.2)+'cqw';n.style.color=o.color||s.colors.text;
-   n.classList.toggle('is-hidden',hidden[o.id]===true);
-   n.classList.toggle('selected',active===o.id);
-  });
-  Object.entries(s.sizes||{}).forEach(([id,size])=>{const n=document.querySelector('#artboard [data-id="'+id+'"]');if(n)n.style.fontSize=(size/document.getElementById('artboard').clientWidth*100)+'cqw'});
-  Object.entries(s.textLocks||{}).forEach(([id,v])=>{locked[id]=v});
- };
- const btn=document.getElementById('lockTextBlock');
- btn.onclick=()=>{locked[active]=!locked[active];current().textLocks=current().textLocks||{};current().textLocks[active]=locked[active];btn.classList.toggle('active',locked[active]);btn.textContent=locked[active]?'Открепить текст':'Закрепить текст';saveState()};
- 
-})();
 
 </script></body></html>
