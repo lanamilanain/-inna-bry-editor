@@ -89,7 +89,7 @@ input,textarea,button{font:inherit}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="pageLock">Закрепить макет</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div id="paletteRow"></div><div class="slideStrip" id="slideStrip"></div>
+ <div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="pageLock">Закрепить макет</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div id="paletteRow"></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -104,7 +104,7 @@ input,textarea,button{font:inherit}
   <button type="button" class="btn" data-template="recipe">Рецепты</button>
   <button type="button" class="btn" data-template="story-repost">Репост сториз</button>
  </div>
- <h2 style="margin-top:18px">3. Текст</h2>
+ <div id="legacyTextControls"><h2 style="margin-top:18px">3. Текст</h2>
  <label>Рубрика / номер</label><input id="meta" type="text" value="01 / 06">
  <label>Метка в скобках</label><input id="kickerInput" type="text" value="[ уютный гайд ]">
  <label>Заголовок</label><textarea id="headingInput">маленькие радости ноября</textarea>
@@ -112,7 +112,7 @@ input,textarea,button{font:inherit}
  <label>Основной текст</label><textarea id="bodyInput">Идеи для тёплых вечеров, когда за окном темнеет раньше.</textarea>
  <label>Ингредиенты / список (для рецептов)</label><textarea id="ingredientsInput">чай · 2 ч. л.\nапельсин · 2 кружочка\nкорица · 1 палочка\nмёд · по вкусу</textarea>
  <label>Подпись / CTA</label><input id="ctaInput" type="text" value="[ сохрани на вечер ]">
- <h2 style="margin-top:18px">4. Фотографии</h2>
+ </div><div id="legacyPhotoControls"><h2 style="margin-top:18px">4. Фотографии</h2>
  <label>Основное фото</label><input type="file" id="photoInput" accept="image/*">
  <label>Постер фильма (для шаблона «Кино»)</label><input type="file" id="posterInput" accept="image/*">
  <label>Положение постера по горизонтали</label><input type="range" id="posterX" min="0" max="56" value="28">
@@ -121,7 +121,7 @@ input,textarea,button{font:inherit}
  <p class="hint">В шаблоне «Кино» постер можно перетаскивать пальцем и увеличивать или уменьшать двумя пальцами.</p>
  <label>Фото для репоста сториз</label><input type="file" id="repostInput" accept="image/*">
  <div class="controls" style="margin-top:8px"><button type="button" class="btn" id="removePhoto">Убрать фото</button></div>
- <h2 style="margin-top:18px">5. Цвета и типографика</h2>
+ </div><h2 style="margin-top:18px">5. Цвета и типографика</h2>
  <div class="grid"><div><label>Фон</label><input type="color" id="bgColor" value="#140d0a"></div><div><label>Основной текст</label><input type="color" id="textColor" value="#f6e5c8"></div><div><label>Заголовок</label><input type="color" id="titleColor" value="#ffaf46"></div><div><label>Рукописный</label><input type="color" id="scriptColor" value="#b75b29"></div><div><label>Акцент / скобки</label><input type="color" id="accentColor" value="#dca83b"></div><div><label>Кнопка подписки</label><input type="color" id="buttonColor" value="#ffaf46"></div></div>
  <label>Размер заголовка</label><input type="range" id="titleSize" min="36" max="88" value="60">
  <label>Размер рукописного текста</label><input type="range" id="scriptSize" min="100" max="250" value="140">
@@ -287,6 +287,35 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  art.addEventListener('click',e=>{if(!pickColor)return;const r=art.getBoundingClientRect(),x=Math.round((e.clientX-r.left)/r.width*$('bgPhoto').naturalWidth),y=Math.round((e.clientY-r.top)/r.height*$('bgPhoto').naturalHeight);try{const c=document.createElement('canvas');c.width=$('bgPhoto').naturalWidth;c.height=$('bgPhoto').naturalHeight;const cx=c.getContext('2d');cx.drawImage($('bgPhoto'),0,0);const d=cx.getImageData(x,y,1,1).data;applyColor('#'+[...d].slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join(''));pickColor=false;$e('eyedropperMode').classList.remove('active');$e('eyedropperMode').textContent='Пипетка с фото'}catch(err){$('status').textContent='Пипетка недоступна для этого фото в Safari.'}},true);
  // Add a palette color picker for any selected block.
  const cp=document.createElement('input');cp.type='color';cp.value='#f4e8d4';cp.title='Свой цвет';cp.style.cssText='width:42px;height:34px;background:transparent;border:0';cp.oninput=()=>applyColor(cp.value);$e('paletteRow').appendChild(cp);
+})();
+
+
+/* Persistence, custom layers and per-object lock */
+(function(){
+ const old=update;
+ update=function(){
+  old();
+  const s=current();
+  (s.extraTexts||[]).forEach(o=>{
+   let n=document.querySelector('#artboard [data-id="'+o.id+'"]');
+   if(!n){n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=o.id;art.appendChild(n)}
+   n.textContent=o.text||'';n.style.left=(o.x??8)+'%';n.style.top=(o.y??45)+'%';
+   n.style.fontSize=(o.size??3.2)+'cqw';n.style.color=o.color||s.colors.text;
+   n.classList.toggle('is-hidden',hidden[o.id]===true);
+   n.classList.toggle('selected',active===o.id);
+  });
+  Object.entries(s.sizes||{}).forEach(([id,size])=>{const n=document.querySelector('#artboard [data-id="'+id+'"]');if(n)n.style.fontSize=(size/art.clientWidth*100)+'cqw'});
+  Object.entries(s.textLocks||{}).forEach(([id,v])=>{locked[id]=v});
+ };
+ const btn=document.getElementById('lockTextBlock');
+ btn.onclick=()=>{locked[active]=!locked[active];current().textLocks=current().textLocks||{};current().textLocks[active]=locked[active];btn.classList.toggle('active',locked[active]);btn.textContent=locked[active]?'Открепить текст':'Закрепить текст';saveState()};
+ const oldSet=window.setValue;
+ // The editor's setter is lexical; wrap the sheet save action to persist user-created layers.
+ document.getElementById('saveText').addEventListener('click',()=>{
+  const id=window.editTarget;
+  const item=(current().extraTexts||[]).find(x=>x.id===id);
+  if(item){item.text=document.getElementById('editText').value;const n=document.querySelector('#artboard [data-id="'+id+'"]');if(n)n.textContent=item.text;saveState()}
+ });
 })();
 
 </script></body></html>
