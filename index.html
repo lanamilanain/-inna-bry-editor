@@ -16,7 +16,7 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .layer{position:absolute;left:8.33%;width:83.34%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.08;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-shadow:0 1px 5px #0003}.layer:active{cursor:grabbing}.layer.selected{outline:1px dashed var(--gold);outline-offset:5px}.layer.editing{cursor:text;touch-action:auto;user-select:text;-webkit-user-select:text;outline:1px solid var(--apricot);outline-offset:5px}
 .kicker{font-size:2.5cqw;color:var(--gold)}.heading{font-size:5.6cqw;color:var(--apricot);line-height:.98}.script{font-family:Alexandra,cursive;color:var(--terra);font-size:13cqw;line-height:.8}.body{font-size:2.8cqw;color:var(--cream);line-height:1.12}.footer{position:absolute;left:8.33%;right:8.33%;bottom:4%;display:flex;justify-content:space-between;font-size:1.8cqw;letter-spacing:.28em;pointer-events:none}
 .standard .heading{font-size:5.8cqw}.standard .layer[data-id="body"]{line-height:1.15}
-.cinema .poster{position:absolute;left:28%;top:8%;width:44%;height:48%;object-fit:cover;border:3px solid var(--gold);border-radius:14px;display:none}.cinema .heading{font-size:5cqw}
+.cinema .poster{position:absolute;left:31%;top:8%;width:38%;height:37%;object-fit:cover;border:3px solid var(--gold);border-radius:14px;display:none}.cinema .heading{font-size:5cqw}.recipe .heading{font-size:5.2cqw}.recipe .script{font-size:10cqw}.recipe .layer[data-id="ingredients"]{max-width:84%;}
 .recipe .layer[data-id="ingredients"]{font-size:2.75cqw;line-height:1.6;border-top:1px solid #76502b;border-bottom:1px solid #76502b;padding:2% 0}
 .recipe .layer[data-id="body"]{font-size:2.55cqw}
 .story-repost .repost-card{position:absolute;left:8%;top:22%;width:84%;height:58%;border:1px solid #9a6b42;background:#21150f;box-shadow:0 12px 30px #0008;overflow:hidden;border-radius:4px}
@@ -104,7 +104,16 @@ const defaults={brand:'INNA.BRY',footer:'ЛИСТАЙ →',meta:'01 / 06',kicker
 let format='post',template='standard',slides=[],index=0,photoData='',posterData='',repostData='',selected='heading';
 const ids=['kicker','heading','script','body','ingredients','cta'];
 const basePos={kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredients:[8,38],cta:[8,88]};
-function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:JSON.parse(JSON.stringify(basePos))}}
+const templatePositions={
+ standard:{kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredients:[8,38],cta:[8,88]},
+ recipe:{kicker:[8,12],heading:[8,17],script:[11,26],ingredients:[8,39],body:[8,73],cta:[8,88]},
+ cinema:{kicker:[8,49],heading:[8,54],script:[11,62],body:[8,74],ingredients:[8,38],cta:[8,88]},
+ 'story-repost':{kicker:[8,12],heading:[8,18],script:[11,27],body:[8,78],ingredients:[8,38],cta:[8,86]},
+ final:{kicker:[8,56],heading:[8,62],script:[11,70],body:[8,80],ingredients:[8,38],cta:[8,88]},
+ 'video-overlay':{kicker:[8,30],heading:[8,38],script:[8,50],body:[8,65],ingredients:[8,38],cta:[8,88]}
+};
+function positionsFor(t){return JSON.parse(JSON.stringify(templatePositions[t]||basePos))}
+function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:positionsFor(template)}}
 slides=[makeSlide()];
 function current(){return slides[index]}
 function saveState(){persistCurrent();try{localStorage.setItem('innaBryStudioV2',JSON.stringify({slides,index}))}catch(e){$('status').textContent='Не удалось сохранить проект в памяти браузера.'}}
@@ -144,7 +153,7 @@ function inputChange(){let s=current();s.values={meta:$('meta').value,kicker:$('
 [['bgColor','bg'],['textColor','text'],['titleColor','title'],['scriptColor','script'],['accentColor','accent'],['buttonColor','button']].forEach(([id,key])=>$(id).addEventListener('input',()=>{current().colors[key]=$(id).value;update()}));
 ['titleSize','scriptSize','darken'].forEach(id=>$(id).addEventListener('input',update));
 document.querySelectorAll('[data-format]').forEach(b=>b.onclick=()=>{format=b.dataset.format;if(format==='story'&&template==='standard'){}update()});
-document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{template=b.dataset.template;if(template==='story-repost'||template==='video-overlay')format='story';update()});
+document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{persistCurrent();template=b.dataset.template;current().positions=positionsFor(template);if(template==='story-repost'||template==='video-overlay')format='story';update()});
 function readFile(file,cb){if(!file)return;let r=new FileReader();r.onload=()=>{cb(r.result);};r.onerror=()=>{$('status').textContent='Не удалось прочитать файл. Попробуй JPG или PNG.'};r.readAsDataURL(file)}
 $('photoInput').onchange=e=>readFile(e.target.files[0],d=>{photoData=d;update();$('status').textContent='Основное фото загружено.'});
 $('posterInput').onchange=e=>readFile(e.target.files[0],d=>{posterData=d;update();$('status').textContent='Постер загружен.'});
