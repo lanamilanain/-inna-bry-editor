@@ -172,14 +172,43 @@ chromeTextIds.forEach(id=>{
 });
 $('bgPhoto').addEventListener('click',()=>{$('photoInput').click()});$('photoTap').addEventListener('click',e=>{e.stopPropagation();$('photoInput').click()});
 $('poster').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});
-let posterDrag=null,posterMoved=false;
-$('poster').addEventListener('pointerdown',e=>{posterMoved=false;posterDrag={x:e.clientX,y:e.clientY,left:current().posterLeft??parseFloat($('poster').style.left),top:current().posterTop??parseFloat($('poster').style.top)};try{$('poster').setPointerCapture(e.pointerId)}catch(_){}});
-$('poster').addEventListener('pointermove',e=>{if(!posterDrag)return;const r=$('stage').getBoundingClientRect(),dx=(e.clientX-posterDrag.x)/r.width*100,dy=(e.clientY-posterDrag.y)/r.height*100;if(Math.abs(dx)+Math.abs(dy)>1)posterMoved=true;if(posterMoved){current().posterLeft=Math.max(0,Math.min(90,posterDrag.left+dx));current().posterTop=Math.max(0,Math.min(90,posterDrag.top+dy));update()}});
-$('poster').addEventListener('pointerup',()=>{if(posterDrag){posterDrag=null;if(posterMoved)saveState()}});
-let resizeDrag=null;
-$('posterResize').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();resizeDrag={x:e.clientX,y:e.clientY,size:current().posterScale||100};$('posterResize').setPointerCapture(e.pointerId)});
-$('posterResize').addEventListener('pointermove',e=>{if(!resizeDrag)return;const r=$('stage').getBoundingClientRect(),d=((e.clientX-resizeDrag.x)+(e.clientY-resizeDrag.y))/r.width*100;current().posterScale=Math.max(45,Math.min(160,resizeDrag.size+d*2));update()});
-$('posterResize').addEventListener('pointerup',()=>{if(resizeDrag){resizeDrag=null;saveState()}});$('posterPlaceholder').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});
+const posterPointers=new Map();let posterGesture=null,posterWasMoved=false;
+function posterPointCenter(){const a=[...posterPointers.values()];return a.length?{x:a.reduce((v,p)=>v+p.x,0)/a.length,y:a.reduce((v,p)=>v+p.y,0)/a.length}:null}
+function posterDistance(){const a=[...posterPointers.values()];return a.length>1?Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y):0}
+$('poster').style.touchAction='none';
+$('poster').addEventListener('pointerdown',e=>{
+ e.preventDefault();posterWasMoved=false;posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ try{$('poster').setPointerCapture(e.pointerId)}catch(_){}
+ const c=posterPointCenter(),r=$('stage').getBoundingClientRect();
+ posterGesture={center:c,distance:posterDistance(),left:current().posterLeft??parseFloat($('poster').style.left),top:current().posterTop??parseFloat($('poster').style.top),scale:current().posterScale||100,stageW:r.width,stageH:r.height};
+});
+$('poster').addEventListener('pointermove',e=>{
+ if(!posterPointers.has(e.pointerId)||!posterGesture)return;
+ e.preventDefault();posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ const c=posterPointCenter(),r=$('stage').getBoundingClientRect();
+ if(posterPointers.size===1){
+  const dx=(c.x-posterGesture.center.x)/r.width*100,dy=(c.y-posterGesture.center.y)/r.height*100;
+  if(Math.abs(dx)+Math.abs(dy)>.4)posterWasMoved=true;
+  if(posterWasMoved){current().posterLeft=Math.max(0,Math.min(95,posterGesture.left+dx));current().posterTop=Math.max(0,Math.min(95,posterGesture.top+dy));update()}
+ }else{
+  const d=posterDistance(),ratio=posterGesture.distance?d/posterGesture.distance:1;
+  if(Math.abs(ratio-1)>.015)posterWasMoved=true;
+  const nextScale=Math.max(45,Math.min(160,posterGesture.scale*ratio));
+  const factor=nextScale/posterGesture.scale;
+  const baseW=42.6*posterGesture.scale/100,baseH=47.8*posterGesture.scale/100;
+  const stageW=posterGesture.stageW,stageH=posterGesture.stageH;
+  const centerX=(posterGesture.left+baseW/2)*stageW/100,centerY=(posterGesture.top+baseH/2)*stageH/100;
+  current().posterScale=nextScale;
+  current().posterLeft=Math.max(0,Math.min(100-baseW*factor,((centerX-c.x+(c.x-centerX)*factor)/stageW*100)));
+  current().posterTop=Math.max(0,Math.min(100-baseH*factor,((centerY-c.y+(c.y-centerY)*factor)/stageH*100)));
+  update();
+ }
+});
+function finishPosterPointer(e){posterPointers.delete(e.pointerId);if(!posterPointers.size){if(posterGesture&&posterWasMoved)saveState();posterGesture=null;posterWasMoved=false}}
+$('poster').addEventListener('pointerup',finishPosterPointer);
+$('poster').addEventListener('pointercancel',finishPosterPointer);
+$('poster').addEventListener('click',e=>{if(posterWasMoved){e.preventDefault();e.stopPropagation();posterWasMoved=false}},true);
+$('posterResize').style.display='none';$('posterPlaceholder').addEventListener('click',e=>{e.stopPropagation();$('posterInput').click()});
 $('repostPhoto').addEventListener('click',e=>{e.stopPropagation();$('repostInput').click()});$('repostCard').addEventListener('click',e=>{e.stopPropagation();$('repostInput').click()});
 function beginInlineEdit(id){let el=$('l-'+id);if(!el||el.contentEditable==='true')return;selectLayer(id);el.contentEditable='true';el.classList.add('editing');el.focus();let range=document.createRange();range.selectNodeContents(el);range.collapse(false);let sel=window.getSelection();sel.removeAllRanges();sel.addRange(range)}
 ids.forEach(id=>{let el=$('l-'+id);el.addEventListener('input',()=>syncInlineText(id,el));el.addEventListener('blur',()=>{el.contentEditable='false';el.classList.remove('editing');syncInlineText(id,el);update()});el.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();el.blur()}if(e.key==='Enter'&&id!=='body'&&id!=='ingredients'){e.preventDefault();el.blur()}})});
