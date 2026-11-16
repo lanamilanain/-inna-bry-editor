@@ -53,22 +53,6 @@ fieldset{border:0;padding:0;margin:0}details{border-top:1px solid #594333;paddin
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
-<section class="panel projectsPanel">
- <h2>Мои проекты</h2>
- <div class="grid">
-  <div><label>Открытый проект</label><select id="projectSelect" style="width:100%"></select></div>
-  <div><label>Название нового проекта</label><input id="projectName" type="text" placeholder="Например, осенняя карусель"></div>
- </div>
- <div class="controls" style="margin-top:10px"><button class="btn primary" id="createProject">+ Новый проект</button><button class="btn" id="saveProject">Сохранить проект</button><button class="btn" id="deleteProject">Удалить проект</button></div>
- <h2 style="margin-top:18px">Референс проекта</h2>
- <p class="hint">Загрузи пример оформления, которое хочешь повторить. Он сохранится вместе с проектом и будет доступен, пока работаешь над ним.</p>
- <label>Фото-референс</label><input type="file" id="referenceInput" accept="image/*">
- <div id="referencePreview" style="display:none;margin-top:10px"><img id="referenceImage" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:12px"><button class="btn" id="removeReference" type="button">Убрать референс</button></div>
- <label>Что важно повторить из референса</label><textarea id="referenceNotes" placeholder="Например: сохранить расположение заголовка, поля, сочетание шрифтов и общую композицию"></textarea>
- <div class="controls" style="margin-top:10px"><button class="btn" id="downloadReference" type="button">Скачать референс</button><button class="btn primary" id="prepareBrief" type="button">Подготовить задание для ChatGPT</button></div>
- <div class="hint">После этого прикрепи скачанный референс в чат ChatGPT. Я разберу его и подготовлю точную схему слайдов и оформления для редактора.</div>
- <div class="hint" id="projectStatus">Проекты хранятся в памяти этого браузера на устройстве.</div>
-</section>
 <section class="panel previewPanel">
  <div class="previewHead"><h2>Предпросмотр · двигай надписи пальцем</h2><div class="controls"><button class="btn" id="prev">←</button><span id="count" style="font-size:12px;align-self:center">1 / 1</span><button class="btn" id="next">→</button></div></div>
  <div class="stage" id="stage"><div class="artboard standard" id="artboard">
@@ -135,13 +119,6 @@ const basePos={kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredien
 function makeSlide(){return {format,template,values:{...defaults},photo:'',poster:'',repost:'',colors:{bg:'#140d0a',text:'#f6e5c8',title:'#ffaf46',script:'#b75b29',accent:'#dca83b',button:'#ffaf46'},positions:JSON.parse(JSON.stringify(basePos))}}
 slides=[makeSlide()];
 function current(){return slides[index]}
-let projectItems=[];let activeProjectId='default';let referenceData='';
-function projectSnapshot(){persistCurrent();return {slides:JSON.parse(JSON.stringify(slides)),index,reference:referenceData,notes:$('referenceNotes')?.value||''}}
-function saveProjects(){try{let p=projectItems.find(x=>x.id===activeProjectId);if(p){Object.assign(p,projectSnapshot());localStorage.setItem('innaBryProjectsV1',JSON.stringify(projectItems));$('projectStatus').textContent='Проект сохранён на этом устройстве.'}}catch(e){$('projectStatus').textContent='Не хватило места для сохранения. Уменьши размер фото или убери лишние изображения.'}}
-function renderProjects(){let sel=$('projectSelect');if(!sel)return;sel.innerHTML='';projectItems.forEach(p=>{let o=document.createElement('option');o.value=p.id;o.textContent=p.name;sel.appendChild(o)});sel.value=activeProjectId}
-function loadProject(p){activeProjectId=p.id;slides=JSON.parse(JSON.stringify(p.slides||[makeSlide()]));index=Math.min(p.index||0,slides.length-1);referenceData=p.reference||'';format=current().format||'post';template=current().template||'standard';photoData=current().photo||'';posterData=current().poster||'';repostData=current().repost||'';if($('referenceNotes'))$('referenceNotes').value=p.notes||'';renderProjects();if($('referenceImage')){if(referenceData){$('referenceImage').src=referenceData;$('referencePreview').style.display='block'}else $('referencePreview').style.display='none'}loadCurrent()}
-function initProjects(){try{projectItems=JSON.parse(localStorage.getItem('innaBryProjectsV1')||'[]')}catch(e){projectItems=[]}if(!projectItems.length){let old;try{old=JSON.parse(localStorage.getItem('innaBryStudioV2'))}catch(e){}projectItems=[{id:'default',name:'Мой первый проект',slides:old?.slides||[makeSlide()],index:old?.index||0,reference:'',notes:''}]}activeProjectId=projectItems[0].id;loadProject(projectItems[0])}
-function saveState(){let s=current();s.format=format;s.template=template;s.photo=photoData;s.poster=posterData;s.repost=repostData;try{localStorage.setItem('innaBryStudioV2',JSON.stringify({slides,index}));saveProjects()}catch(e){$('status').textContent='Фото слишком большие для автосохранения. Экспортируй готовые слайды.'}}
 function loadState(){try{let d=JSON.parse(localStorage.getItem('innaBryStudioV2'));if(d&&d.slides?.length){slides=d.slides;index=Math.min(d.index||0,slides.length-1);let s=current();format=s.format;template=s.template;photoData=s.photo||'';posterData=s.poster||'';repostData=s.repost||''}}catch(e){}}
 function setImage(el,src){if(src){el.src=src;el.style.display='block'}else{el.removeAttribute('src');el.style.display='none'}}
 function applyValuesToInputs(){let v=current().values; $('meta').value=v.meta;$('kickerInput').value=v.kicker;$('headingInput').value=v.heading;$('scriptInput').value=v.script;$('bodyInput').value=v.body;$('ingredientsInput').value=v.ingredients;$('ctaInput').value=v.cta;['bgColor','textColor','titleColor','scriptColor','accentColor','buttonColor'].forEach((id,i)=>$(id).value=Object.values(current().colors)[i])}
@@ -213,16 +190,6 @@ async function exportPNG(){
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'INNA.BRY'});$('status').textContent='Открылось меню iPhone: выбери «Сохранить изображение».';return}}catch(e){if(e.name==='AbortError')return}
  let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);$('status').textContent='PNG создан. Если Safari открыл картинку, удерживай её и выбери «Сохранить в Фото».';
 }
-$('projectSelect').onchange=()=>{saveProjects();let p=projectItems.find(x=>x.id===$('projectSelect').value);if(p)loadProject(p)};
-$('createProject').onclick=()=>{saveProjects();let name=$('projectName').value.trim()||'Новый проект '+(projectItems.length+1),p={id:'p'+Date.now(),name,slides:[makeSlide()],index:0,reference:'',notes:''};projectItems.push(p);loadProject(p);$('projectName').value='';$('projectStatus').textContent='Создан новый проект. Можно загрузить референс и собрать карусель.'};
-$('saveProject').onclick=saveProjects;
-$('deleteProject').onclick=()=>{if(projectItems.length===1){$('projectStatus').textContent='Нельзя удалить последний проект.';return}projectItems=projectItems.filter(p=>p.id!==activeProjectId);loadProject(projectItems[0]);localStorage.setItem('innaBryProjectsV1',JSON.stringify(projectItems))};
-$('referenceNotes').oninput=saveProjects;
-$('referenceInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let fr=new FileReader();fr.onload=()=>{let im=new Image();im.onload=()=>{let max=1100,sc=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);referenceData=c.toDataURL('image/jpeg',.78);$('referenceImage').src=referenceData;$('referencePreview').style.display='block';saveProjects();$('projectStatus').textContent='Референс добавлен к проекту.'};im.src=fr.result};fr.readAsDataURL(f)};
-$('removeReference').onclick=()=>{referenceData='';$('referenceInput').value='';$('referencePreview').style.display='none';saveProjects()};
-$('downloadReference').onclick=()=>{if(!referenceData){$('projectStatus').textContent='Сначала загрузи референс.';return}let a=document.createElement('a');a.href=referenceData;a.download=(projectItems.find(p=>p.id===activeProjectId)?.name||'reference').replace(/[^a-zа-я0-9_-]/gi,'_')+'-reference.jpg';a.click()};
-$('prepareBrief').onclick=async()=>{let p=projectItems.find(x=>x.id===activeProjectId);let brief='Проект INNA.BRY Studio: '+(p?.name||'Без названия')+'\\nЗадача: проанализировать прикреплённый референс и повторить его композицию максимально близко, используя мои фотографии и тексты.\\nСохранить: геометрию и расположение блоков, иерархию текста, поля, интервалы, масштаб и баланс. Не придумывать декор. Использовать только утверждённые шрифты INNA.BRY и не менять их.\\nПожелания: '+($('referenceNotes').value||'определи по изображению')+'\\nПодготовь структуру карусели по слайдам и точные параметры макета для переноса в редактор.';try{await navigator.clipboard.writeText(brief);$('projectStatus').textContent='Задание скопировано. Прикрепи скачанный референс в этот чат.'}catch(e){$('projectStatus').textContent=brief}};
-
 $('export').onclick=exportPNG;
-initProjects();
+localStorage.removeItem('innaBryProjectsV1');loadState();loadCurrent();
 </script></body></html>
