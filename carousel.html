@@ -377,29 +377,26 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  $e('closeText').onclick=()=>{$e('editSheet').classList.remove('open');};
  $e('photoBottom').onclick=()=>{$('photoInput').click()};
  let solidFillPending=false;
+ function applySolidBackground(color){
+  const s=current();
+  s.colors.bg=color||$('bgColor').value||'#140d0a';
+  photoData='';s.photo='';
+  $('photoInput').value='';
+  update();saveState();
+  $('status').textContent='Однотонный фон установлен: '+s.colors.bg;
+ }
  $e('solidBg').onclick=()=>{
   solidFillPending=true;
-  photoData='';
-  current().photo='';
-  $('photoInput').value='';
-  $('bgColor').click();
-  update();
-  $('status').textContent='Выбери цвет фона в открывшейся палитре.';
+  applySolidBackground($('bgColor').value);
+  $('status').textContent='Фон залит выбранным цветом. Можно выбрать другой оттенок в палитре ниже.';
  };
  $('bgColor').addEventListener('input',()=>{
   if(!solidFillPending)return;
-  const s=current();
-  s.colors.bg=$('bgColor').value;
-  photoData='';s.photo='';
-  update();saveState();
-  $('status').textContent='Однотонный фон установлен.';
+  applySolidBackground($('bgColor').value);
  });
  $('bgColor').addEventListener('change',()=>{
   if(!solidFillPending)return;
-  solidFillPending=false;
-  const s=current();s.colors.bg=$('bgColor').value;photoData='';s.photo='';
-  update();saveState();
-  $('status').textContent='Однотонный фон установлен.';
+  applySolidBackground($('bgColor').value);
  });
  $e('photoLock').onclick=()=>{current().photoLocked=!current().photoLocked;$e('photoLock').classList.toggle('active',!!current().photoLocked);$e('photoLock').textContent=current().photoLocked?'Открепить фото':'Закрепить фото';saveState()};
  const oldPhoto=$('photoInput').onchange;
@@ -432,7 +429,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  
  // Color swatches change the selected text color. Native color input remains available in the palette panel.
  palette.forEach(c=>{const b=document.createElement('button');b.className='paletteDot';b.style.background=c;b.title=c;b.onclick=()=>applyColor(c);$e('paletteRow').appendChild(b)});
- function applyColor(c){const id=active,key=styleFor(id);if(['meta','brand','footer'].includes(id)){const n=idNode(id);n.style.color=c}else{current().colors[key]=c;update()}saveState()}
+ function applyColor(c){if(solidFillPending){$('bgColor').value=c;applySolidBackground(c);return;}const id=active,key=styleFor(id);if(['meta','brand','footer'].includes(id)){const n=idNode(id);n.style.color=c}else{current().colors[key]=c;update()}saveState()}
  $e('eyedropperMode').onclick=()=>{pickColor=!pickColor;$e('eyedropperMode').classList.toggle('active',pickColor);$e('eyedropperMode').textContent=pickColor?'Тапни по фото':'Пипетка с фото'};
  art.addEventListener('click',e=>{if(!pickColor)return;const r=art.getBoundingClientRect(),x=Math.round((e.clientX-r.left)/r.width*$('bgPhoto').naturalWidth),y=Math.round((e.clientY-r.top)/r.height*$('bgPhoto').naturalHeight);try{const c=document.createElement('canvas');c.width=$('bgPhoto').naturalWidth;c.height=$('bgPhoto').naturalHeight;const cx=c.getContext('2d');cx.drawImage($('bgPhoto'),0,0);const d=cx.getImageData(x,y,1,1).data;applyColor('#'+[...d].slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join(''));pickColor=false;$e('eyedropperMode').classList.remove('active');$e('eyedropperMode').textContent='Пипетка с фото'}catch(err){$('status').textContent='Пипетка недоступна для этого фото в Safari.'}},true);
  // Add a palette color picker for any selected block.
