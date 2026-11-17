@@ -431,18 +431,7 @@ window.addEventListener('error',e=>{const st=document.getElementById('status');i
 window.addEventListener('unhandledrejection',e=>{const st=document.getElementById('status');if(st)st.textContent='Ошибка действия: '+(e.reason?.message||'попробуй обновить страницу')});
 $('status').textContent='Редактор запущен. Выбери шаблон или начни редактирование.';
 
-/* Solid background button: clear only the background image, retain the cinema poster. */
-document.addEventListener('click',function(e){
- const button=e.target.closest('#solidBg');
- if(!button)return;
- e.preventDefault();e.stopPropagation();
- const slide=slides[index],chosen=document.getElementById('bgColor').value||slide.colors.bg||'#140d0a';
- slide.colors.bg=chosen;slide.photo='';photoData='';
- const input=document.getElementById('photoInput');if(input)input.value='';
- update();saveState();
- const status=document.getElementById('status');
- if(status)status.textContent='Однотонный фон '+chosen+' применён. Постер сохранён.';
-},true);
+/* Background fill is armed inside the touch editor so palette taps target the canvas, not text. */
 
 /* Touch-first text/photo editing layer */
 (function(){
@@ -463,6 +452,7 @@ document.addEventListener('click',function(e){
  $e('photoBottom').onclick=()=>{$('photoInput').click()};
  $e('removeBgPhoto').onclick=()=>{photoData='';current().photo='';$('photoInput').value='';update();saveState();$('status').textContent='Фото с фона удалено. Постер и остальные элементы сохранены.'};
  let solidFillPending=false;
+ $e('solidBg').onclick=()=>{solidFillPending=true;$e('solidBg').classList.add('active');$('status').textContent='Режим заливки включён. Теперь выбери цвет в палитре под макетом.'};
  function applySolidBackground(color){
   const s=current();
   s.colors.bg=color||$('bgColor').value||'#140d0a';
