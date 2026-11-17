@@ -264,7 +264,7 @@ function update(){
  $('posterPlaceholder').style.display=template==='cinema'&&!posterData?'flex':'none';
  $('posterBottom').style.display=template==='cinema'?'inline-flex':'none';
  $('solidBg').textContent=photoData?'Залить фон цветом':'Фон уже однотонный';
- $('shade').style.background=`linear-gradient(to bottom,rgba(20,13,10,.05) 20%,rgba(20,13,10,${$('darken').value/100}) 55%,rgba(20,13,10,.96) 100%)`;
+ if(photoData){$('shade').style.display='block';$('shade').style.background=`linear-gradient(to bottom,rgba(20,13,10,.05) 20%,rgba(20,13,10,${$('darken').value/100}) 55%,rgba(20,13,10,.96) 100%)`}else{$('shade').style.display='none'}
  $('poster').style.display=(template==='cinema'&&posterData)?'block':'none';
  const pb=s.posterBox||posterDefault; $('poster').style.left=pb.x+'%';$('poster').style.top=pb.y+'%';$('poster').style.width=pb.w+'%';$('poster').style.height=(pb.w*($('artboard').clientWidth/$('artboard').clientHeight)*1.45)+'%';if(typeof showPosterTools==='function')showPosterTools();if($('posterScale'))$('posterScale').value=pb.w;
  ['posterX','posterY','posterWidth'].forEach((id,i)=>{if($(id))$(id).value=[pb.x,pb.y,pb.w][i]});
