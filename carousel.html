@@ -158,6 +158,7 @@ summary{cursor:pointer;color:#e2b75e;font-size:13px;letter-spacing:.08em}
  .controls .btn{min-height:44px!important;padding:10px 12px!important}
 }
 
+#removeBgPhoto{background:#38291f;color:#f6e5c8;border-color:#9b7655}#removeBgPhoto:active{background:#dca83b;color:#21150e}
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
@@ -177,7 +178,7 @@ summary{cursor:pointer;color:#e2b75e;font-size:13px;letter-spacing:.08em}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div id="posterTools" class="controls" style="display:none;margin:10px 0;align-items:center"><span class="hint" style="margin-right:4px">ПОСТЕР</span><button type="button" class="btn" id="posterSmaller">−</button><button type="button" class="btn" id="posterLarger">＋</button><button type="button" class="btn" id="posterCenter">По центру</button><input id="posterScale" type="range" min="18" max="72" value="44" style="flex:1;min-width:100px"></div><div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Фото на фон</button><button type="button" class="btn" id="posterBottom" style="display:none">＋ Фото в плашку</button><button type="button" class="btn" id="solidBg">Залить фон цветом</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
+ <div id="posterTools" class="controls" style="display:none;margin:10px 0;align-items:center"><span class="hint" style="margin-right:4px">ПОСТЕР</span><button type="button" class="btn" id="posterSmaller">−</button><button type="button" class="btn" id="posterLarger">＋</button><button type="button" class="btn" id="posterCenter">По центру</button><input id="posterScale" type="range" min="18" max="72" value="44" style="flex:1;min-width:100px"></div><div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Фото на фон</button><button type="button" class="btn" id="removeBgPhoto">Убрать фото с фона</button><button type="button" class="btn" id="posterBottom" style="display:none">＋ Фото в плашку</button><button type="button" class="btn" id="solidBg">Залить фон цветом</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -280,7 +281,8 @@ function persistCurrent(){let s=current();s.format=format;s.template=template;s.
 function loadCurrent(){let s=current();format=s.format||'post';template=s.template||'standard';photoData=s.photo||'';posterData=s.poster||'';repostData=s.repost||'';applyValuesToInputs();update()}
 function inputChange(){let s=current();s.values={meta:$('meta').value,kicker:$('kickerInput').value,heading:$('headingInput').value,script:$('scriptInput').value,body:$('bodyInput').value,ingredients:$('ingredientsInput').value,cta:$('ctaInput').value};update()}
 ['meta','kickerInput','headingInput','scriptInput','bodyInput','ingredientsInput','ctaInput'].forEach(id=>$(id).addEventListener('input',inputChange));
-[['bgColor','bg'],['textColor','text'],['titleColor','title'],['scriptColor','script'],['accentColor','accent'],['buttonColor','button']].forEach(([id,key])=>$(id).addEventListener('input',()=>{current().colors[key]=$(id).value;update()}));
+[['textColor','text'],['titleColor','title'],['scriptColor','script'],['accentColor','accent'],['buttonColor','button']].forEach(([id,key])=>$(id).addEventListener('input',()=>{current().colors[key]=$(id).value;update();saveState()}));
+$('bgColor').addEventListener('input',()=>{const s=current();s.colors.bg=$('bgColor').value;photoData='';s.photo='';const fi=$('photoInput');if(fi)fi.value='';update();saveState();$('status').textContent='Однотонный фон применён. Фото на фоне удалено, постер сохранён.'});
 ['titleSize','scriptSize','darken'].forEach(id=>$(id).addEventListener('input',update));
 document.querySelectorAll('[data-format]').forEach(b=>b.onclick=()=>{format=b.dataset.format;if(format==='story'&&template==='standard'){}update()});
 document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{persistCurrent();template=b.dataset.template;if(template==='story-repost')format='story';const d=templateDefaults[template];if(d){current().values={...d};current().positions=JSON.parse(JSON.stringify(templatePositions[template]||basePos));selected='heading';}photoData=current().photo||'';posterData=current().poster||'';repostData=current().repost||'';applyValuesToInputs();update();$('status').textContent='Шаблон загружен. Все надписи уже на макете и доступны для редактирования.'});
@@ -416,22 +418,17 @@ window.addEventListener('error',e=>{const st=document.getElementById('status');i
 window.addEventListener('unhandledrejection',e=>{const st=document.getElementById('status');if(st)st.textContent='Ошибка действия: '+(e.reason?.message||'попробуй обновить страницу')});
 $('status').textContent='Редактор запущен. Выбери шаблон или начни редактирование.';
 
-/* Reliable solid-background action, independent of the touch editor module */
+/* Solid background button: clear only the background image, retain the cinema poster. */
 document.addEventListener('click',function(e){
  const button=e.target.closest('#solidBg');
  if(!button)return;
- e.preventDefault();
- e.stopPropagation();
- const slide=slides[index];
- const chosen=document.getElementById('bgColor').value||slide.colors.bg||'#140d0a';
- slide.colors.bg=chosen;
- slide.photo='';
- photoData='';
+ e.preventDefault();e.stopPropagation();
+ const slide=slides[index],chosen=document.getElementById('bgColor').value||slide.colors.bg||'#140d0a';
+ slide.colors.bg=chosen;slide.photo='';photoData='';
  const input=document.getElementById('photoInput');if(input)input.value='';
- update();
- saveState();
+ update();saveState();
  const status=document.getElementById('status');
- if(status)status.textContent='Фон залит цветом '+chosen+'. Фото в постере сохранено.';
+ if(status)status.textContent='Однотонный фон '+chosen+' применён. Постер сохранён.';
 },true);
 
 /* Touch-first text/photo editing layer */
@@ -451,6 +448,7 @@ document.addEventListener('click',function(e){
  $e('saveText').onclick=()=>{if(editTarget){setValue(editTarget,$e('editText').value);$e('editSheet').classList.remove('open');}};
  $e('closeText').onclick=()=>{$e('editSheet').classList.remove('open');};
  $e('photoBottom').onclick=()=>{$('photoInput').click()};
+ $e('removeBgPhoto').onclick=()=>{photoData='';current().photo='';$('photoInput').value='';update();saveState();$('status').textContent='Фото с фона удалено. Постер и остальные элементы сохранены.'};
  let solidFillPending=false;
  function applySolidBackground(color){
   const s=current();
