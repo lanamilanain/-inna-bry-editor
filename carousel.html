@@ -94,6 +94,13 @@ input,textarea,button{font:inherit}
 #artboard.cinema #poster:active{cursor:grabbing}
 #artboard.cinema .layer{pointer-events:auto}
 
+
+#artboard #poster{z-index:31!important;pointer-events:auto!important;touch-action:none!important;-webkit-user-drag:none;user-select:none}
+#artboard #posterPlaceholder{position:absolute;z-index:32;left:28%;top:8%;width:44%;height:calc(44% * 1.45 * var(--art-ratio, .75));box-sizing:border-box;border:3px solid var(--gold);border-radius:14px;background:rgba(73,32,20,.35);color:var(--cream);font-size:2.1cqw;letter-spacing:.08em;display:none;align-items:center;justify-content:center;text-align:center;padding:5%;touch-action:none;pointer-events:auto}
+#posterTools{display:flex!important}
+#posterBottom.active{background:#d6a34b;color:#21150e}
+#solidBg{border-color:#d6a34b}
+
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
@@ -103,7 +110,7 @@ input,textarea,button{font:inherit}
   <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div>
   <div class="topline"><span id="brandPreview">INNA.BRY</span><span id="metaPreview">01 / 06</span></div>
   <div class="repost-card" id="repostCard" style="display:none"><img id="repostPhoto"><div class="repost-overlay"></div></div>
-  <img class="poster" id="poster">
+  <img class="poster" id="poster"><button type="button" id="posterPlaceholder">＋ ДОБАВИТЬ ФОТО В ПОСТЕР</button>
   <div class="layer kicker" data-id="kicker" id="l-kicker">[ уютный гайд ]</div>
   <div class="layer heading" data-id="heading" id="l-heading">маленькие радости ноября</div>
   <div class="layer script" data-id="script" id="l-script">ноябрь</div>
@@ -113,7 +120,7 @@ input,textarea,button{font:inherit}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div id="posterTools" class="controls" style="display:none;margin:10px 0;align-items:center"><span class="hint" style="margin-right:4px">ПОСТЕР</span><button type="button" class="btn" id="posterSmaller">−</button><button type="button" class="btn" id="posterLarger">＋</button><button type="button" class="btn" id="posterCenter">По центру</button><input id="posterScale" type="range" min="18" max="72" value="44" style="flex:1;min-width:100px"></div><div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Добавить фото</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
+ <div id="posterTools" class="controls" style="display:none;margin:10px 0;align-items:center"><span class="hint" style="margin-right:4px">ПОСТЕР</span><button type="button" class="btn" id="posterSmaller">−</button><button type="button" class="btn" id="posterLarger">＋</button><button type="button" class="btn" id="posterCenter">По центру</button><input id="posterScale" type="range" min="18" max="72" value="44" style="flex:1;min-width:100px"></div><div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Фото на фон</button><button type="button" class="btn" id="posterBottom" style="display:none">＋ Фото в плашку</button><button type="button" class="btn" id="solidBg">Залить фон цветом</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -196,7 +203,9 @@ function update(){
  $('subscribe').style.display='none';
  $('repostCard').style.display=template==='story-repost'?'block':'none';setImage($('repostPhoto'),repostData);
  setImage($('bgPhoto'),photoData);setImage($('poster'),posterData);
- if(template==='cinema'&&!posterData&&photoData)setImage($('poster'),photoData);
+ $('posterPlaceholder').style.display=template==='cinema'&&!posterData?'flex':'none';
+ $('posterBottom').style.display=template==='cinema'?'inline-flex':'none';
+ $('solidBg').textContent=photoData?'Залить фон цветом':'Фон уже однотонный';
  $('shade').style.background=`linear-gradient(to bottom,rgba(20,13,10,.05) 20%,rgba(20,13,10,${$('darken').value/100}) 55%,rgba(20,13,10,.96) 100%)`;
  $('poster').style.display=(template==='cinema'&&posterData)?'block':'none';
  const pb=s.posterBox||posterDefault; $('poster').style.left=pb.x+'%';$('poster').style.top=pb.y+'%';$('poster').style.width=pb.w+'%';$('poster').style.height=(pb.w*($('artboard').clientWidth/$('artboard').clientHeight)*1.45)+'%';if(typeof showPosterTools==='function')showPosterTools();if($('posterScale'))$('posterScale').value=pb.w;
@@ -237,11 +246,11 @@ function posterBox(){const s=current();s.posterBox=s.posterBox||{...posterDefaul
 function applyPosterBox(save=true){
  const b=posterBox(),art=$('artboard'),ratio=art.clientWidth/art.clientHeight;
  posterEl.style.left=b.x+'%';posterEl.style.top=b.y+'%';posterEl.style.width=b.w+'%';
- posterEl.style.height=(b.w*ratio*1.45)+'%';
+ posterEl.style.height=(b.w*ratio*1.45)+'%';const ph=$('posterPlaceholder');ph.style.left=b.x+'%';ph.style.top=b.y+'%';ph.style.width=b.w+'%';ph.style.height=(b.w*ratio*1.45)+'%';
  $('posterX').value=b.x;$('posterY').value=b.y;$('posterWidth').value=b.w;$('posterScale').value=b.w;
  if(save)saveState();
 }
-function showPosterTools(){ $('posterTools').style.display=template==='cinema'&&!!posterData?'flex':'none'; }
+function showPosterTools(){ $('posterTools').style.display=template==='cinema'?'flex':'none'; }
 function posterCenter(){const b=posterBox(),art=$('artboard'),h=b.w*(art.clientWidth/art.clientHeight)*1.45;b.x=(100-b.w)/2;b.y=(100-h)/2;applyPosterBox(); }
 function posterResize(delta){const b=posterBox(),old=b.w;b.w=Math.max(18,Math.min(72,old+delta));const cx=b.x+old/2;b.x=Math.max(0,Math.min(100-b.w,cx-b.w/2));applyPosterBox()}
 $('posterSmaller').onclick=()=>posterResize(-3);
@@ -281,6 +290,44 @@ posterEl.addEventListener('pointermove',e=>{
 function posterPointerEnd(e){posterPointers.delete(e.pointerId);if(!posterPointers.size){posterGesture=null;saveState()}else{const remaining=[...posterPointers.values()],b=posterBox();posterGesture={initial:{...b},startPoints:remaining.map(p=>({...p})),startDistance:0}}}
 posterEl.addEventListener('pointerup',posterPointerEnd);
 posterEl.addEventListener('pointercancel',posterPointerEnd);
+
+// iOS-safe cinema poster gesture handler: capture on artboard, move on window.
+(function(){
+ const board=$('artboard'),img=$('poster'),empty=$('posterPlaceholder');
+ const active=new Map();let gesture=null;
+ function box(){return posterBox()}
+ function paint(){const b=box(),ratio=board.clientWidth/board.clientHeight,hh=b.w*ratio*1.45;
+  [img,empty].forEach(el=>{el.style.left=b.x+'%';el.style.top=b.y+'%';el.style.width=b.w+'%';el.style.height=hh+'%'});
+  $('posterScale').value=b.w;$('posterX').value=b.x;$('posterY').value=b.y;$('posterWidth').value=b.w;
+ }
+ board.addEventListener('pointerdown',e=>{
+  if(template!=='cinema'||!(e.target===img||e.target===empty||e.target.closest('#poster,#posterPlaceholder')))return;
+  e.preventDefault();e.stopImmediatePropagation();
+  active.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const points=[...active.values()],b={...box()};
+  gesture={base:b,points:points.map(p=>({...p})),distance:points.length>1?Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y):0};
+  try{board.setPointerCapture(e.pointerId)}catch(_){}
+ },true);
+ window.addEventListener('pointermove',e=>{
+  if(!active.has(e.pointerId)||!gesture)return;
+  e.preventDefault();active.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const pts=[...active.values()],g=gesture,b={...g.base},r=board.getBoundingClientRect();
+  if(pts.length>=2&&g.points.length>=2&&g.distance>0){
+   const d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),old=b.w;
+   b.w=Math.max(18,Math.min(72,old*d/g.distance));
+   const c0={x:(g.points[0].x+g.points[1].x)/2,y:(g.points[0].y+g.points[1].y)/2},c1={x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2};
+   b.x+=(c1.x-c0.x)/r.width*100;b.y+=(c1.y-c0.y)/r.height*100;
+  }else{
+   b.x+=(pts[0].x-g.points[0].x)/r.width*100;b.y+=(pts[0].y-g.points[0].y)/r.height*100;
+  }
+  const hh=b.w*(r.width/r.height)*1.45;b.x=Math.max(0,Math.min(100-b.w,b.x));b.y=Math.max(0,Math.min(100-hh,b.y));
+  current().posterBox=b;paint();
+ },{passive:false,capture:true});
+ function end(e){if(!active.has(e.pointerId))return;active.delete(e.pointerId);if(!active.size){gesture=null;saveState()}else{const p=[...active.values()],b={...box()};gesture={base:b,points:p.map(v=>({...v})),distance:0}}}
+ window.addEventListener('pointerup',end,true);window.addEventListener('pointercancel',end,true);
+ empty.addEventListener('click',()=>{if(!posterData)$('posterInput').click()});
+})();
+
 $('resetPosition').onclick=()=>{current().positions=JSON.parse(JSON.stringify(basePos));update()};
 $('addSlide').onclick=()=>{persistCurrent();const n=makeSlide();n.template=template;n.format=format;n.values={...(templateDefaults[template]||defaults)};slides.push(n);index=slides.length-1;loadCurrent();$('status').textContent='Добавлен новый слайд с выбранным шаблоном.'};
 $('duplicate').onclick=()=>{persistCurrent();let copy=JSON.parse(JSON.stringify(current()));slides.splice(index+1,0,copy);index++;loadCurrent();$('status').textContent='Слайд дублирован.'};
