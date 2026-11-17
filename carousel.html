@@ -97,7 +97,7 @@ input,textarea,button{font:inherit}
 
 #artboard #poster{z-index:31!important;pointer-events:auto!important;touch-action:none!important;-webkit-user-drag:none;user-select:none}
 #artboard #posterPlaceholder{position:absolute;z-index:32;left:28%;top:8%;width:44%;height:calc(44% * 1.45 * var(--art-ratio, .75));box-sizing:border-box;border:3px solid var(--gold);border-radius:14px;background:rgba(73,32,20,.35);color:var(--cream);font-size:2.1cqw;letter-spacing:.08em;display:none;align-items:center;justify-content:center;text-align:center;padding:5%;touch-action:none;pointer-events:auto}
-#posterTools{display:flex!important}
+
 #posterBottom.active{background:#d6a34b;color:#21150e}
 #solidBg{border-color:#d6a34b}
 
@@ -325,7 +325,7 @@ posterEl.addEventListener('pointercancel',posterPointerEnd);
  },{passive:false,capture:true});
  function end(e){if(!active.has(e.pointerId))return;active.delete(e.pointerId);if(!active.size){gesture=null;saveState()}else{const p=[...active.values()],b={...box()};gesture={base:b,points:p.map(v=>({...v})),distance:0}}}
  window.addEventListener('pointerup',end,true);window.addEventListener('pointercancel',end,true);
- empty.addEventListener('click',()=>{if(!posterData)$('posterInput').click()});
+
 })();
 
 $('resetPosition').onclick=()=>{current().positions=JSON.parse(JSON.stringify(basePos));update()};
@@ -341,7 +341,7 @@ async function exportPNG(){
  const load=src=>new Promise(resolve=>{if(!src)return resolve(null);let im=new Image();im.onload=()=>resolve(im);im.onerror=()=>resolve(null);im.src=src});
  let bg=await load(photoData);if(bg){let scale=Math.max(W/bg.width,H/bg.height),ww=bg.width*scale,hh=bg.height*scale,v=s.photoView||{scale:1,x:0,y:0};ctx.save();ctx.translate(W*v.x/100,H*v.y/100);ctx.translate(W/2,H/2);ctx.scale(v.scale,v.scale);ctx.translate(-W/2,-H/2);ctx.drawImage(bg,(W-ww)/2,(H-hh)/2,ww,hh);ctx.restore();let gr=ctx.createLinearGradient(0,H*.25,0,H);gr.addColorStop(0,'rgba(20,13,10,.04)');gr.addColorStop(.55,`rgba(20,13,10,${$('darken').value/100})`);gr.addColorStop(1,'rgba(20,13,10,.96)');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H)}
 
- if(template==='cinema'&&posterData){let im=await load(posterData);if(im){let art=$('artboard').getBoundingClientRect(),r=$('poster').getBoundingClientRect(),k=W/art.width,x=(r.left-art.left)*k,y=(r.top-art.top)*k,w=r.width*k,hh=r.height*k,sc=Math.max(w/im.width,hh/im.height);ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,hh,18);ctx.clip();ctx.drawImage(im,x+(w-im.width*sc)/2,y+(hh-im.height*sc)/2,im.width*sc,hh*im.height*sc);ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(x,y,w,hh,18);ctx.stroke()}}
+ if(template==='cinema'){let art=$('artboard').getBoundingClientRect(),r=$('poster').getBoundingClientRect(),k=W/art.width,x=(r.left-art.left)*k,y=(r.top-art.top)*k,w=r.width*k,hh=r.height*k;ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,hh,18);ctx.clip();if(posterData){let im=await load(posterData);if(im){let sc=Math.max(w/im.width,hh/im.height);ctx.drawImage(im,x+(w-im.width*sc)/2,y+(hh-im.height*sc)/2,im.width*sc,hh*sc)}}else{ctx.fillStyle='rgba(73,32,20,.35)';ctx.fillRect(x,y,w,hh)}ctx.restore();ctx.strokeStyle=s.colors.accent;ctx.lineWidth=4;ctx.beginPath();ctx.roundRect(x,y,w,hh,18);ctx.stroke()}
  if(template==='story-repost'){let im=await load(repostData);if(im){let x=85,y=430,w=910,h=1080,sc=Math.max(w/im.width,h/im.height);ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,h)}}
  ctx.fillStyle=s.colors.text;ctx.font='300 22px Overpass';ctx.letterSpacing='7px';ctx.fillText('INNA.BRY',90,80);ctx.textAlign='right';ctx.fillText(s.values.meta,990,80);ctx.textAlign='left';ctx.letterSpacing='0px';
  let stage=$('stage').getBoundingClientRect(),art=$('artboard').getBoundingClientRect(),scale=W/art.width;
