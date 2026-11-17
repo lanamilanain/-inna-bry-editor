@@ -376,6 +376,16 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  $e('saveText').onclick=()=>{if(editTarget){setValue(editTarget,$e('editText').value);$e('editSheet').classList.remove('open');}};
  $e('closeText').onclick=()=>{$e('editSheet').classList.remove('open');};
  $e('photoBottom').onclick=()=>{$('photoInput').click()};
+ $e('solidBg').onclick=()=>{
+  photoData='';
+  current().photo='';
+  $('photoInput').value='';
+  const s=current();
+  s.colors.bg=$('bgColor').value||s.colors.bg;
+  update();
+  saveState();
+  $('status').textContent='Фото фона убрано. Макет залит выбранным цветом.';
+ };
  $e('photoLock').onclick=()=>{current().photoLocked=!current().photoLocked;$e('photoLock').classList.toggle('active',!!current().photoLocked);$e('photoLock').textContent=current().photoLocked?'Открепить фото':'Закрепить фото';saveState()};
  const oldPhoto=$('photoInput').onchange;
  $('photoInput').onchange=e=>{if(oldPhoto)oldPhoto.call($('photoInput'),e);setTimeout(()=>{$e('photoBottom').textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ДОБАВИТЬ ФОТО'},100)};
