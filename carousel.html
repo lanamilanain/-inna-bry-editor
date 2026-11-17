@@ -253,7 +253,7 @@ function update(){
  let w=format==='post'?1080:1080,h=format==='post'?1440:1920;
  $('stage').style.aspectRatio=`${w}/${h}`;$('artboard').style.aspectRatio=`${w}/${h}`;
  $('artboard').className='artboard '+template;
- $('artboard').style.setProperty('--bg',s.colors.bg);$('artboard').style.background=s.colors.bg;
+ $('artboard').style.setProperty('--bg',s.colors.bg);$('artboard').style.setProperty('background',s.colors.bg,'important');$('artboard').style.setProperty('background-color',s.colors.bg,'important');
  $('artboard').style.setProperty('--cream',s.colors.text);$('artboard').style.setProperty('--apricot',s.colors.title);$('artboard').style.setProperty('--terra',s.colors.script);$('artboard').style.setProperty('--gold',s.colors.accent);
  $('brandPreview').textContent='INNA.BRY';$('metaPreview').textContent=s.values.meta;
  $('l-kicker').textContent=s.values.kicker;$('l-heading').textContent=s.values.heading;$('l-script').textContent=s.values.script;$('l-body').textContent=s.values.body;$('l-ingredients').textContent=s.values.ingredients;$('l-cta').textContent=s.values.cta;
@@ -282,7 +282,20 @@ function loadCurrent(){let s=current();format=s.format||'post';template=s.templa
 function inputChange(){let s=current();s.values={meta:$('meta').value,kicker:$('kickerInput').value,heading:$('headingInput').value,script:$('scriptInput').value,body:$('bodyInput').value,ingredients:$('ingredientsInput').value,cta:$('ctaInput').value};update()}
 ['meta','kickerInput','headingInput','scriptInput','bodyInput','ingredientsInput','ctaInput'].forEach(id=>$(id).addEventListener('input',inputChange));
 [['textColor','text'],['titleColor','title'],['scriptColor','script'],['accentColor','accent'],['buttonColor','button']].forEach(([id,key])=>$(id).addEventListener('input',()=>{current().colors[key]=$(id).value;update();saveState()}));
-$('bgColor').addEventListener('input',()=>{const s=current();s.colors.bg=$('bgColor').value;photoData='';s.photo='';const fi=$('photoInput');if(fi)fi.value='';update();saveState();$('status').textContent='Однотонный фон применён. Фото на фоне удалено, постер сохранён.'});
+function commitBackgroundColor(){
+ const color=$('bgColor').value||'#140d0a',s=current();
+ s.colors.bg=color;s.photo='';photoData='';
+ const fi=$('photoInput');if(fi)fi.value='';
+ const artboard=$('artboard');
+ artboard.style.setProperty('background',color,'important');
+ artboard.style.setProperty('background-color',color,'important');
+ artboard.style.setProperty('background-image','none','important');
+ setImage($('bgPhoto'),'');
+ update();saveState();
+ $('status').textContent='Цвет фона применён ко всему макету: '+color+'.';
+}
+$('bgColor').addEventListener('input',commitBackgroundColor);
+$('bgColor').addEventListener('change',commitBackgroundColor);
 ['titleSize','scriptSize','darken'].forEach(id=>$(id).addEventListener('input',update));
 document.querySelectorAll('[data-format]').forEach(b=>b.onclick=()=>{format=b.dataset.format;if(format==='story'&&template==='standard'){}update()});
 document.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{persistCurrent();template=b.dataset.template;if(template==='story-repost')format='story';const d=templateDefaults[template];if(d){current().values={...d};current().positions=JSON.parse(JSON.stringify(templatePositions[template]||basePos));selected='heading';}photoData=current().photo||'';posterData=current().poster||'';repostData=current().repost||'';applyValuesToInputs();update();$('status').textContent='Шаблон загружен. Все надписи уже на макете и доступны для редактирования.'});
