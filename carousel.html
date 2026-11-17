@@ -88,6 +88,12 @@ input,textarea,button{font:inherit}
 #paletteRow .paletteDot{width:100%;height:auto;aspect-ratio:1/1;min-height:0!important;border:1px solid rgba(255,255,255,.28);border-radius:8px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 #paletteRow input[type="color"]{width:100%!important;height:auto!important;aspect-ratio:1/1;padding:0;border-radius:8px;overflow:hidden}
 
+
+/* Cinema poster must be the active touch target above text layers */
+#artboard.cinema #poster{z-index:30!important;pointer-events:auto!important;touch-action:none!important;cursor:grab}
+#artboard.cinema #poster:active{cursor:grabbing}
+#artboard.cinema .layer{pointer-events:auto}
+
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
