@@ -102,6 +102,62 @@ input,textarea,button{font:inherit}
 #solidBg{border-color:#d6a34b}
 
 #solidBg{pointer-events:auto!important;position:relative;z-index:50;cursor:pointer;touch-action:manipulation}#touchTools{position:relative;z-index:40;pointer-events:auto}#touchTools button{pointer-events:auto!important}
+
+/* INNA.BRY editorial chocolate redesign */
+:root{--bg:#140d0a;--cream:#f6e5c8;--amber:#dca83b;--orange:#ffaf46;--terracotta:#b75b29;--panel:#241914;--line:#5a4030}
+html{background:#140d0a}
+body{background:radial-gradient(ellipse at 50% -12%,#49301f 0,transparent 48%),#140d0a!important;color:var(--cream)!important;font-family:Overpass,system-ui,sans-serif!important;font-weight:300}
+header{padding:18px clamp(16px,4vw,42px)!important;min-height:76px;background:rgba(20,13,10,.96)!important;border-bottom:1px solid #6b4b32!important;box-shadow:0 8px 30px #0003}
+header .brand{font-family:Overpass,sans-serif!important;font-weight:300!important;letter-spacing:.28em!important;font-size:15px!important;color:var(--cream)!important}
+header .sub{font-size:11px!important;letter-spacing:.12em!important;color:#c6ad91!important;font-weight:300!important}
+main{max-width:1180px!important;padding:18px clamp(12px,3vw,28px) 60px!important;gap:18px!important}
+.panel{background:linear-gradient(145deg,rgba(48,37,31,.97),rgba(34,24,19,.98))!important;border:1px solid #654a36!important;border-radius:19px!important;padding:clamp(16px,2.5vw,26px)!important;box-shadow:0 18px 48px #0004!important}
+.previewPanel{background:linear-gradient(160deg,#2b201a,#1e1511)!important}
+.editor h2,.previewPanel h2{font-family:Overpass,sans-serif!important;font-size:clamp(15px,1.5vw,19px)!important;font-weight:600!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:#e2b75e!important;margin:24px 0 13px!important}
+.editor h2:first-child{margin-top:0!important}
+.editor h2:after{content:"";display:block;width:42px;height:1px;background:#a86d3d;margin-top:9px;opacity:.8}
+.previewHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.previewHead h2{margin:0!important;font-size:13px!important;letter-spacing:.11em!important}
+.btn{background:#422b20!important;border:1px solid #8b6648!important;color:#f6e5c8!important;border-radius:12px!important;padding:12px 16px!important;min-height:48px!important;font:300 14px/1.2 Overpass,system-ui,sans-serif!important;transition:background .18s,border-color .18s,transform .18s}
+.btn:hover{background:#543626!important;border-color:#c28a45!important}
+.btn:active{transform:scale(.985)}
+.btn.active,.btn.primary{background:#3d291e!important;border:2px solid #dca83b!important;color:#ffe8bf!important;box-shadow:inset 0 0 0 2px #dca83b55,0 0 0 1px #dca83b44!important}
+.grid{gap:10px!important}
+.editor>.grid .btn{min-height:64px!important;font-size:16px!important;letter-spacing:.01em!important}
+label{font-family:Overpass,sans-serif!important;font-size:13px!important;font-weight:300!important;letter-spacing:.015em!important;color:#d8c3aa!important;margin:15px 0 7px!important}
+input:not([type=color]):not([type=range]):not([type=file]),textarea,select{width:100%;background:#17100d!important;color:#f6e5c8!important;border:1px solid #715239!important;border-radius:11px!important;padding:12px 13px!important;font:300 16px/1.45 Overpass,system-ui,sans-serif!important;box-shadow:inset 0 2px 8px #0003!important;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#dca83b!important;box-shadow:0 0 0 2px #dca83b25!important}
+input[type=color]{width:100%!important;height:54px!important;padding:5px!important;border:1px solid #72543d!important;border-radius:12px!important;background:#17100d!important;cursor:pointer}
+input[type=range]{width:100%;height:28px;accent-color:#e5a83b;cursor:pointer}
+input[type=file]{width:100%;color:#cbb59a;font-size:13px!important;background:#1b120e;padding:12px;border:1px dashed #76563b;border-radius:11px}
+textarea{min-height:90px!important;max-height:38vh!important}
+.editor .grid>div{min-width:0}
+.stage{border-radius:4px!important;box-shadow:0 15px 45px #0009!important;border:1px solid #715239!important;overflow:hidden}
+.artboard{font-family:Overpass,sans-serif!important}
+#paletteRow{margin:10px 0}
+#touchTools{gap:8px!important;margin:12px 0!important}
+#touchTools .btn{flex:1 1 auto}
+.slideStrip{gap:9px!important;padding:14px 0!important}
+.slideStrip>*{border-radius:9px!important;border:1px solid #72543d!important;overflow:hidden}
+.status{color:#e4b65d!important;font-size:12px!important;letter-spacing:.02em}
+.hint{font-size:11px!important;letter-spacing:.02em!important;color:#bda88f!important;line-height:1.55!important}
+details{border-top:1px solid #634831;margin-top:22px;padding-top:14px;color:#e2c9a7}
+summary{cursor:pointer;color:#e2b75e;font-size:13px;letter-spacing:.08em}
+#editSheet{background:#251a14!important;border:1px solid #79573a!important;border-radius:18px 18px 0 0!important;box-shadow:0 -15px 45px #0008!important}
+#editSheet label{color:#e3b85e!important}
+#editSheet .sheetActions{gap:9px}
+#editSheet .btn{min-width:110px}
+@media(max-width:760px){
+ main{padding:12px 10px 40px!important;gap:12px!important}
+ .panel{border-radius:15px!important;padding:14px!important}
+ header{min-height:66px!important;padding:14px 16px!important}
+ .previewHead{align-items:flex-start}
+ .previewHead h2{max-width:70%}
+ .editor>.grid .btn{min-height:58px!important;font-size:15px!important}
+ .editor h2{margin-top:22px!important}
+ .controls .btn{min-height:44px!important;padding:10px 12px!important}
+}
+
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
