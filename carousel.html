@@ -75,7 +75,7 @@ input,textarea,button{font:inherit}
 #touchTools{margin:12px 0}
 #photoBottom{background:#d6a34b;color:#21150e;border-color:#d6a34b}
 #photoLock.active{background:#d6a34b;color:#21150e}
-#artboard .photo{touch-action:none}
+#artboard .photo{touch-action:none}#posterTools .btn{min-width:42px}#posterTools .hint{font-size:10px;letter-spacing:.12em}
 #artboard .layer[data-id="cta"]{white-space:pre-wrap;box-sizing:border-box}
 .cinema .layer[data-id="cta"],.recipe .layer[data-id="cta"]{display:block!important;background:rgba(73,32,20,.58)!important;border-left:4px solid #b85d2e!important;padding:2.1% 3.2%!important;box-shadow:none!important;color:var(--cream);line-height:1.35}
 .cinema .layer[data-id="cta"]{font-size:2.55cqw!important}
@@ -107,7 +107,7 @@ input,textarea,button{font:inherit}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Добавить фото</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
+ <div id="posterTools" class="controls" style="display:none;margin:10px 0;align-items:center"><span class="hint" style="margin-right:4px">ПОСТЕР</span><button type="button" class="btn" id="posterSmaller">−</button><button type="button" class="btn" id="posterLarger">＋</button><button type="button" class="btn" id="posterCenter">По центру</button><input id="posterScale" type="range" min="18" max="72" value="44" style="flex:1;min-width:100px"></div><div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Добавить фото</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -193,7 +193,7 @@ function update(){
  if(template==='cinema'&&!posterData&&photoData)setImage($('poster'),photoData);
  $('shade').style.background=`linear-gradient(to bottom,rgba(20,13,10,.05) 20%,rgba(20,13,10,${$('darken').value/100}) 55%,rgba(20,13,10,.96) 100%)`;
  $('poster').style.display=(template==='cinema'&&posterData)?'block':'none';
- const pb=s.posterBox||posterDefault; $('poster').style.left=pb.x+'%';$('poster').style.top=pb.y+'%';$('poster').style.width=pb.w+'%';$('poster').style.height=(pb.w*($('artboard').clientWidth/$('artboard').clientHeight)*1.45)+'%';
+ const pb=s.posterBox||posterDefault; $('poster').style.left=pb.x+'%';$('poster').style.top=pb.y+'%';$('poster').style.width=pb.w+'%';$('poster').style.height=(pb.w*($('artboard').clientWidth/$('artboard').clientHeight)*1.45)+'%';if(typeof showPosterTools==='function')showPosterTools();if($('posterScale'))$('posterScale').value=pb.w;
  ['posterX','posterY','posterWidth'].forEach((id,i)=>{if($(id))$(id).value=[pb.x,pb.y,pb.w][i]});
  ids.forEach(id=>{let el=$('l-'+id),p=s.positions[id]||basePos[id];el.style.left=p[0]+'%';el.style.top=p[1]+'%';el.style.color=id==='kicker'||id==='cta'?s.colors.accent:id==='heading'?s.colors.title:id==='script'?s.colors.script:s.colors.text;el.classList.toggle('selected',selected===id)});
  $('l-heading').style.fontSize=$('titleSize').value/1080*100+'cqw';$('l-script').style.fontSize=$('scriptSize').value/1080*100+'cqw';
@@ -222,9 +222,59 @@ function updatePositionControls(){let p=current().positions[selected]||[8,55];$(
 ids.forEach(id=>{$('l-'+id).addEventListener('pointerdown',e=>{e.preventDefault();selectLayer(id);let startX=e.clientX,startY=e.clientY,stage=$('stage').getBoundingClientRect(),p=current().positions[id]||[8,55],orig=[...p];function move(ev){let dx=(ev.clientX-startX)/stage.width*100,dy=(ev.clientY-startY)/stage.height*100;current().positions[id]=[Math.max(0,Math.min(90,orig[0]+dx)),Math.max(0,Math.min(95,orig[1]+dy))];let pp=current().positions[id];$('l-'+id).style.left=pp[0]+'%';$('l-'+id).style.top=pp[1]+'%';updatePositionControls()}function end(){window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);saveState()}window.addEventListener('pointermove',move);window.addEventListener('pointerup',end,{once:true})})});
 $('posX').oninput=()=>{let p=current().positions[selected];p[0]=+$('posX').value;$('l-'+selected).style.left=p[0]+'%';saveState()};
 $('posY').oninput=()=>{let p=current().positions[selected];p[1]=+$('posY').value;$('l-'+selected).style.top=p[1]+'%';saveState()};
-function setPosterBox(k,v){const s=current();s.posterBox=s.posterBox||{...posterDefault};s.posterBox[k]=+v;update();saveState()}
+function setPosterBox(k,v){const s=current();s.posterBox=s.posterBox||{...posterDefault};s.posterBox[k]=+v;update();saveState();if(typeof applyPosterBox==='function')applyPosterBox(false)}
 $('posterX').oninput=e=>setPosterBox('x',e.target.value);$('posterY').oninput=e=>setPosterBox('y',e.target.value);$('posterWidth').oninput=e=>setPosterBox('w',e.target.value);
-const posterEl=$('poster');let posterPointers=new Map(),posterGesture=null;posterEl.addEventListener('pointerdown',e=>{if(template!=='cinema')return;e.preventDefault();posterEl.setPointerCapture(e.pointerId);posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const b=current().posterBox||posterDefault;posterGesture={startX:e.clientX,startY:e.clientY,box:{...b},distance:0};if(posterPointers.size===2){const a=[...posterPointers.values()];posterGesture.distance=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);posterGesture.center={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2}}});posterEl.addEventListener('pointermove',e=>{if(!posterPointers.has(e.pointerId)||!posterGesture)return;posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const box=posterGesture.box,rect=$('artboard').getBoundingClientRect();if(posterPointers.size>=2){const a=[...posterPointers.values()],dist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),ratio=dist/(posterGesture.distance||dist);box.w=Math.max(18,Math.min(72,posterGesture.box.w*ratio));box.x=Math.max(0,Math.min(100-box.w,posterGesture.box.x));}else{box.x=Math.max(0,Math.min(100-box.w,posterGesture.box.x+(e.clientX-posterGesture.startX)/rect.width*100));box.y=Math.max(0,Math.min(42,posterGesture.box.y+(e.clientY-posterGesture.startY)/rect.height*100));}current().posterBox={...box};$('poster').style.left=box.x+'%';$('poster').style.top=box.y+'%';$('poster').style.width=box.w+'%';$('poster').style.height=(box.w*($('artboard').clientWidth/$('artboard').clientHeight)*1.45)+'%';$('posterWidth').value=box.w;$('posterX').value=box.x;$('posterY').value=box.y});function posterPointerEnd(e){posterPointers.delete(e.pointerId);if(!posterPointers.size){posterGesture=null;saveState()}}posterEl.addEventListener('pointerup',posterPointerEnd);posterEl.addEventListener('pointercancel',posterPointerEnd);
+
+const posterEl=$('poster');
+let posterPointers=new Map(),posterGesture=null;
+function posterBox(){const s=current();s.posterBox=s.posterBox||{...posterDefault};return s.posterBox}
+function applyPosterBox(save=true){
+ const b=posterBox(),art=$('artboard'),ratio=art.clientWidth/art.clientHeight;
+ posterEl.style.left=b.x+'%';posterEl.style.top=b.y+'%';posterEl.style.width=b.w+'%';
+ posterEl.style.height=(b.w*ratio*1.45)+'%';
+ $('posterX').value=b.x;$('posterY').value=b.y;$('posterWidth').value=b.w;$('posterScale').value=b.w;
+ if(save)saveState();
+}
+function showPosterTools(){ $('posterTools').style.display=template==='cinema'&&!!posterData?'flex':'none'; }
+function posterCenter(){const b=posterBox(),art=$('artboard'),h=b.w*(art.clientWidth/art.clientHeight)*1.45;b.x=(100-b.w)/2;b.y=(100-h)/2;applyPosterBox(); }
+function posterResize(delta){const b=posterBox(),old=b.w;b.w=Math.max(18,Math.min(72,old+delta));const cx=b.x+old/2;b.x=Math.max(0,Math.min(100-b.w,cx-b.w/2));applyPosterBox()}
+$('posterSmaller').onclick=()=>posterResize(-3);
+$('posterLarger').onclick=()=>posterResize(3);
+$('posterCenter').onclick=posterCenter;
+$('posterScale').oninput=e=>{const b=posterBox(),old=b.w;b.w=+e.target.value;const cx=b.x+old/2;b.x=Math.max(0,Math.min(100-b.w,cx-b.w/2));applyPosterBox()};
+posterEl.addEventListener('pointerdown',e=>{
+ if(template!=='cinema'||!posterData)return;
+ e.preventDefault();e.stopPropagation();
+ try{posterEl.setPointerCapture(e.pointerId)}catch(_){}
+ posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ const b=posterBox(),points=[...posterPointers.values()];
+ posterGesture={initial:{...b},startPoints:points.map(p=>({...p})),startDistance:points.length>1?Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y):0};
+},{passive:false});
+posterEl.addEventListener('pointermove',e=>{
+ if(!posterPointers.has(e.pointerId)||!posterGesture)return;
+ e.preventDefault();e.stopPropagation();posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ const pts=[...posterPointers.values()],g=posterGesture,b={...g.initial},rect=artboard.getBoundingClientRect();
+ if(pts.length>=2&&g.startPoints.length>=2&&g.startDistance>0){
+  const start=g.startPoints,now=pts.slice(0,2);
+  const d0=g.startDistance,d1=Math.hypot(now[0].x-now[1].x,now[0].y-now[1].y);
+  const scale=d1/d0,oldW=b.w;b.w=Math.max(18,Math.min(72,b.w*scale));
+  const c0={x:(start[0].x+start[1].x)/2,y:(start[0].y+start[1].y)/2};
+  const c1={x:(now[0].x+now[1].x)/2,y:(now[0].y+now[1].y)/2};
+  b.x+=((c1.x-c0.x)/rect.width)*100;
+  b.y+=((c1.y-c0.y)/rect.height)*100;
+  const ratio=rect.width/rect.height,newH=b.w*ratio*1.45;
+  b.x=Math.max(0,Math.min(100-b.w,b.x));b.y=Math.max(0,Math.min(100-newH,b.y));
+ }else{
+  const p0=g.startPoints[0],p1=pts[0];
+  b.x=Math.max(0,Math.min(100-b.w,g.initial.x+(p1.x-p0.x)/rect.width*100));
+  const ratio=rect.width/rect.height,newH=b.w*ratio*1.45;
+  b.y=Math.max(0,Math.min(100-newH,g.initial.y+(p1.y-p0.y)/rect.height*100));
+ }
+ current().posterBox=b;applyPosterBox(false);
+},{passive:false});
+function posterPointerEnd(e){posterPointers.delete(e.pointerId);if(!posterPointers.size){posterGesture=null;saveState()}else{const remaining=[...posterPointers.values()],b=posterBox();posterGesture={initial:{...b},startPoints:remaining.map(p=>({...p})),startDistance:0}}}
+posterEl.addEventListener('pointerup',posterPointerEnd);
+posterEl.addEventListener('pointercancel',posterPointerEnd);
 $('resetPosition').onclick=()=>{current().positions=JSON.parse(JSON.stringify(basePos));update()};
 $('addSlide').onclick=()=>{persistCurrent();const n=makeSlide();n.template=template;n.format=format;n.values={...(templateDefaults[template]||defaults)};slides.push(n);index=slides.length-1;loadCurrent();$('status').textContent='Добавлен новый слайд с выбранным шаблоном.'};
 $('duplicate').onclick=()=>{persistCurrent();let copy=JSON.parse(JSON.stringify(current()));slides.splice(index+1,0,copy);index++;loadCurrent();$('status').textContent='Слайд дублирован.'};
