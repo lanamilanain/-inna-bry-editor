@@ -101,6 +101,7 @@ input,textarea,button{font:inherit}
 #posterBottom.active{background:#d6a34b;color:#21150e}
 #solidBg{border-color:#d6a34b}
 
+#solidBg{pointer-events:auto!important;position:relative;z-index:50;cursor:pointer;touch-action:manipulation}#touchTools{position:relative;z-index:40;pointer-events:auto}#touchTools button{pointer-events:auto!important}
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
@@ -359,6 +360,24 @@ window.addEventListener('error',e=>{const st=document.getElementById('status');i
 window.addEventListener('unhandledrejection',e=>{const st=document.getElementById('status');if(st)st.textContent='Ошибка действия: '+(e.reason?.message||'попробуй обновить страницу')});
 $('status').textContent='Редактор запущен. Выбери шаблон или начни редактирование.';
 
+/* Reliable solid-background action, independent of the touch editor module */
+document.addEventListener('click',function(e){
+ const button=e.target.closest('#solidBg');
+ if(!button)return;
+ e.preventDefault();
+ e.stopPropagation();
+ const slide=slides[index];
+ const chosen=document.getElementById('bgColor').value||slide.colors.bg||'#140d0a';
+ slide.colors.bg=chosen;
+ slide.photo='';
+ photoData='';
+ const input=document.getElementById('photoInput');if(input)input.value='';
+ update();
+ saveState();
+ const status=document.getElementById('status');
+ if(status)status.textContent='Фон залит цветом '+chosen+'. Фото в постере сохранено.';
+},true);
+
 /* Touch-first text/photo editing layer */
 (function(){
  const $e=id=>document.getElementById(id), art=$e('artboard'), stage=$e('stage');
@@ -385,11 +404,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
   update();saveState();
   $('status').textContent='Однотонный фон установлен: '+s.colors.bg;
  }
- $e('solidBg').onclick=()=>{
-  solidFillPending=true;
-  applySolidBackground($('bgColor').value);
-  $('status').textContent='Фон залит выбранным цветом. Можно выбрать другой оттенок в палитре ниже.';
- };
+ // Solid background is handled by the document-level capture listener below.
  $('bgColor').addEventListener('input',()=>{
   if(!solidFillPending)return;
   applySolidBackground($('bgColor').value);
