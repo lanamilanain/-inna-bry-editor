@@ -16,7 +16,7 @@ main{max-width:1050px;margin:auto;padding:10px;display:grid;grid-template-column
 .layer{position:absolute;left:8.33%;width:83.34%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.08;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-shadow:0 1px 5px #0003}.layer:active{cursor:grabbing}.layer.selected{outline:1px dashed var(--gold);outline-offset:5px}
 .kicker{font-size:2.5cqw;color:var(--gold)}.heading{font-size:5.6cqw;color:var(--apricot);line-height:.98}.script{font-family:Alexandra,cursive;color:var(--terra);font-size:13cqw;line-height:.8}.body{font-size:2.8cqw;color:var(--cream);line-height:1.12}.footer{position:absolute;left:8.33%;right:8.33%;bottom:4%;display:flex;justify-content:space-between;font-size:1.8cqw;letter-spacing:.28em;pointer-events:none}
 .standard .heading{font-size:5.8cqw}.standard .layer[data-id="body"]{line-height:1.15}
-.cinema .poster{position:absolute;left:28%;top:8%;width:44%;height:48%;object-fit:cover;border:3px solid var(--gold);border-radius:14px;display:none;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;box-sizing:border-box}.cinema .poster:active{cursor:grabbing}.cinema .heading{font-size:5cqw}
+.cinema .poster{position:absolute;left:28%;top:8%;width:44%;height:48%;object-fit:cover;border:3px solid var(--gold);border-radius:14px;display:none;touch-action:none;cursor:grab;user-select:none;-webkit-user-drag:none;box-sizing:border-box}.cinema .poster:active{cursor:grabbing}.cinema .poster{display:block!important}.cinema .heading{font-size:5cqw}
 .recipe .layer[data-id="ingredients"]{font-size:2.75cqw;line-height:1.6;border-top:1px solid #76502b;border-bottom:1px solid #76502b;padding:2% 0}
 .recipe .layer[data-id="body"]{font-size:2.55cqw}
 .story-repost .repost-card{position:absolute;left:8%;top:22%;width:84%;height:58%;border:1px solid #9a6b42;background:#21150f;box-shadow:0 12px 30px #0008;overflow:hidden;border-radius:4px}
@@ -48,8 +48,8 @@ input,textarea,button{font:inherit}
 #artboard .layer{touch-action:none!important;user-select:none;-webkit-user-select:none}
 #artboard .layer.is-hidden{display:none!important}
 #artboard .topline,#artboard .footer{pointer-events:auto;touch-action:none}
-#artboard .poster{display:none!important}
-.cinema .poster,.recipe .layer[data-id="ingredients"]{border:0!important;background:transparent!important;box-shadow:none!important}
+#artboard .poster{display:none}
+.cinema .poster{display:block!important}
 .recipe .layer[data-id="ingredients"]{padding:0!important}
 #artboard .layer[data-id="cta"]{background:transparent!important;border:0!important;box-shadow:none!important}
 #photoCenter{position:absolute;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #d6a34b;background:#21150de8;color:#f6e5c8;border-radius:999px;padding:13px 20px;font-size:12px;letter-spacing:.12em;white-space:nowrap}
@@ -70,13 +70,26 @@ input,textarea,button{font:inherit}
 #stage.gesture-active{position:relative;touch-action:none}
 @media(max-width:760px){#stage{width:min(100%,460px);touch-action:none!important}#editSheet textarea{font-size:18px!important}body{overscroll-behavior-y:contain}}
 
+
+#photoCenter{display:none!important}
+#touchTools{margin:12px 0}
+#photoBottom{background:#d6a34b;color:#21150e;border-color:#d6a34b}
+#photoLock.active{background:#d6a34b;color:#21150e}
+#artboard .photo{touch-action:none}
+#artboard .layer[data-id="cta"]{white-space:pre-wrap;box-sizing:border-box}
+.cinema .layer[data-id="cta"],.recipe .layer[data-id="cta"]{display:block!important;background:rgba(73,32,20,.58)!important;border-left:4px solid #b85d2e!important;padding:2.1% 3.2%!important;box-shadow:none!important;color:var(--cream);line-height:1.35}
+.cinema .layer[data-id="cta"]{font-size:2.55cqw!important}
+.recipe .layer[data-id="cta"]{font-size:2.45cqw!important}
+.cinema .layer[data-id="body"]{font-size:2.55cqw!important;line-height:1.25}
+.recipe .layer[data-id="ingredients"]{border:0!important;background:transparent!important;padding:0!important}
+
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
 <section class="panel previewPanel">
  <div class="previewHead"><h2>Предпросмотр · двигай надписи пальцем</h2><div class="controls"><button type="button" class="btn" id="prev">←</button><span id="count" style="font-size:12px;align-self:center">1 / 1</span><button type="button" class="btn" id="next">→</button></div></div>
  <div class="stage" id="stage"><div class="artboard standard" id="artboard">
-  <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div><button type="button" id="photoCenter">＋ ВЫБРАТЬ ФОТО</button>
+  <img class="photo" id="bgPhoto"><div class="shade" id="shade"></div>
   <div class="topline"><span id="brandPreview">INNA.BRY</span><span id="metaPreview">01 / 06</span></div>
   <div class="repost-card" id="repostCard" style="display:none"><img id="repostPhoto"><div class="repost-overlay"></div></div>
   <img class="poster" id="poster">
@@ -89,7 +102,7 @@ input,textarea,button{font:inherit}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="pageLock">Закрепить макет</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div id="paletteRow"></div><div class="slideStrip" id="slideStrip"></div>
+ <div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Добавить фото</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div id="paletteRow"></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -141,14 +154,14 @@ const ids=['kicker','heading','script','body','ingredients','cta'];
 const basePos={kicker:[8,59],heading:[8,64],script:[11,72],body:[8,82],ingredients:[8,38],cta:[8,88]};
 const templateDefaults={
  standard:{meta:'04 / 09',kicker:'[ маленькая заметка ]',heading:'а вот здесь начинается',script:'самое интересное',body:'Добавь сюда основной текст. Он уже находится на макете, его можно редактировать и двигать.',ingredients:'',cta:'[ сохрани себе ]'},
- cinema:{meta:'04 / 09',kicker:'[ вечерний просмотр ]',heading:'название фильма',script:'название',body:'О чём: коротко расскажи сюжет, не раскрывая главного. Добавь своё впечатление и объясни, кому может понравиться фильм.',ingredients:'',cta:'[ настроение после просмотра ]'},
- recipe:{meta:'РЕЦЕПТ · 05 / 05',kicker:'[ для тех, кто замёрз до кончиков пальцев ]',heading:'чай с чили, апельсином и тёмным',script:'шоколадом',body:'[ как заваривать ]\nВ чайник засыпаю зелёный чай, перец горошком и нарезанный кружочками апельсин. Пока чай настаивается, натираю тёмный шоколад и высыпаю прямо на дно любимой кружки.',ingredients:'листовой зелёный чай · 2 ч. л.\nгорячая вода · 400 мл\nсвежий апельсин · 1 шт.\nтёмный шоколад · 20 г\nкрасный и чёрный перец · ½ ч. л.\nстручок красного чили · по желанию',cta:'[ маленький секрет ]'},
+ cinema:{meta:'04 / 09',kicker:'[ вечерний просмотр ]',heading:'название фильма',script:'название',body:'О чём: коротко расскажи сюжет, не раскрывая главного. Добавь своё впечатление и объясни, кому может понравиться фильм.',ingredients:'',cta:'[ настроение ]\\nСмотреть, когда за окном стучит дождь и хочется легально поплакать. История тяжёлая, но оставляет много света и желание прямо сейчас позвонить близким.'},
+ recipe:{meta:'РЕЦЕПТ · 05 / 05',kicker:'[ для тех, кто замёрз до кончиков пальцев ]',heading:'чай с чили, апельсином и тёмным',script:'шоколадом',body:'[ как заваривать ]\nВ чайник засыпаю зелёный чай, перец горошком и нарезанный кружочками апельсин. Пока чай настаивается, натираю тёмный шоколад и высыпаю прямо на дно любимой кружки.',ingredients:'листовой зелёный чай · 2 ч. л.\nгорячая вода · 400 мл\nсвежий апельсин · 1 шт.\nтёмный шоколад · 20 г\nкрасный и чёрный перец · ½ ч. л.\nстручок красного чили · по желанию',cta:'[ маленький секрет ]\\nЕсли хочется погорячее, сделай тонкий надрез вдоль стручка чили и опусти его прямо в чашку. Согревает моментально.'},
  'story-repost':{meta:'УЖЕ В ЛЕНТЕ',kicker:'[ сохрани на вечер ]',heading:'уютная подборка для тех, кто любит',script:'читать',body:'Добавь короткую фразу, которая приглашает открыть публикацию. Фото поста подставляется отдельно.',ingredients:'',cta:'НАЖМИ НА ПОСТ И ЛИСТАЙ →'}
 };
 const templatePositions={
  standard:{kicker:[8,57],heading:[8,63],script:[11,72],body:[8,81],ingredients:[8,38],cta:[8,89]},
- cinema:{kicker:[8,56],heading:[8,62],script:[11,70],body:[8,80],ingredients:[8,38],cta:[8,90]},
- recipe:{kicker:[8,8],heading:[8,13],script:[11,20],body:[8,55],ingredients:[8,31],cta:[8,88]},
+ cinema:{kicker:[8,56],heading:[8,62],script:[11,70],body:[8,65],ingredients:[8,38],cta:[8,82]},
+ recipe:{kicker:[8,8],heading:[8,13],script:[11,20],body:[8,55],ingredients:[8,31],cta:[8,78]},
  'story-repost':{kicker:[8,12],heading:[8,19],script:[11,27],body:[8,85],ingredients:[8,38],cta:[8,90]}
 };
 const posterDefault={x:28,y:8,w:44};
@@ -168,7 +181,7 @@ function update(){
  $('artboard').style.setProperty('--cream',s.colors.text);$('artboard').style.setProperty('--apricot',s.colors.title);$('artboard').style.setProperty('--terra',s.colors.script);$('artboard').style.setProperty('--gold',s.colors.accent);
  $('brandPreview').textContent='INNA.BRY';$('metaPreview').textContent=s.values.meta;
  $('l-kicker').textContent=s.values.kicker;$('l-heading').textContent=s.values.heading;$('l-script').textContent=s.values.script;$('l-body').textContent=s.values.body;$('l-ingredients').textContent=s.values.ingredients;$('l-cta').textContent=s.values.cta;
- $('l-ingredients').style.display=template==='recipe'?'block':'none';$('l-cta').style.display=template==='story-repost'?'block':'none';
+ $('l-ingredients').style.display=template==='recipe'?'block':'none';$('l-cta').style.display=['story-repost','cinema','recipe'].includes(template)?'block':'none';
  $('subscribe').style.display='none';
  $('repostCard').style.display=template==='story-repost'?'block':'none';setImage($('repostPhoto'),repostData);
  setImage($('bgPhoto'),photoData);setImage($('poster'),posterData);
@@ -223,7 +236,7 @@ async function exportPNG(){
  if(template==='story-repost'){let im=await load(repostData);if(im){let x=85,y=430,w=910,h=1080,sc=Math.max(w/im.width,h/im.height);ctx.drawImage(im,x+(w-im.width*sc)/2,y+(h-im.height*sc)/2,im.width*sc,h)}}
  ctx.fillStyle=s.colors.text;ctx.font='300 22px Overpass';ctx.letterSpacing='7px';ctx.fillText('INNA.BRY',90,80);ctx.textAlign='right';ctx.fillText(s.values.meta,990,80);ctx.textAlign='left';ctx.letterSpacing='0px';
  let stage=$('stage').getBoundingClientRect(),art=$('artboard').getBoundingClientRect(),scale=W/art.width;
- for(let id of ids){let el=$('l-'+id);if(el.style.display==='none'||getComputedStyle(el).display==='none')continue;if(id==='ingredients'&&template!=='recipe')continue;if(id==='cta'&&template!=='story-repost')continue;let r=el.getBoundingClientRect(),x=(r.left-art.left)*scale,y=(r.top-art.top)*scale+parseFloat(getComputedStyle(el).fontSize)*scale*.8,style=getComputedStyle(el),fontSize=parseFloat(style.fontSize)*scale,color=style.color,font=id==='script'?'Alexandra':'Overpass';ctx.fillStyle=color;ctx.font=`300 ${fontSize}px ${font}`;let maxW=r.width*scale;drawWrapped(ctx,el.textContent,x,y,maxW,fontSize*1.12)}
+ for(let id of ids){let el=$('l-'+id);if(el.style.display==='none'||getComputedStyle(el).display==='none')continue;if(id==='ingredients'&&template!=='recipe')continue;if(id==='cta'&&!['story-repost','cinema','recipe'].includes(template))continue;let r=el.getBoundingClientRect(),x=(r.left-art.left)*scale,y=(r.top-art.top)*scale+parseFloat(getComputedStyle(el).fontSize)*scale*.8,style=getComputedStyle(el),fontSize=parseFloat(style.fontSize)*scale,color=style.color,font=id==='script'?'Alexandra':'Overpass';if(id==='cta'&&['cinema','recipe'].includes(template)){ctx.fillStyle='rgba(73,32,20,.58)';ctx.fillRect((r.left-art.left)*scale,(r.top-art.top)*scale,r.width*scale,r.height*scale);ctx.fillStyle='#b85d2e';ctx.fillRect((r.left-art.left)*scale,(r.top-art.top)*scale,4*scale,r.height*scale)}ctx.fillStyle=color;ctx.font=`300 ${fontSize}px ${font}`;let maxW=r.width*scale;drawWrapped(ctx,el.textContent,x,y,maxW,fontSize*1.12)}
  for(const el of document.querySelectorAll('#artboard .extra-layer')){if(getComputedStyle(el).display==='none')continue;const r=el.getBoundingClientRect(),x=(r.left-art.left)*scale,y=(r.top-art.top)*scale+parseFloat(getComputedStyle(el).fontSize)*scale*.8,st=getComputedStyle(el),fs=parseFloat(st.fontSize)*scale;ctx.fillStyle=st.color;ctx.font='300 '+fs+'px Overpass';drawWrapped(ctx,el.textContent,x,y,r.width*scale,fs*1.12)}
  ctx.fillStyle=s.colors.text;ctx.font='300 21px Overpass';ctx.letterSpacing='5px';ctx.fillText('INNA.BRY',90,H-55);ctx.textAlign='right';ctx.letterSpacing='0px';ctx.fillText(template==='final'?'СПАСИБО, ЧТО ТЫ ЗДЕСЬ':'ЛИСТАЙ →',990,H-55);ctx.textAlign='left';
  let blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob){$('status').textContent='Safari не смог создать PNG. Попробуй ещё раз.';return}
@@ -249,20 +262,21 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  function selectedNode(){return idNode(active)}
  function idNode(id){return id==='meta'?$('metaPreview'):id==='brand'?$('brandPreview'):id==='footer'?$('footerText'):$('l-'+id)}
  $e('lockTextBlock').onclick=()=>{locked[active]=!locked[active];current().textLocks=current().textLocks||{};current().textLocks[active]=locked[active];$e('lockTextBlock').classList.toggle('active',locked[active]);$e('lockTextBlock').textContent=locked[active]?'Открепить текст':'Закрепить текст';saveState()};
- function select(id){active=id;selected=id;document.querySelectorAll('#artboard .layer').forEach(n=>n.classList.toggle('selected',n.dataset.id===id));$e('deleteTextBlock').disabled=locked[id]===true;$e('pageLock').classList.toggle('active',pageLocked);$e('pageLock').textContent=pageLocked?'Открепить макет':'Закрепить макет';}
+ function select(id){active=id;selected=id;document.querySelectorAll('#artboard .layer').forEach(n=>n.classList.toggle('selected',n.dataset.id===id));$e('deleteTextBlock').disabled=locked[id]===true;}
  function openEditor(id){if(locked[id])return;editTarget=id;$e('editLabel').textContent='Текст: '+id;$e('editText').value=currentValue(id);$e('editSheet').classList.add('open');setTimeout(()=>{$e('editText').focus()},120)}
  $e('saveText').onclick=()=>{if(editTarget){setValue(editTarget,$e('editText').value);$e('editSheet').classList.remove('open');}};
  $e('closeText').onclick=()=>{$e('editSheet').classList.remove('open');};
- $e('photoCenter').onclick=()=>{$('photoInput').click()};
+ $e('photoBottom').onclick=()=>{$('photoInput').click()};
+ $e('photoLock').onclick=()=>{current().photoLocked=!current().photoLocked;$e('photoLock').classList.toggle('active',!!current().photoLocked);$e('photoLock').textContent=current().photoLocked?'Открепить фото':'Закрепить фото';saveState()};
  const oldPhoto=$('photoInput').onchange;
  $('photoInput').onchange=e=>{oldPhoto&&oldPhoto.call($('photoInput'),e);setTimeout(()=>{const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО'},100)};
  const oldUpdate=update;
- update=function(){oldUpdate();const b=$e('photoCenter');b.classList.toggle('has-photo',!!photoData);b.textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ВЫБРАТЬ ФОТО';document.querySelectorAll('#artboard .layer').forEach(n=>{const id=n.dataset.id;n.classList.toggle('is-hidden',hidden[id]===true);n.style.opacity=locked[id]?'0.96':''});const s=current();(s.extraTexts||[]).forEach(o=>{let n=document.querySelector('#artboard [data-id="'+o.id+'"]');if(!n){n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=o.id;art.appendChild(n)}n.textContent=o.text||'';n.style.left=(o.x??8)+'%';n.style.top=(o.y??45)+'%';n.style.fontSize=(o.size??3.2)+'cqw';n.style.color=o.color||s.colors.text;n.classList.toggle('is-hidden',hidden[o.id]===true);n.classList.toggle('selected',active===o.id)});Object.entries(s.sizes||{}).forEach(([id,size])=>{const n=document.querySelector('#artboard [data-id="'+id+'"]');if(n)n.style.fontSize=(size/art.clientWidth*100)+'cqw'});Object.entries(s.textLocks||{}).forEach(([id,v])=>{locked[id]=v});if(s.photoView){$('bgPhoto').style.transform='translate('+s.photoView.x+'%, '+s.photoView.y+'%) scale('+s.photoView.scale+')'}if(s.brandText)$('brandPreview').textContent=s.brandText;if(s.footerText)$('footerText').textContent=s.footerText;};
+ update=function(){oldUpdate();$e('photoBottom').textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ДОБАВИТЬ ФОТО';$e('photoLock').classList.toggle('active',!!current().photoLocked);$e('photoLock').textContent=current().photoLocked?'Открепить фото':'Закрепить фото';document.querySelectorAll('#artboard .layer').forEach(n=>{const id=n.dataset.id;n.classList.toggle('is-hidden',hidden[id]===true);n.style.opacity=locked[id]?'0.96':''});const s=current();(s.extraTexts||[]).forEach(o=>{let n=document.querySelector('#artboard [data-id="'+o.id+'"]');if(!n){n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=o.id;art.appendChild(n)}n.textContent=o.text||'';n.style.left=(o.x??8)+'%';n.style.top=(o.y??45)+'%';n.style.fontSize=(o.size??3.2)+'cqw';n.style.color=o.color||s.colors.text;n.classList.toggle('is-hidden',hidden[o.id]===true);n.classList.toggle('selected',active===o.id)});Object.entries(s.sizes||{}).forEach(([id,size])=>{const n=document.querySelector('#artboard [data-id="'+id+'"]');if(n)n.style.fontSize=(size/art.clientWidth*100)+'cqw'});Object.entries(s.textLocks||{}).forEach(([id,v])=>{locked[id]=v});if(s.photoView){$('bgPhoto').style.transform='translate('+s.photoView.x+'%, '+s.photoView.y+'%) scale('+s.photoView.scale+')'}if(s.brandText)$('brandPreview').textContent=s.brandText;if(s.footerText)$('footerText').textContent=s.footerText;};
  // Single tap edits, drag moves, pinch resizes. Prevents page scroll while interacting with canvas.
  let pts=new Map(),gesture=null;
  function posPct(e){const r=art.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100}}
  art.addEventListener('pointerdown',e=>{
-  if(e.target.id==='bgPhoto'&&photoData){e.preventDefault();e.stopImmediatePropagation();pts.set(e.pointerId,{x:e.clientX,y:e.clientY});const v=current().photoView||{scale:1,x:0,y:0};gesture={id:'photo',node:e.target,startX:e.clientX,startY:e.clientY,orig:[v.x,v.y],startScale:v.scale,startDist:0,moved:false};if(pts.size===2){const a=[...pts.values()];gesture.startDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}return}
+  if(e.target.id==='bgPhoto'&&photoData){if(current().photoLocked)return;e.preventDefault();e.stopImmediatePropagation();pts.set(e.pointerId,{x:e.clientX,y:e.clientY});const v=current().photoView||{scale:1,x:0,y:0};gesture={id:'photo',node:e.target,startX:e.clientX,startY:e.clientY,orig:[v.x,v.y],startScale:v.scale,startDist:0,moved:false};if(pts.size===2){const a=[...pts.values()];gesture.startDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}return}
   const node=e.target.closest('.layer,.topline span,.footer span');
   if(!node||e.target.id==='photoCenter')return;
   e.preventDefault();e.stopImmediatePropagation();
@@ -283,7 +297,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  art.addEventListener('pointerup',finish,true);art.addEventListener('pointercancel',finish,true);
  $e('deleteTextBlock').onclick=()=>{if(locked[active])return;hidden[active]=true;const n=idNode(active);if(n)n.style.display='none';saveState()};
  $e('addTextBlock').onclick=()=>{const id='extra_'+Date.now();const n=document.createElement('div');n.className='layer extra-layer';n.dataset.id=id;n.textContent='Новый текст';n.style.left='8%';n.style.top='45%';n.style.fontSize='3.2cqw';art.appendChild(n);current().extraTexts=current().extraTexts||[];current().extraTexts.push({id,text:'Новый текст',x:8,y:45,size:3.2});select(id);openEditor(id)};
- $e('pageLock').onclick=()=>{pageLocked=!pageLocked;$e('pageLock').classList.toggle('active',pageLocked);$e('pageLock').textContent=pageLocked?'Открепить макет':'Закрепить макет'};
+ 
  // Color swatches change the selected text color. Native color input remains available in the palette panel.
  palette.forEach(c=>{const b=document.createElement('button');b.className='paletteDot';b.style.background=c;b.title=c;b.onclick=()=>applyColor(c);$e('paletteRow').appendChild(b)});
  function applyColor(c){const id=active,key=styleFor(id);if(['meta','brand','footer'].includes(id)){const n=idNode(id);n.style.color=c}else{current().colors[key]=c;update()}saveState()}
