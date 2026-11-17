@@ -83,6 +83,11 @@ input,textarea,button{font:inherit}
 .cinema .layer[data-id="body"]{font-size:2.55cqw!important;line-height:1.25}
 .recipe .layer[data-id="ingredients"]{border:0!important;background:transparent!important;padding:0!important}
 
+
+#paletteRow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:12px 0 16px;padding:0}
+#paletteRow .paletteDot{width:100%;height:auto;aspect-ratio:1/1;min-height:0!important;border:1px solid rgba(255,255,255,.28);border-radius:8px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+#paletteRow input[type="color"]{width:100%!important;height:auto!important;aspect-ratio:1/1;padding:0;border-radius:8px;overflow:hidden}
+
 </style></head><body>
 <header><div class="brand">INNA.BRY</div><div class="sub">CAROUSEL STUDIO · 1080 PX</div></header>
 <main>
@@ -102,7 +107,7 @@ input,textarea,button{font:inherit}
   <div class="subscribe" id="subscribe" style="display:none">[ подписаться на @inna.bry ]</div>
   <div class="footer"><span>INNA.BRY</span><span id="footerText">ЛИСТАЙ →</span></div>
  </div></div>
- <div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Добавить фото</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div id="paletteRow"></div><div class="slideStrip" id="slideStrip"></div>
+ <div id="paletteRow"></div><div id="touchTools" class="controls"><button type="button" class="btn primary" id="addTextBlock">＋ Текст</button><button type="button" class="btn" id="photoBottom">＋ Добавить фото</button><button type="button" class="btn" id="photoLock">Закрепить фото</button><button type="button" class="btn" id="lockTextBlock">Закрепить текст</button><button type="button" class="btn" id="deleteTextBlock">В корзину</button><button type="button" class="btn" id="eyedropperMode">Пипетка с фото</button></div><div class="slideStrip" id="slideStrip"></div>
  <div class="controls"><button type="button" class="btn primary" id="export">Скачать PNG</button><button type="button" class="btn" id="addSlide">+ Слайд</button><button type="button" class="btn" id="duplicate">Дублировать</button><button type="button" class="btn" id="delete">Удалить</button></div>
  <div class="status" id="status">Выбери формат и шаблон, затем редактируй текст.</div>
  <p class="hint">Чтобы переместить надпись, удерживай её пальцем и перетащи. Экспорт — PNG в точном размере 1080 px по ширине.</p>
@@ -255,7 +260,7 @@ $('status').textContent='Редактор запущен. Выбери шабл�
 (function(){
  const $e=id=>document.getElementById(id), art=$e('artboard'), stage=$e('stage');
  let active='heading', locked={}, hidden={}, extra=[], pageLocked=false, editTarget=null, pickColor=false;
- const palette=['#f4e8d4','#fff8ed','#d6a34b','#ffaf46','#b75b29','#a95832','#8d9a79','#6f7658','#3b261d','#21150f','#17100d','#d9c4a5','#c58a5c','#8d4c35','#e0b875','#a8a18a','#6b7d6d','#7e3f32','#f0c9a6','#ffffff'];
+ const palette=['#FFAF46','#5E5218','#803716','#382F26','#424226','#9E583F','#AC4826','#5D521C','#8F301A','#AD8257','#B75B28','#DCA83B','#F6E5C9','#FFFFFF','#000000'];
  function valFor(id){const map={meta:'meta',kicker:'kicker',heading:'heading',script:'script',body:'body',ingredients:'ingredients',cta:'cta',brand:'brand',footer:'footer'};return map[id]||id}
  function currentValue(id){const ex=(current().extraTexts||[]).find(x=>x.id===id);if(ex)return ex.text||'';if(id==='brand')return 'INNA.BRY';if(id==='footer')return $('footerText').textContent;return current().values[valFor(id)]||''}
  function setValue(id,v){const ex=(current().extraTexts||[]).find(x=>x.id===id);if(ex){ex.text=v;const node=document.querySelector('#artboard [data-id="'+id+'"]');if(node)node.textContent=v;saveState();return;}if(id==='brand'){ $('brandPreview').textContent=v; current().brandText=v;}else if(id==='footer'){$('footerText').textContent=v;current().footerText=v;}else{current().values[valFor(id)]=v;const input=$(id==='meta'?'meta':id+'Input');if(input)input.value=v;} update();}
