@@ -253,7 +253,7 @@ posterEl.addEventListener('pointerdown',e=>{
 posterEl.addEventListener('pointermove',e=>{
  if(!posterPointers.has(e.pointerId)||!posterGesture)return;
  e.preventDefault();e.stopPropagation();posterPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
- const pts=[...posterPointers.values()],g=posterGesture,b={...g.initial},rect=artboard.getBoundingClientRect();
+ const pts=[...posterPointers.values()],g=posterGesture,b={...g.initial},rect=$('artboard').getBoundingClientRect();
  if(pts.length>=2&&g.startPoints.length>=2&&g.startDistance>0){
   const start=g.startPoints,now=pts.slice(0,2);
   const d0=g.startDistance,d1=Math.hypot(now[0].x-now[1].x,now[0].y-now[1].y);
