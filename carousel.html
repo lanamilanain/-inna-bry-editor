@@ -376,16 +376,31 @@ $('status').textContent='Редактор запущен. Выбери шабл�
  $e('saveText').onclick=()=>{if(editTarget){setValue(editTarget,$e('editText').value);$e('editSheet').classList.remove('open');}};
  $e('closeText').onclick=()=>{$e('editSheet').classList.remove('open');};
  $e('photoBottom').onclick=()=>{$('photoInput').click()};
+ let solidFillPending=false;
  $e('solidBg').onclick=()=>{
+  solidFillPending=true;
   photoData='';
   current().photo='';
   $('photoInput').value='';
-  const s=current();
-  s.colors.bg=$('bgColor').value||s.colors.bg;
+  $('bgColor').click();
   update();
-  saveState();
-  $('status').textContent='Фото фона убрано. Макет залит выбранным цветом.';
+  $('status').textContent='Выбери цвет фона в открывшейся палитре.';
  };
+ $('bgColor').addEventListener('input',()=>{
+  if(!solidFillPending)return;
+  const s=current();
+  s.colors.bg=$('bgColor').value;
+  photoData='';s.photo='';
+  update();saveState();
+  $('status').textContent='Однотонный фон установлен.';
+ });
+ $('bgColor').addEventListener('change',()=>{
+  if(!solidFillPending)return;
+  solidFillPending=false;
+  const s=current();s.colors.bg=$('bgColor').value;photoData='';s.photo='';
+  update();saveState();
+  $('status').textContent='Однотонный фон установлен.';
+ });
  $e('photoLock').onclick=()=>{current().photoLocked=!current().photoLocked;$e('photoLock').classList.toggle('active',!!current().photoLocked);$e('photoLock').textContent=current().photoLocked?'Открепить фото':'Закрепить фото';saveState()};
  const oldPhoto=$('photoInput').onchange;
  $('photoInput').onchange=e=>{if(oldPhoto)oldPhoto.call($('photoInput'),e);setTimeout(()=>{$e('photoBottom').textContent=photoData?'＋ ЗАМЕНИТЬ ФОТО':'＋ ДОБАВИТЬ ФОТО'},100)};
