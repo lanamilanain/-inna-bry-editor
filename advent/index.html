@@ -31,11 +31,32 @@ footer{text-align:center;color:#9e987f;font-size:10px;letter-spacing:.12em;margi
 @media(max-width:390px){.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
-<body>
+<body><div class="snow-layer" aria-hidden="true"></div>
 <div class="wrap">
 <header class="top"><span>рождественская корреспонденция · 2026</span><div class="stamp">✉</div></header>
 <section class="hero">
-<div class="eyebrow">письма, которые приходят только в декабре</div>
+<div class="lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<svg class="hero-elf-art" viewBox="0 0 440 300" role="img" aria-label="Снузи и Нори — маленькие рождественские эльфы">
+<defs><radialGradient id="elfglow"><stop stop-color="#f3c36b" stop-opacity=".28"/><stop offset="1" stop-color="#f3c36b" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="220" cy="180" rx="180" ry="115" fill="url(#elfglow)"/>
+<g transform="translate(65 12)">
+<path d="M65 34 Q14 8 35 105 Q75 92 103 77Z" fill="#b23a32"/><path d="M37 87 Q63 105 103 78" fill="none" stroke="#d9ad58" stroke-width="6"/>
+<ellipse cx="72" cy="117" rx="48" ry="48" fill="#e8d4ad"/><path d="M30 112 Q72 76 113 112 L112 128 Q72 150 32 128Z" fill="#f2e7d6"/>
+<circle cx="56" cy="119" r="3" fill="#34271f"/><circle cx="87" cy="119" r="3" fill="#34271f"/><path d="M61 136 Q72 144 84 136" fill="none" stroke="#ad6c59" stroke-width="2"/>
+<path d="M29 166 Q72 146 116 166 L127 231 Q72 246 18 231Z" fill="#f2e7d6"/><path d="M30 165 Q8 181 3 215 L29 220 Q45 194 52 177" fill="#704e3c"/><path d="M112 167 Q137 185 138 212 L113 219 Q100 194 91 179" fill="#704e3c"/>
+<path d="M45 233 L43 255 Q30 267 49 269 L71 268 L74 236 M91 234 L94 256 Q107 267 90 269 L72 268" fill="#7b332e"/>
+<path d="M55 92 Q48 78 62 73 Q75 69 86 80 L98 91" fill="#c6a36c"/><path d="M58 88 Q52 102 62 107" fill="none" stroke="#c6a36c" stroke-width="8"/>
+<path d="M40 163 Q72 176 104 162" fill="none" stroke="#d6b66b" stroke-width="4"/>
+</g>
+<g transform="translate(225 20)">
+<path d="M65 34 Q106 3 97 106 Q64 98 44 78Z" fill="#b23a32"/><path d="M46 84 Q72 102 99 78" fill="none" stroke="#d9ad58" stroke-width="6"/>
+<ellipse cx="72" cy="117" rx="48" ry="48" fill="#e8d4ad"/><path d="M29 111 Q72 77 114 111 L113 128 Q72 149 31 128Z" fill="#f2e7d6"/>
+<circle cx="56" cy="119" r="3" fill="#34271f"/><circle cx="87" cy="119" r="3" fill="#34271f"/><path d="M61 136 Q72 144 84 136" fill="none" stroke="#ad6c59" stroke-width="2"/>
+<path d="M29 166 Q72 146 116 166 L127 231 Q72 246 18 231Z" fill="#f2e7d6"/><path d="M30 165 Q8 181 3 215 L29 220 Q45 194 52 177" fill="#684938"/><path d="M112 167 Q137 185 138 212 L113 219 Q100 194 91 179" fill="#684938"/>
+<path d="M45 233 L43 255 Q30 267 49 269 L71 268 L74 236 M91 234 L94 256 Q107 267 90 269 L72 268" fill="#7b332e"/>
+<path d="M54 163 Q72 176 105 162" fill="none" stroke="#d6b66b" stroke-width="4"/>
+</g>
+</svg><div class="elf-art-caption">Снузи и Нори уже здесь ✦</div><div class="eyebrow">письма, которые приходят только в декабре</div>
 <h1>Тайная почта<span>Рождества</span></h1>
 <div class="subtitle">для Василисы — от Снузи и Нори</div>
 <p class="intro">Кажется, в нашем доме снова поселилось маленькое волшебство. Где-то между снежинками и огоньками появилась почта, адресованная только тебе. В ней — 31 декабрьская история, сюрприз и секрет.</p>
@@ -96,5 +117,5 @@ function unlocked(day){if(preview)return true;const now=new Date();return now.ge
 function render(){calendar.innerHTML='';entries.forEach((entry,i)=>{const day=i+1,canOpen=unlocked(day),card=document.createElement('button');card.className='envelope'+(opened.includes(day)?' opened':'');card.disabled=!canOpen;card.innerHTML='<span class="date">'+String(day).padStart(2,'0')+'</span><span class="label">'+(opened.includes(day)?'прочитано':'письмо')+'</span><span class="seal">'+(opened.includes(day)?'✓':'✦')+'</span>';card.setAttribute('aria-label','Письмо '+day);card.addEventListener('click',()=>show(day));calendar.appendChild(card)});document.getElementById('progress').style.width=(opened.length/31*100)+'%';document.getElementById('progressText').textContent=opened.length?'Прочитано писем: '+opened.length+' из 31':'Пока не прочитано ни одного письма'}
 function show(day){const e=entries[day-1];document.getElementById('dayLabel').textContent='рождественская почта · письмо '+String(day).padStart(2,'0');document.getElementById('dayTitle').textContent=e[0];document.getElementById('dayBody').textContent=e[1];document.getElementById('task').textContent=e[2];const extra=document.querySelector('.video-note');if(extra)extra.remove();if(e[3]==='video'){const note=document.createElement('div');note.className='video-note';note.innerHTML='🎬 <strong>Видео-письмо от Снузи и Нори</strong><br>Здесь появится ваше первое видео, когда мы добавим его на сайт.';document.getElementById('task').after(note)}modal.classList.add('open');if(!opened.includes(day)){opened.push(day);localStorage.setItem(storeKey,JSON.stringify(opened));render()}}
 document.getElementById('close').onclick=()=>modal.classList.remove('open');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});render();
-</script>
+const snowLayer=document.querySelector(".snow-layer");for(let i=0;i<72;i++){const flake=document.createElement("i");flake.className="snowflake";flake.style.setProperty("--s",(Math.random()*3+1)+"px");flake.style.setProperty("--o",(Math.random()*.5+.15).toFixed(2));flake.style.setProperty("--b",(Math.random()*1.4)+"px");flake.style.setProperty("--d",(Math.random()*28+18)+"s");flake.style.setProperty("--delay",(-Math.random()*35)+"s");flake.style.setProperty("--x",(Math.random()*240-120)+"px");flake.style.left=Math.random()*100+"%";snowLayer.appendChild(flake)}\n</script>
 </body></html>
