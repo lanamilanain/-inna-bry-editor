@@ -50,6 +50,24 @@ body:before{opacity:.55;background-image:radial-gradient(2px 2px at 10% 20%,#fff
 @keyframes paperWarm{from{filter:brightness(1);box-shadow:0 8px 28px #0004,0 0 20px #ffc76644,0 0 42px #ffba4b33}to{filter:brightness(1.045);box-shadow:0 8px 28px #0004,0 0 32px #ffc76677,0 0 65px #ffba4b55}}
 .envelope{box-shadow:0 8px 18px #0004,0 0 20px #ffc86b44,0 0 38px #ffad4733}
 @media(max-width:680px){.window-scene{margin:25px auto 15px;width:100%;aspect-ratio:1.3}.lights span{width:10px;height:14px}}
+
+/* CINEMATIC CHRISTMAS LAYER */
+:root{--gold:#f3bf63;--amber:#ffce78}
+body{background:radial-gradient(ellipse at 50% 12%,#8e3a2b 0%,#641d20 38%,#240b0e 90%)!important}
+body:before{opacity:0!important}
+.snow-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:2}
+.snowflake{position:absolute;top:-12px;width:var(--s);height:var(--s);border-radius:50%;background:#fff;opacity:var(--o);filter:blur(var(--b));box-shadow:0 0 4px #fff8;animation:flakeFall var(--d) linear var(--delay) infinite;transform:translateX(0)}
+@keyframes flakeFall{0%{transform:translate3d(0,-8vh,0)}50%{transform:translate3d(var(--x),50vh,0)}100%{transform:translate3d(calc(var(--x)*-.35),110vh,0)}}
+.wrap{position:relative;z-index:3}.hero{position:relative}.hero .lights{z-index:4}.window-scene{filter:drop-shadow(0 18px 38px #0008)}
+.lights span{width:13px;height:17px;background:radial-gradient(circle at 30% 25%,#fff9d9 0,#ffe889 25%,#f3bd42 58%,#bb711c 100%);box-shadow:0 0 9px 4px #ffd86e99,0 0 26px 13px #ffb53f55;animation:bulbBreath 2.5s ease-in-out infinite alternate}
+@keyframes bulbBreath{to{filter:brightness(1.25);box-shadow:0 0 12px 5px #ffe28baa,0 0 35px 18px #ffb53f77}}
+.envelope{border-radius:9px;box-shadow:0 7px 15px #0005,0 0 18px #ffc86b55,0 0 38px #ffad4744!important;position:relative}
+.envelope:after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(ellipse at 50% 48%,#fff5d51f,transparent 65%);pointer-events:none}
+.paper,.modal-paper{box-shadow:0 8px 30px #0005,0 0 25px #ffd17a77,0 0 55px #ffb54a44!important}
+.stamp{box-shadow:inset 0 0 0 4px #263b30,0 0 18px #ffbd5555}
+.hero-elf-art{filter:drop-shadow(0 14px 15px #0006);max-width:500px;width:100%;margin:0 auto;display:block}
+.quick-card{box-shadow:0 5px 15px #0004,0 0 18px #ffb84a33!important}
+@media(prefers-reduced-motion:reduce){.snowflake,.lights span,.paper,.modal-paper{animation:none!important}}
 </style>
 </head>
 <body><div class="snow-layer" aria-hidden="true"></div>
