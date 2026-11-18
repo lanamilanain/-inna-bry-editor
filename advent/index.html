@@ -29,7 +29,14 @@ footer{text-align:center;color:#9e987f;font-size:10px;letter-spacing:.12em;margi
 .modal{position:fixed;inset:0;background:#07110ce8;display:none;align-items:center;justify-content:center;padding:18px;z-index:10;backdrop-filter:blur(6px)}.modal.open{display:flex}.modal-paper{max-width:550px;width:100%;max-height:90vh;overflow:auto;background:linear-gradient(130deg,#f3e7d2,#e4d3b7);color:#4a392c;padding:35px 28px;position:relative;box-shadow:0 25px 90px #0007,0 0 30px #ffc96b33}.modal-paper:after{content:"";position:absolute;inset:11px;border:1px solid #9c805340;pointer-events:none}.close{position:absolute;right:17px;top:13px;border:0;background:none;color:#76553a;font-size:26px;cursor:pointer;z-index:2}.date-tag{text-align:center;text-transform:uppercase;letter-spacing:.18em;font-size:10px;color:#906b43}.modal-paper h2{text-align:center;font:500 39px Cormorant Garamond;margin:14px 0;color:#49362a}.modal-paper p{font-size:14px;line-height:1.85}.task{margin-top:22px;padding-top:18px;border-top:1px solid #ad936e;color:#755132;font-size:14px;line-height:1.8}.video-note{margin-top:20px;padding:16px;border:1px dashed #a58b64;text-align:center;font-size:12px;color:#79583b;line-height:1.7}.signature{font:27px Marck Script;text-align:right;color:#80553a;margin-top:18px}
 @media(max-width:680px){.wrap{padding:18px 15px 50px}.hero{padding-top:48px}.grid{grid-template-columns:repeat(4,1fr);gap:9px}.envelope .date{font-size:30px}.scene{padding:13px}.paper{padding:24px 20px}.paper h2{font-size:33px}.calendar-title{margin-top:38px}}
 @media(max-width:390px){.grid{grid-template-columns:repeat(3,1fr)}}
-</style>
+/* STORYBOOK REDESIGN */
+:root{--pine:#48181d;--pine2:#250b10;--cream:#f9ecd4;--paper:#f0dfc2;--gold:#d5a65e;--amber:#ffcc78;--ink:#49372b;--muted:#d2b895}
+body{background:radial-gradient(ellipse at 50% 0,#8b392d 0,#591b20 42%,#230b0f 90%)}body:before{opacity:.26;background-image:radial-gradient(#fff 1px,transparent 2px),radial-gradient(#f3c46e 1px,transparent 2px);background-size:83px 83px,137px 137px;animation:snow 25s linear infinite}
+@keyframes snow{to{background-position:0 760px,48px 815px}}
+.hero h1{text-shadow:0 2px 22px #ffb44944}.hero h1 span{color:#f6bd57;text-shadow:0 0 20px #ff9e3266}.scene,.paper,.modal-paper{box-shadow:0 28px 90px #0007,0 0 32px #ffc66b40,0 0 65px #ff9c3a20}.envelope{border-radius:7px;box-shadow:0 5px 12px #0003,0 0 20px #ffca7255,0 0 35px #ff9c3a35}.envelope:hover:not(:disabled){box-shadow:0 12px 22px #0005,0 0 25px #ffd17a99,0 0 46px #ff9c3a66}.envelope .seal{box-shadow:0 2px 4px #0002,0 0 15px #ffb64e99,0 0 28px #ffc35a44}.envelope.opened{box-shadow:0 0 24px #ffd27a77,0 0 45px #ffb24b44}.modal{backdrop-filter:blur(8px)}
+.elf-art-caption{font:italic 18px Cormorant Garamond;color:#f4d08b;text-align:center;padding:7px 0 13px}
+.quick-links{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:900px;margin:24px auto 32px}.quick-card{display:block;text-align:center;text-decoration:none;color:#f5dfb8;border:1px solid #d09a4b66;border-radius:12px;padding:16px 10px;background:linear-gradient(145deg,#682326aa,#350f13cc);box-shadow:0 0 16px #ffb84a22;transition:.2s}.quick-card:hover{transform:translateY(-4px);box-shadow:0 0 24px #ffb84a55}.quick-icon{display:block;font-size:27px;margin-bottom:7px;filter:drop-shadow(0 0 7px #ffc55a88)}.quick-card strong{font:500 20px Cormorant Garamond;display:block}.quick-card small{font-size:10px;color:#d3bda0;display:block;margin-top:4px}.main-cta{display:inline-block;margin:24px auto 0;padding:13px 25px;border-radius:999px;border:1px solid #efb65d;color:#f8d58e;text-decoration:none;letter-spacing:.1em;font-size:11px;background:#641d2080;box-shadow:0 0 15px #ffc35a66,0 0 35px #ff9c3a33}.main-cta:hover{box-shadow:0 0 25px #ffc35a99,0 0 50px #ff9c3a66}
+@media(max-width:680px){.quick-links{grid-template-columns:repeat(2,1fr);gap:9px;margin:22px auto}.quick-card{padding:14px 8px}.quick-card strong{font-size:18px}}</style>
 </head>
 <body><div class="snow-layer" aria-hidden="true"></div>
 <div class="wrap">
@@ -61,7 +68,8 @@ footer{text-align:center;color:#9e987f;font-size:10px;letter-spacing:.12em;margi
 <div class="subtitle">для Василисы — от Снузи и Нори</div>
 <p class="intro">Кажется, в нашем доме снова поселилось маленькое волшебство. Где-то между снежинками и огоньками появилась почта, адресованная только тебе. В ней — 31 декабрьская история, сюрприз и секрет.</p>
 </section>
-<section class="scene"><div class="paper">
+<nav class="quick-links" aria-label="Разделы почты"><a class="quick-card" href="#calendar"><span class="quick-icon">✉</span><strong>31 письмо</strong><small>открывай каждый день</small></a><a class="quick-card" href="#first-letter"><span class="quick-icon">🎁</span><strong>Послания</strong><small>от Снузи и Нори</small></a><a class="quick-card" href="#missions"><span class="quick-icon">✦</span><strong>Миссии</strong><small>задания и чудеса</small></a><a class="quick-card" href="#calendar"><span class="quick-icon">🎬</span><strong>Видео</strong><small>эльфийские истории</small></a></nav>
+<section class="scene" id="first-letter"><div class="paper">
 <div class="postmark">✦ письмо № 001 · доставлено из зимы ✦</div>
 <h2>Василиса, привет!</h2>
 <p>Ну что, ты заметила? Мы снова здесь! Снузи уже распаковала чемодан, а Нори почему-то принёс с собой целых три шарфа и говорит, что это очень важная вещь.</p>
@@ -69,10 +77,10 @@ footer{text-align:center;color:#9e987f;font-size:10px;letter-spacing:.12em;margi
 <p>Не заглядывай в будущие конверты — они ещё запечатываются! И обязательно проверяй почту каждый день. Мы приготовили для тебя целый декабрь.</p>
 <div class="hand">обнимаем, Снузи и Нори ✧</div>
 </div></section>
-<h2 class="calendar-title">декабрьская почта</h2><div class="calendar-note">по одному письму в день · некоторые конверты особенно важные</div>
+<h2 class="calendar-title" id="calendar">декабрьская почта</h2><div class="calendar-note">по одному письму в день · некоторые конверты особенно важные</div>
 <div class="grid" id="calendar"></div>
 <div class="progress"><span id="progress"></span></div><div class="progress-label" id="progressText">Пока не открыто ни одного письма</div>
-<section class="archive"><h3>Твой рождественский архив</h3>Все открытые письма останутся здесь, даже когда декабрь закончится. Можно будет возвращаться к ним, перечитывать задания и вспоминать наши маленькие чудеса.</section>
+<section class="archive" id="missions"><h3>Твой рождественский архив</h3>Все открытые письма останутся здесь, даже когда декабрь закончится. Можно будет возвращаться к ним, перечитывать задания и вспоминать наши маленькие чудеса.</section>
 <footer>с любовью и щепоткой эльфийского озорства · 2026</footer>
 </div>
 <div class="modal" id="modal"><div class="modal-paper"><button class="close" id="close" aria-label="Закрыть">×</button><div class="date-tag" id="dayLabel"></div><h2 id="dayTitle"></h2><p id="dayBody"></p><div class="task" id="task"></div><div class="signature">Снузи & Нори ♡</div></div></div>
