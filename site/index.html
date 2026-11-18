@@ -99,6 +99,46 @@ body:before{opacity:0!important}
 @media(min-width:900px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 
 </style>
+<style>
+/* redesigned responsive Christmas Mail */
+body{background:radial-gradient(ellipse at 50% 10%,#71332a 0%,#421a19 43%,#19090a 100%);overflow-x:hidden}
+.wrap{width:min(100%,980px);padding:16px clamp(14px,4vw,36px) 54px}
+.top{font-size:clamp(9px,2.2vw,11px);letter-spacing:.14em;gap:12px}
+.hero{padding:28px 8px 28px;display:flex;flex-direction:column;align-items:center}
+.window-scene{width:min(100%,560px);margin:0 auto 12px;position:relative}
+.window-scene svg{display:block;width:100%;height:auto}
+.hero-elf-art{display:block;width:min(100%,460px);height:auto;margin:-2px auto 0;filter:drop-shadow(0 16px 16px #09030355)}
+.elf-art-caption{margin:4px 0 22px;font:italic clamp(18px,5vw,27px) Cormorant Garamond,serif;color:#e8c98d}
+.hero h1{font-size:clamp(40px,12vw,82px);line-height:.9;margin:16px 0 0;text-wrap:balance}
+.hero h1 span{font-size:.56em;margin-top:10px}
+.subtitle{font:italic clamp(19px,5.6vw,30px) Cormorant Garamond,serif;margin:22px 0 16px}
+.eyebrow{font-size:9px;letter-spacing:.15em;line-height:1.7}
+.intro{font-size:clamp(13px,3.6vw,16px);line-height:1.85;max-width:650px;margin:0 auto}
+.calendar-section{margin:18px auto 0;padding:24px 14px 28px;border:1px solid #c49a5b55;background:linear-gradient(180deg,#451a1b66,#260f1055);border-radius:16px;box-shadow:0 0 28px #e3a64b10}
+.calendar-title{font-size:clamp(32px,9vw,54px);margin:0 0 8px}
+.calendar-note{font-size:12px;line-height:1.6;margin:0 auto 24px;max-width:360px}
+.grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;max-width:720px!important;margin:0 auto!important}
+.envelope{display:flex!important;aspect-ratio:1/1.12!important;min-height:0!important;min-width:0!important;padding:0!important;border-radius:7px!important;position:relative!important;overflow:hidden!important;background:linear-gradient(145deg,#873f35,#4a1b1b 72%,#321314)!important;border:1px solid #c69d62!important;color:#f3dfb7!important;box-shadow:0 6px 12px #0004,inset 0 0 0 3px #582820,inset 0 0 0 4px #a9784a!important;transition:transform .2s,filter .2s!important;justify-content:center!important;align-items:center!important}
+.envelope:before{content:""!important;position:absolute!important;inset:6px!important;z-index:0!important;border:1px solid #d3a96d55!important;background:linear-gradient(145deg,#874239,#512425 68%,#381818)!important;opacity:1!important}
+.envelope:after{content:""!important;position:absolute!important;left:6px!important;right:6px!important;top:8%!important;height:58%!important;clip-path:polygon(0 0,100% 0,50% 100%)!important;background:linear-gradient(155deg,#bd7653,#79372d)!important;box-shadow:none!important;border:0!important;opacity:.9!important;z-index:1!important}
+.envelope .flap{position:absolute!important;z-index:2!important;left:6px!important;right:6px!important;top:8%!important;height:58%!important;clip-path:polygon(0 0,100% 0,50% 100%)!important;background:linear-gradient(155deg,#b66d4e,#76382d)!important;filter:drop-shadow(0 2px 3px #1a0909)!important}
+.envelope .date{z-index:4!important;position:relative!important;margin:0!important;font:500 clamp(26px,8vw,42px) Cormorant Garamond,serif!important;color:#f7e5c4!important;text-shadow:0 2px 8px #310e0e!important}
+.envelope .label{z-index:4!important;position:relative!important;margin:2px 0 0!important;font:500 clamp(7px,2.3vw,10px) Manrope,sans-serif!important;letter-spacing:.12em!important;color:#e6c68a!important}
+.envelope .seal{z-index:5!important;position:absolute!important;bottom:8px!important;left:50%!important;transform:translateX(-50%)!important;width:clamp(22px,6vw,30px)!important;height:clamp(22px,6vw,30px)!important;border-radius:50%!important;background:radial-gradient(circle at 30% 25%,#d88a5e,#873d36 70%)!important;border:1px solid #d3ab70!important;color:#f4d89d!important;display:grid!important;place-items:center!important;font-size:12px!important;box-shadow:0 2px 5px #220c0c,0 0 13px #d6a24a55!important}
+.envelope .corner{position:absolute!important;z-index:5!important;right:9px!important;top:9px!important;font-size:10px!important;color:#d8b36f!important}
+.envelope.special{background:linear-gradient(150deg,#b5864c,#693024)!important;border-color:#e3c27b!important;box-shadow:0 8px 20px #0005,inset 0 0 0 3px #682a22,inset 0 0 0 4px #d1a45f!important}
+.envelope.special .flap{background:linear-gradient(150deg,#d4a36a,#8b4c32)!important}
+.envelope.opened{filter:brightness(1.22)!important;border-color:#e6ca88!important;box-shadow:0 0 22px #e6b55c55,inset 0 0 0 3px #693125!important}
+.envelope.locked{opacity:.8!important;filter:saturate(.8)!important}
+.progress{margin:26px 0 12px}
+.progress-label{font-size:12px;text-align:center;line-height:1.6}
+.archive{margin:42px 0 24px;padding:26px 14px;border:1px solid #c49a5b55;border-radius:14px;text-align:center;line-height:1.8;background:#3a161744}
+.archive h3{font:500 clamp(28px,7vw,42px) Cormorant Garamond,serif;margin:0 0 12px;color:#dfc18a}
+footer{text-align:center;font-size:10px;letter-spacing:.14em;color:#c8b18a;padding:28px 8px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}.hero{padding-top:40px}.calendar-section{padding:32px 28px}}
+@media(min-width:850px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))!important}.hero{padding-top:54px}.calendar-section{padding:42px}}
+@media(max-width:380px){.grid{gap:7px!important}.calendar-section{padding:18px 9px}.envelope .seal{bottom:6px}}
+</style>
 </head>
 <body><div class="snow-layer" aria-hidden="true"></div>
 <div class="wrap">
