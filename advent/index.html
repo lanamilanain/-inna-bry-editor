@@ -65,7 +65,7 @@ body:before{opacity:0!important}
 .envelope:after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(ellipse at 50% 48%,#fff5d51f,transparent 65%);pointer-events:none}
 .paper,.modal-paper{box-shadow:0 8px 30px #0005,0 0 25px #ffd17a77,0 0 55px #ffb54a44!important}
 .stamp{box-shadow:inset 0 0 0 4px #263b30,0 0 18px #ffbd5555}
-.hero-elf-art{filter:drop-shadow(0 14px 15px #0006);max-width:500px;width:100%;margin:0 auto;display:block}
+.hero-elf-art{filter:drop-shadow(0 18px 20px #0008);max-width:520px;width:100%;margin:0 auto;display:block;animation:elfFloat 5s ease-in-out infinite}@keyframes elfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 .quick-card{box-shadow:0 5px 15px #0004,0 0 18px #ffb84a33!important}
 @media(prefers-reduced-motion:reduce){.snowflake,.lights span,.paper,.modal-paper{animation:none!important}}
 </style>
@@ -75,26 +75,65 @@ body:before{opacity:0!important}
 <header class="top"><span>рождественская корреспонденция · 2026</span><div class="stamp">✉</div></header>
 <section class="hero">
 <div class="lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-<div class="window-scene" aria-hidden="true"><svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="nightglass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#182d44"/><stop offset="1" stop-color="#283f53"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9b5637"/><stop offset=".5" stop-color="#6f3427"/><stop offset="1" stop-color="#b16a43"/></linearGradient><filter id="windowGlow"><feGaussianBlur stdDeviation="9"/></filter></defs><rect x="15" y="10" width="730" height="490" rx="8" fill="#190c0b" opacity=".45"/><rect x="26" y="15" width="708" height="470" rx="5" fill="url(#wood)" stroke="#d29b57" stroke-width="3"/><rect x="54" y="44" width="652" height="414" fill="url(#nightglass)" stroke="#d7a363" stroke-width="14"/><g fill="#f7e9c6" opacity=".8"><circle cx="95" cy="88" r="2"/><circle cx="154" cy="160" r="2"/><circle cx="250" cy="80" r="2"/><circle cx="327" cy="210" r="1.8"/><circle cx="520" cy="110" r="2"/><circle cx="610" cy="182" r="2"/><circle cx="675" cy="82" r="1.5"/><circle cx="432" cy="65" r="2"/></g><g fill="#142b40"><path d="M110 365L165 230 138 245 190 120 238 246 210 235 265 365Z"/><path d="M430 365L485 220 462 238 526 108 570 240 552 220 616 365Z"/><path d="M260 365L310 245 290 260 345 145 390 260 365 245 420 365Z"/></g><path d="M58 375 Q130 354 208 378 T360 374 T520 376 T706 370 V458 H54Z" fill="#e6dfd1"/><path d="M54 382 Q115 363 170 380 T286 382 T430 374 T560 382 T706 374" fill="none" stroke="#fff4de" stroke-width="9" stroke-linecap="round"/><g stroke="#c28a4b" stroke-width="10" fill="none"><path d="M380 44V458"/><path d="M54 250H706"/></g><g fill="#b33b2f" stroke="#e0b65c" stroke-width="3"><circle cx="174" cy="148" r="27"/><circle cx="590" cy="150" r="29"/></g><g stroke="#f2cc73" stroke-width="4" fill="none"><path d="M151 143q23 14 46 0M151 153q23 14 46 0M566 144q24 14 48 0M566 154q24 14 48 0"/></g><g fill="#183522" stroke="#c7a15c" stroke-width="2"><path d="M108 398l48-110 30 57 37-98 45 151Z"/><path d="M565 398l42-108 33 60 35-99 35 151Z"/></g><g fill="#d9ac56"><circle cx="154" cy="350" r="6"/><circle cx="206" cy="381" r="6"/><circle cx="619" cy="352" r="6"/><circle cx="677" cy="386" r="6"/></g><rect x="26" y="15" width="708" height="470" rx="5" fill="none" stroke="#4a2118" stroke-width="20" opacity=".6"/></svg><div class="lights"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><svg class="hero-elf-art" viewBox="0 0 440 300" role="img" aria-label="Снузи и Нори — маленькие рождественские эльфы">
-<defs><radialGradient id="elfglow"><stop stop-color="#f3c36b" stop-opacity=".28"/><stop offset="1" stop-color="#f3c36b" stop-opacity="0"/></radialGradient></defs>
-<ellipse cx="220" cy="180" rx="180" ry="115" fill="url(#elfglow)"/>
-<g transform="translate(65 12)">
-<path d="M65 34 Q14 8 35 105 Q75 92 103 77Z" fill="#b23a32"/><path d="M37 87 Q63 105 103 78" fill="none" stroke="#d9ad58" stroke-width="6"/>
-<ellipse cx="72" cy="117" rx="48" ry="48" fill="#e8d4ad"/><path d="M30 112 Q72 76 113 112 L112 128 Q72 150 32 128Z" fill="#f2e7d6"/>
-<circle cx="56" cy="119" r="3" fill="#34271f"/><circle cx="87" cy="119" r="3" fill="#34271f"/><path d="M61 136 Q72 144 84 136" fill="none" stroke="#ad6c59" stroke-width="2"/>
-<path d="M29 166 Q72 146 116 166 L127 231 Q72 246 18 231Z" fill="#f2e7d6"/><path d="M30 165 Q8 181 3 215 L29 220 Q45 194 52 177" fill="#704e3c"/><path d="M112 167 Q137 185 138 212 L113 219 Q100 194 91 179" fill="#704e3c"/>
-<path d="M45 233 L43 255 Q30 267 49 269 L71 268 L74 236 M91 234 L94 256 Q107 267 90 269 L72 268" fill="#7b332e"/>
-<path d="M55 92 Q48 78 62 73 Q75 69 86 80 L98 91" fill="#c6a36c"/><path d="M58 88 Q52 102 62 107" fill="none" stroke="#c6a36c" stroke-width="8"/>
-<path d="M40 163 Q72 176 104 162" fill="none" stroke="#d6b66b" stroke-width="4"/>
+<div class="window-scene" aria-hidden="true"><svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="nightglass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#182d44"/><stop offset="1" stop-color="#283f53"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9b5637"/><stop offset=".5" stop-color="#6f3427"/><stop offset="1" stop-color="#b16a43"/></linearGradient><filter id="windowGlow"><feGaussianBlur stdDeviation="9"/></filter></defs><rect x="15" y="10" width="730" height="490" rx="8" fill="#190c0b" opacity=".45"/><rect x="26" y="15" width="708" height="470" rx="5" fill="url(#wood)" stroke="#d29b57" stroke-width="3"/><rect x="54" y="44" width="652" height="414" fill="url(#nightglass)" stroke="#d7a363" stroke-width="14"/><g fill="#f7e9c6" opacity=".8"><circle cx="95" cy="88" r="2"/><circle cx="154" cy="160" r="2"/><circle cx="250" cy="80" r="2"/><circle cx="327" cy="210" r="1.8"/><circle cx="520" cy="110" r="2"/><circle cx="610" cy="182" r="2"/><circle cx="675" cy="82" r="1.5"/><circle cx="432" cy="65" r="2"/></g><g fill="#142b40"><path d="M110 365L165 230 138 245 190 120 238 246 210 235 265 365Z"/><path d="M430 365L485 220 462 238 526 108 570 240 552 220 616 365Z"/><path d="M260 365L310 245 290 260 345 145 390 260 365 245 420 365Z"/></g><path d="M58 375 Q130 354 208 378 T360 374 T520 376 T706 370 V458 H54Z" fill="#e6dfd1"/><path d="M54 382 Q115 363 170 380 T286 382 T430 374 T560 382 T706 374" fill="none" stroke="#fff4de" stroke-width="9" stroke-linecap="round"/><g stroke="#c28a4b" stroke-width="10" fill="none"><path d="M380 44V458"/><path d="M54 250H706"/></g><g fill="#b33b2f" stroke="#e0b65c" stroke-width="3"><circle cx="174" cy="148" r="27"/><circle cx="590" cy="150" r="29"/></g><g stroke="#f2cc73" stroke-width="4" fill="none"><path d="M151 143q23 14 46 0M151 153q23 14 46 0M566 144q24 14 48 0M566 154q24 14 48 0"/></g><g fill="#183522" stroke="#c7a15c" stroke-width="2"><path d="M108 398l48-110 30 57 37-98 45 151Z"/><path d="M565 398l42-108 33 60 35-99 35 151Z"/></g><g fill="#d9ac56"><circle cx="154" cy="350" r="6"/><circle cx="206" cy="381" r="6"/><circle cx="619" cy="352" r="6"/><circle cx="677" cy="386" r="6"/></g><rect x="26" y="15" width="708" height="470" rx="5" fill="none" stroke="#4a2118" stroke-width="20" opacity=".6"/></svg><div class="lights"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><svg class="hero-elf-art" viewBox="0 0 520 410" role="img" aria-label="Снузи и Нори, сказочные рождественские эльфы">
+<defs>
+ <radialGradient id="elfHalo"><stop stop-color="#ffca70" stop-opacity=".42"/><stop offset="1" stop-color="#ffca70" stop-opacity="0"/></radialGradient>
+ <linearGradient id="hatRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c95643"/><stop offset=".55" stop-color="#8c2528"/><stop offset="1" stop-color="#5e171b"/></linearGradient>
+ <linearGradient id="coatGreen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4e7352"/><stop offset="1" stop-color="#1e3d31"/></linearGradient>
+ <linearGradient id="coatBerry" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a54b3c"/><stop offset="1" stop-color="#65232b"/></linearGradient>
+ <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffdfb1"/><stop offset="1" stop-color="#e6b783"/></linearGradient>
+ <filter id="elfShadow"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<ellipse cx="260" cy="315" rx="210" ry="80" fill="url(#elfHalo)"/>
+<ellipse cx="150" cy="362" rx="86" ry="18" fill="#100807" opacity=".3" filter="url(#elfShadow)"/>
+<ellipse cx="366" cy="362" rx="86" ry="18" fill="#100807" opacity=".3" filter="url(#elfShadow)"/>
+<!-- Snuzi -->
+<g transform="translate(65 22)">
+ <path d="M65 67 Q-8 31 36 -22 Q87 -6 115 50 Q107 76 65 67Z" fill="url(#hatRed)" stroke="#6c2023" stroke-width="2"/>
+ <path d="M26 53 Q68 71 112 51" fill="none" stroke="#e5c17a" stroke-width="4" opacity=".7"/>
+ <circle cx="38" cy="-17" r="13" fill="#f5dfc0" stroke="#d8b989" stroke-width="2"/>
+ <path d="M31 82 L-7 60 Q-16 71 -9 83 L22 111" fill="#e7b885" stroke="#d19c6c" stroke-width="2"/>
+ <path d="M125 82 L158 62 Q171 73 163 86 L136 109" fill="#e7b885" stroke="#d19c6c" stroke-width="2"/>
+ <ellipse cx="65" cy="103" rx="52" ry="55" fill="url(#skin)" stroke="#c98e65" stroke-width="2"/>
+ <path d="M17 101 Q23 54 72 48 Q107 55 115 93 Q92 77 79 76 Q51 86 17 101Z" fill="#7c4c2e"/>
+ <path d="M27 112 Q65 91 104 112 L104 130 Q65 145 27 130Z" fill="#fff2db"/>
+ <ellipse cx="48" cy="116" rx="6" ry="9" fill="#4a2a20"/><ellipse cx="82" cy="116" rx="6" ry="9" fill="#4a2a20"/>
+ <circle cx="46" cy="113" r="2" fill="#fff"/><circle cx="80" cy="113" r="2" fill="#fff"/>
+ <ellipse cx="29" cy="130" rx="13" ry="7" fill="#ee9b7b" opacity=".55"/><ellipse cx="99" cy="130" rx="13" ry="7" fill="#ee9b7b" opacity=".55"/>
+ <path d="M53 143 Q66 154 80 142" fill="none" stroke="#a34e40" stroke-width="3" stroke-linecap="round"/>
+ <path d="M26 168 Q65 150 106 169 L125 247 Q65 267 5 247Z" fill="url(#coatBerry)" stroke="#572326" stroke-width="2"/>
+ <path d="M25 169 Q8 186 -9 221 L17 235 Q40 203 50 183" fill="url(#coatBerry)" stroke="#572326" stroke-width="2"/>
+ <path d="M108 170 Q136 186 144 217 L119 232 Q101 205 91 182" fill="url(#coatBerry)" stroke="#572326" stroke-width="2"/>
+ <path d="M44 166 Q65 180 89 166 L78 194 L65 207 L52 194Z" fill="#fff1d8"/>
+ <path d="M65 207 L65 238" stroke="#e4bd72" stroke-width="4"/><circle cx="65" cy="218" r="4" fill="#f4d48c"/><circle cx="65" cy="232" r="4" fill="#f4d48c"/>
+ <path d="M21 247 L18 278 Q7 286 19 291 L49 291 L53 252 M79 251 L82 279 Q92 286 82 291 L56 291 L55 252" fill="#722b2b" stroke="#4a191e" stroke-width="2"/>
+ <path d="M14 289 Q28 282 47 289 L48 296 L9 296Z M55 289 Q75 282 90 289 L96 296 L53 296Z" fill="#4d2422"/>
+ <path d="M32 82 Q16 105 26 132" fill="none" stroke="#d8ad73" stroke-width="5" opacity=".9"/>
 </g>
-<g transform="translate(225 20)">
-<path d="M65 34 Q106 3 97 106 Q64 98 44 78Z" fill="#b23a32"/><path d="M46 84 Q72 102 99 78" fill="none" stroke="#d9ad58" stroke-width="6"/>
-<ellipse cx="72" cy="117" rx="48" ry="48" fill="#e8d4ad"/><path d="M29 111 Q72 77 114 111 L113 128 Q72 149 31 128Z" fill="#f2e7d6"/>
-<circle cx="56" cy="119" r="3" fill="#34271f"/><circle cx="87" cy="119" r="3" fill="#34271f"/><path d="M61 136 Q72 144 84 136" fill="none" stroke="#ad6c59" stroke-width="2"/>
-<path d="M29 166 Q72 146 116 166 L127 231 Q72 246 18 231Z" fill="#f2e7d6"/><path d="M30 165 Q8 181 3 215 L29 220 Q45 194 52 177" fill="#684938"/><path d="M112 167 Q137 185 138 212 L113 219 Q100 194 91 179" fill="#684938"/>
-<path d="M45 233 L43 255 Q30 267 49 269 L71 268 L74 236 M91 234 L94 256 Q107 267 90 269 L72 268" fill="#7b332e"/>
-<path d="M54 163 Q72 176 105 162" fill="none" stroke="#d6b66b" stroke-width="4"/>
+<!-- Nori -->
+<g transform="translate(290 28)">
+ <path d="M72 64 Q127 13 120 -13 Q72 -20 40 49 Q48 75 72 64Z" fill="url(#hatRed)" stroke="#6c2023" stroke-width="2"/>
+ <path d="M41 52 Q82 67 117 45" fill="none" stroke="#e5c17a" stroke-width="4" opacity=".7"/>
+ <circle cx="120" cy="-13" r="12" fill="#f5dfc0" stroke="#d8b989" stroke-width="2"/>
+ <path d="M26 83 L-13 63 Q-22 73 -14 86 L20 111" fill="#e7b885" stroke="#d19c6c" stroke-width="2"/>
+ <path d="M127 84 L159 64 Q170 73 163 87 L137 111" fill="#e7b885" stroke="#d19c6c" stroke-width="2"/>
+ <ellipse cx="72" cy="103" rx="52" ry="55" fill="url(#skin)" stroke="#c98e65" stroke-width="2"/>
+ <path d="M20 96 Q28 54 74 50 Q112 58 121 92 Q96 75 82 77 Q50 85 20 96Z" fill="#8a552e"/>
+ <path d="M30 111 Q72 91 112 111 L111 130 Q72 145 30 130Z" fill="#fff2db"/>
+ <ellipse cx="54" cy="116" rx="6" ry="9" fill="#4a2a20"/><ellipse cx="88" cy="116" rx="6" ry="9" fill="#4a2a20"/>
+ <circle cx="52" cy="113" r="2" fill="#fff"/><circle cx="86" cy="113" r="2" fill="#fff"/>
+ <ellipse cx="34" cy="130" rx="13" ry="7" fill="#ee9b7b" opacity=".55"/><ellipse cx="106" cy="130" rx="13" ry="7" fill="#ee9b7b" opacity=".55"/>
+ <path d="M59 143 Q72 154 86 142" fill="none" stroke="#a34e40" stroke-width="3" stroke-linecap="round"/>
+ <path d="M32 168 Q72 150 112 169 L129 247 Q72 267 12 247Z" fill="url(#coatGreen)" stroke="#203c2e" stroke-width="2"/>
+ <path d="M31 169 Q8 186 -8 221 L17 235 Q42 203 52 183" fill="url(#coatGreen)" stroke="#203c2e" stroke-width="2"/>
+ <path d="M112 170 Q137 186 145 217 L120 232 Q101 205 92 182" fill="url(#coatGreen)" stroke="#203c2e" stroke-width="2"/>
+ <path d="M50 166 Q72 180 94 166 L82 194 L72 207 L59 194Z" fill="#fff1d8"/>
+ <path d="M72 207 L72 238" stroke="#e4bd72" stroke-width="4"/><circle cx="72" cy="218" r="4" fill="#f4d48c"/><circle cx="72" cy="232" r="4" fill="#f4d48c"/>
+ <path d="M28 247 L25 278 Q14 286 26 291 L56 291 L60 252 M85 251 L88 279 Q98 286 88 291 L62 291 L61 252" fill="#31503b" stroke="#1b3228" stroke-width="2"/>
+ <path d="M21 289 Q35 282 54 289 L55 296 L16 296Z M61 289 Q81 282 96 289 L102 296 L59 296Z" fill="#263d2e"/>
 </g>
+<!-- little stars -->
+<g fill="#ffd979" opacity=".9"><path d="M52 28 L57 40 L69 45 L57 50 L52 62 L47 50 L35 45 L47 40Z"/><path d="M458 78 L462 87 L471 91 L462 95 L458 104 L454 95 L445 91 L454 87Z"/><circle cx="256" cy="34" r="4"/><circle cx="240" cy="374" r="3"/><circle cx="480" cy="300" r="3"/></g>
 </svg><div class="elf-art-caption">Снузи и Нори уже здесь ✦</div><div class="eyebrow">письма, которые приходят только в декабре</div>
 <h1>Тайная почта<span>Рождества</span></h1>
 <div class="subtitle">для Василисы — от Снузи и Нори</div>
