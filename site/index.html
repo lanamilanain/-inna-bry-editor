@@ -229,7 +229,7 @@ const entries=[
 ['Письмо почти последнее','Мы уже видим огоньки праздника. Осталось совсем чуть-чуть, и наша почта отправит самое важное письмо.','Оставь сегодня немного времени для сюрприза. Подробности пока не скажем!'],
 ['Самое главное письмо','Василиса, наша почта закрывает декабрьскую смену, но чудеса вовсе не заканчиваются. Спасибо, что каждый день открывала наши письма, смеялась, творила и делилась временем с близкими. Ты — самое настоящее чудо этого декабря.','Открой финальный подарок. С Новым годом! Мы обязательно вернёмся. ♡']
 ];
-const calendar=document.getElementById('calendar'),modal=document.getElementById('modal'),storeKey='secret-christmas-post-2026';
+const calendar=document.querySelector('.grid'),modal=document.getElementById('modal'),storeKey='secret-christmas-post-2026';
 let opened=[];try{opened=JSON.parse(localStorage.getItem(storeKey)||'[]')}catch(e){opened=[]}
 const preview=new URLSearchParams(location.search).has('preview');
 function unlocked(day){if(preview)return true;const now=new Date();return now.getFullYear()===2026&&now.getMonth()===11&&day<=now.getDate()}
