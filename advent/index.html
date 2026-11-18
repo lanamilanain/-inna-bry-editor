@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14241d">
+<title>Секретное дело № 31 — Миссия: Василиса</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@300;400&display=swap');
+:root{--forest:#14241d;--deep:#0d1712;--gold:#d8b979;--cream:#f4ead6;--red:#7b302b;--muted:#c5b99f}
+*{box-sizing:border-box}body{margin:0;color:var(--cream);font-family:Manrope,sans-serif;background:radial-gradient(ellipse at 50% 0%,#304b39 0,#18281e 35%,#0b1510 80%);min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:radial-gradient(#e6c87b 1px,transparent 1.6px);background-size:68px 68px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+.wrap{max-width:1120px;margin:auto;padding:30px 22px 70px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#c9b88c}.seal{width:42px;height:42px;border:1px solid #ad8753;border-radius:50%;display:grid;place-items:center;color:var(--gold);font-family:Georgia;font-size:20px}
+.hero{text-align:center;padding:65px 12px 30px}.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#c5a76b}.hero h1{font:500 clamp(42px,9vw,92px)/.95 Cormorant Garamond,serif;letter-spacing:.02em;margin:22px 0 12px}.hero h1 span{display:block;font-size:.52em;color:var(--gold);letter-spacing:.12em;margin-top:14px}.hero p{max-width:530px;margin:24px auto;color:#ded4bd;font-size:14px;line-height:1.8}
+.portal{position:relative;margin:36px auto 40px;max-width:740px;border:1px solid rgba(216,185,121,.45);padding:24px;background:linear-gradient(140deg,rgba(18,36,26,.8),rgba(7,15,11,.8));box-shadow:0 20px 80px #0005}
+.portal:before,.portal:after{content:"✦";position:absolute;color:var(--gold);font-size:14px}.portal:before{top:10px;left:10px}.portal:after{bottom:10px;right:10px}
+.letter{max-width:560px;margin:auto;text-align:center;padding:20px}.letter h2{font:500 38px Cormorant Garamond,serif;margin:0 0 12px;color:#e9d5a5}.letter p{font-size:13px;line-height:1.85;color:#d4c9b4}.signature{font:italic 24px Cormorant Garamond;color:var(--gold);margin-top:15px}
+.section-title{text-align:center;font:500 34px Cormorant Garamond;margin:55px 0 8px}.hint{text-align:center;color:#bdb49f;font-size:12px;margin-bottom:25px}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.day{aspect-ratio:1;border:1px solid #8b7147;background:linear-gradient(145deg,#314a35,#14241b 70%);color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.25s;box-shadow:inset 0 0 20px #0003}.day:hover:not(.locked){transform:translateY(-4px);border-color:#e2c47d;box-shadow:0 8px 25px #0004,inset 0 0 24px #c7a66a12}.day .num{font:500 34px Cormorant Garamond}.day .small{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#cbb47e;margin-top:4px}.day.locked{opacity:.45;cursor:not-allowed;filter:grayscale(.4)}.day.locked:after{content:"✧";position:absolute;top:7px;right:9px;font-size:11px}.day.done{border-color:#c8ae72;background:linear-gradient(145deg,#4a5536,#243421)}.day.done .small{color:#ead49b}
+.progress{max-width:350px;margin:25px auto 0;height:3px;background:#ffffff1b}.progress span{display:block;height:100%;background:var(--gold);width:0;transition:width .4s}.progress-text{text-align:center;color:#c5b99f;font-size:11px;margin-top:10px}
+footer{text-align:center;color:#9e967f;font-size:11px;letter-spacing:.12em;margin-top:60px}
+.modal{position:fixed;inset:0;background:#06100ce8;display:none;align-items:center;justify-content:center;padding:20px;z-index:5}.modal.open{display:flex}.box{max-width:510px;width:100%;border:1px solid #b18b50;background:linear-gradient(150deg,#23382a,#101b14);padding:32px 26px;text-align:center;position:relative;box-shadow:0 20px 100px #0008}.box button.close{position:absolute;right:13px;top:12px;background:none;border:0;color:#d9c58f;font-size:24px;cursor:pointer}.box .day-label{color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:10px}.box h3{font:500 40px Cormorant Garamond;margin:15px 0}.box p{line-height:1.8;color:#e1d5bf;font-size:14px}.box .mission{border-top:1px solid #b18b503b;margin-top:22px;padding-top:18px;color:#f0d18d}
+@media(max-width:650px){.wrap{padding:20px 16px 55px}.hero{padding-top:45px}.portal{padding:12px}.letter{padding:12px}.grid{grid-template-columns:repeat(4,1fr);gap:9px}.day .num{font-size:29px}.section-title{margin-top:40px}.top{letter-spacing:.13em;font-size:9px}}
+@media(max-width:390px){.grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><span>Эльфийский штаб · секретный архив</span><div class="seal">31</div></header>
+<section class="hero">
+<div class="eyebrow">Дело открыто · декабрь 2026</div>
+<h1>Секретное дело № 31<span>миссия: василиса</span></h1>
+<p>В штабе снова обнаружено письмо. Оно адресовано только тебе. Снузи и Нори вернулись, но в этот раз им нужна помощь в одном очень важном деле.</p>
+</section>
+<section class="portal">
+<div class="letter"><div class="eyebrow">Письмо из эльфийского штаба</div><h2>Дорогая Василиса!</h2>
+<p>Мы снова здесь! Снузи уже успела устроить маленький переполох, а Нори обнаружил кое-что странное в архиве. Кажется, декабрь приготовил для нас 31 секрет.</p>
+<p>Каждый день будет появляться новое задание, письмо или сюрприз. Не пропускай сигналы из штаба. И помни: самые важные секреты открываются тем, кто умеет замечать чудеса.</p><div class="signature">Снузи & Нори ✦</div></div>
+</section>
+<h2 class="section-title">Архив декабрьских миссий</h2><div class="hint">Окошки открываются день за днём · нажми на доступную дату</div>
+<div class="grid" id="calendar"></div>
+<div class="progress"><span id="progress"></span></div><div class="progress-text" id="progressText">Секреты пока не раскрыты</div>
+<footer>ТОЛЬКО ДЛЯ ВАСИЛИСЫ · 2026</footer>
+</div>
+<div class="modal" id="modal"><div class="box"><button class="close" id="close" aria-label="Закрыть">×</button><div class="day-label" id="dayLabel"></div><h3 id="dayTitle"></h3><p id="dayBody"></p><div class="mission" id="mission"></div></div></div>
+<script>
+const calendar=document.getElementById('calendar'),modal=document.getElementById('modal'),openedKey='elf-advent-2026';
+const today=new Date();const year=2026;
+const entries=[
+['Сигнал из штаба','Снузи и Нори снова здесь! Сегодня нужно придумать секретное приветствие для нашей команды.','Миссия: придумай пароль, который знают только вы трое.'],
+['Почта Деда Мороза','Сегодня штаб превращается в почтовую станцию.','Миссия: напиши письмо Деду Морозу и подготовь его к отправке.'],
+['Следы на снегу','Кто-то ночью оставил возле штаба странные следы…','Миссия: найди дома 5 предметов, которые могли принадлежать эльфам.'],
+['Тёплый день','Даже секретным агентам нужен уют.','Миссия: выбери любимый напиток и устрой маленький зимний перерыв.'],
+['Эльфийская фотосессия','Снузи просит сделать несколько кадров для архива.','Миссия: устрой смешную фотосессию эльфам.'],
+['Тайный комплимент','В штабе сегодня день добрых слов.','Миссия: оставь кому-нибудь дома секретную записку.'],
+['Улики недели','Пора проверить, сколько секретов уже раскрыто.','Миссия: нарисуй эмблему секретного дела № 31.'],
+['Кинооперация','Сегодня штаб работает в режиме кинотеатра.','Миссия: выбери фильм для уютного семейного вечера.'],
+['Подарок без повода','Нори считает, что сюрпризы не обязательно ждать.','Миссия: сделай маленький сюрприз кому-нибудь.'],
+['Снежная лаборатория','Снузи хочет провести эксперимент.','Миссия: придумай или проведи зимний эксперимент.'],
+['Тайный маршрут','В архиве появилась карта.','Миссия: найди дома место, где спрятана маленькая записка.'],
+['День блёсток','Сегодня разрешено немного волшебства.','Миссия: нарядись так, будто идёшь на эльфийский бал.'],
+['Кодовое слово','Штаб меняет пароль.','Миссия: придумай новое кодовое слово для сегодняшнего дня.'],
+['Время для творчества','Снузи оставила материалы для творчества.','Миссия: сделай маленькую новогоднюю поделку.'],
+['Половина пути','Вы раскрыли уже много секретов.','Миссия: выбери три самых счастливых момента этого года.'],
+['Вкусный секрет','Нори проголодался во время расследования.','Миссия: приготовьте вместе что-нибудь вкусное.'],
+['Операция доброта','Сегодня важна не улика, а доброе дело.','Миссия: помоги кому-нибудь, не рассказывая об этом сразу.'],
+['Зимнее настроение','Штаб объявляет вечер уютных вещей.','Миссия: собери плед, вкусняшку и любимую музыку.'],
+['Загадка от Нори','Нори придумал загадку, но забыл ответ.','Миссия: придумай загадку для семьи.'],
+['Секретный танец','Снузи включила музыку и не может остановиться.','Миссия: придумай короткий танец эльфов.'],
+['Охота за украшениями','В архиве нужна праздничная атмосфера.','Миссия: найди или повесь одно новогоднее украшение.'],
+['День воспоминаний','Эльфы хотят сохранить лучшие моменты.','Миссия: выбери фото этого года, которое хочется оставить в памяти.'],
+['Секретная посылка','Для агента Василисы подготовлена небольшая посылка.','Миссия: ищи сюрприз там, где подскажет сегодняшний конверт.'],
+['Пижамная операция','Сегодня штаб закрывает все серьёзные дела.','Миссия: устрой вечер в пижаме.'],
+['Большая подготовка','До финала осталось совсем немного.','Миссия: помоги подготовить один маленький элемент праздника.'],
+['Звёздная улика','Снузи нашла звёздочку с посланием.','Миссия: загадай желание и запиши его в секретный блокнот.'],
+['День семейной команды','Без команды даже эльфы не справятся.','Миссия: придумайте семейную игру или испытание.'],
+['Последний конверт','Нори почти раскрыл главное дело.','Миссия: напиши, что было самым волшебным в этом адвенте.'],
+['Тихое чудо','Сегодня можно никуда не спешить.','Миссия: подарите друг другу час спокойствия и уюта.'],
+['Почти финал','Снузи и Нори готовят последний сюрприз.','Миссия: оставь место для самого главного завтра.'],
+['Дело раскрыто!','Агент Василиса успешно выполнила миссию № 31.','Миссия: открой финальный подарок. С Новым годом, наш главный агент!']
+];
+let opened=JSON.parse(localStorage.getItem(openedKey)||'[]');
+function render(){calendar.innerHTML='';entries.forEach((e,i)=>{const d=i+1,unlocked=d<=today.getDate()&&today.getMonth()===11&&today.getFullYear()===year;const card=document.createElement('button');card.className='day'+(!unlocked?' locked':'')+(opened.includes(d)?' done':'');card.disabled=!unlocked;card.innerHTML='<span class="num">'+String(d).padStart(2,'0')+'</span><span class="small">'+(opened.includes(d)?'открыто':'секрет')+'</span>';card.addEventListener('click',()=>show(d));calendar.appendChild(card)});document.getElementById('progress').style.width=(opened.length/31*100)+'%';document.getElementById('progressText').textContent=opened.length?'Раскрыто секретов: '+opened.length+' из 31':'Секреты пока не раскрыты'}
+function show(d){const e=entries[d-1];document.getElementById('dayLabel').textContent='Миссия '+String(d).padStart(2,'0')+' · секретное дело';document.getElementById('dayTitle').textContent=e[0];document.getElementById('dayBody').textContent=e[1];document.getElementById('mission').textContent=e[2];modal.classList.add('open');if(!opened.includes(d)){opened.push(d);localStorage.setItem(openedKey,JSON.stringify(opened));render()}}
+document.getElementById('close').onclick=()=>modal.classList.remove('open');modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});render();
+</script>
+</body></html>
