@@ -1,5 +1,5 @@
-// Заполни эти два значения после создания проекта Supabase.
+// Supabase project connection
 window.ADVENT_CONFIG = {
-  SUPABASE_URL: "ВСТАВЬТЕ_PROJECT_URL",
-  SUPABASE_ANON_KEY: "ВСТАВЬТЕ_PUBLISHABLE_OR_ANON_KEY"
+  SUPABASE_URL: "https://hidzsgrxqurzljnbcxft.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_8bjXM6jKD-i__lxomk8E7w_O4C8u8Mv"
 };
