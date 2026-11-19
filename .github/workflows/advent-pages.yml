@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'site/**'
+      - 'advent-vasilisa-2026/**'
       - '.github/workflows/advent-pages.yml'
   workflow_dispatch:
 permissions:
@@ -23,6 +24,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
+      - name: Add Vasilisa Advent under its own path
+        run: |
+          mkdir -p site/advent-vasilisa-2026
+          cp -R advent-vasilisa-2026/. site/advent-vasilisa-2026/
       - name: Upload Advent site
         uses: actions/upload-pages-artifact@v3
         with:
