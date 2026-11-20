@@ -1401,7 +1401,7 @@
         try { return new URLSearchParams(window.location.search).get('mama') === '1'; }
         catch (e) { return false; }
       })();
-      let momPreviewAll = false;
+      let momPreviewAll = momUnlocked;
       let missionFilter = 'unlocked';
       let currentLetterDay = null;
       let toastTimer = null;
