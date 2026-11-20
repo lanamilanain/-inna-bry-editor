@@ -55,6 +55,67 @@ body.dragging{overflow:hidden!important;overscroll-behavior:none!important;touch
 .stage.move-mode .drag-handle{position:absolute!important;display:flex!important;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid #d4a45f;border-radius:50%;background:#3d291f;color:#fff4e4;font:22px/1 sans-serif;z-index:10000;touch-action:none!important;pointer-events:auto!important;user-select:none;-webkit-user-select:none;box-shadow:0 2px 8px #24170f55}
 .stage .drag-handle{display:none}
 body.dragging{overflow:hidden!important;touch-action:none!important}
+
+/* 2026 usability pass: predictable stacking, spacing and mobile controls */
+.stage.hasphoto:not(.template-photo) .photo-layer{z-index:0!important}
+.stage.hasphoto:not(.template-photo) .rubric,
+.stage.hasphoto:not(.template-photo) .heading,
+.stage.hasphoto:not(.template-photo) .copy,
+.stage.hasphoto:not(.template-photo) .accent,
+.stage.hasphoto:not(.template-photo) .foot{position:relative;z-index:2}
+.stage .phone-plate{box-shadow:0 8px 22px #24170f22}
+.stage .photo-tile img{will-change:object-position,transform}
+button,input,textarea,select{font:inherit}
+button{ -webkit-tap-highlight-color:transparent }
+.btn:focus-visible,.choice:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #b98543;outline-offset:2px}
+.field input:not([type=color]):not([type=file]),.field textarea,.photo-tools select{min-height:46px}
+.field textarea{line-height:1.45}
+.btn,.choice{min-height:44px}
+.preview{min-width:0;border-radius:20px}
+.previewhead{gap:10px;flex-wrap:wrap}
+.previewhead>span:first-child{font-size:12px}
+.previewhead #moveToggle{min-width:150px;min-height:46px;border-radius:13px;font-size:14px;letter-spacing:.02em}
+.stagewrap{padding:16px 0 10px}
+.stage{border-radius:8px}
+.status{line-height:1.5}
+@media(max-width:850px){
+  .top{position:relative;gap:12px;align-items:flex-start}
+  .brand{font-size:21px}
+  .top small{font-size:9px;line-height:1.5}
+  .layout{display:flex;flex-direction:column;gap:12px;padding:10px}
+  .preview{order:0;padding:16px 14px 14px}
+  .layout>.panel:not(.preview){order:1}
+  .panel{border-radius:18px;padding:16px}
+  .panel h2{margin:24px 0 11px;font-size:12px}
+  .panel h2:first-child{margin-top:2px}
+  .stagewrap{padding:14px 0 8px}
+  .stage{width:min(100%,440px)!important}
+  .previewhead{display:grid;grid-template-columns:1fr auto;row-gap:12px}
+  .previewhead #moveToggle{grid-column:1/-1;width:100%}
+  .grid{gap:9px}
+  .grid>.choice{min-height:48px}
+  .row{gap:8px}
+  .row>.btn{min-width:calc(50% - 4px)}
+  .field{margin:13px 0}
+  .field span{font-size:12px;margin-bottom:7px}
+  .field input:not([type=color]):not([type=file]),.field textarea{padding:12px;font-size:16px}
+  .swatch{width:36px;height:36px}
+  .photo-tools{padding:12px}
+  .photo-tools label{margin:10px 0}
+  .thumbs{padding:3px 1px 7px}
+}
+@media(max-width:420px){
+  .layout{padding:8px;gap:9px}
+  .preview{padding:14px 11px}
+  .panel{padding:13px}
+  .brand{font-size:19px}
+  .top{padding:13px}
+  .stage{width:100%!important}
+  .previewhead #moveToggle{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
 </style></head><body>
 <header class="top"><div><div class="brand">ЗАГРЯЖСКОЕ</div><small>CONTENT STUDIO · CREATIVE TOOLS</small></div><small>СТУДИЯ КОНТЕНТА</small></header>
 <main class="layout">
@@ -107,7 +168,7 @@ $('stage').addEventListener('pointerdown',beginDrag,{passive:false});document.ad
 function touchStart(e){if(!moveMode)return;const target=e.target.closest('#rubricPreview,#headingPreview,#bodyPreview,#accentPreview,.phone-plate,#repostText');if(!target||target.classList.contains('block-deleted'))return;const t=e.changedTouches[0],key=target.classList.contains('phone-plate')?'phonePlate':target.id,p=(cur().positions||{})[key]||{x:0,y:0};dragState={key,el:target,id:'touch',startX:t.clientX,startY:t.clientY,baseX:p.x,baseY:p.y};e.preventDefault()}
 function touchMove(e){if(!dragState||dragState.id!=='touch')return;const t=e.changedTouches[0],p={x:dragState.baseX+t.clientX-dragState.startX,y:dragState.baseY+t.clientY-dragState.startY};cur().positions=cur().positions||{};cur().positions[dragState.key]=p;dragState.el.style.transform='translate('+p.x+'px,'+p.y+'px)';e.preventDefault()}
 function touchEnd(){if(dragState&&dragState.id==='touch'){dragState=null;save()}}
-$('stage').addEventListener('touchstart',touchStart,{passive:false});document.addEventListener('touchmove',touchMove,{passive:false});document.addEventListener('touchend',touchEnd);document.addEventListener('touchcancel',touchEnd);
+/* Pointer Events are used as the single input path to avoid duplicate drags on iOS. */
 document.querySelectorAll('[data-delete-block]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.deleteBlock;cur().hiddenBlocks=cur().hiddenBlocks||[];if(!cur().hiddenBlocks.includes(id))cur().hiddenBlocks.push(id);if(editableMap[id]){cur()[editableMap[id]]='';$(editableMap[id]).value='';$(id).textContent=''}if(id==='phonePlate'){cur().phone='';cur().address='';$('phone').value='';$('address').value=''}if(id==='repostText')cur().repostText='';render();say('Блок удалён с макета. Его можно вернуть кнопкой ниже.')}));
 $('restoreBlocks').addEventListener('click',()=>{cur().hiddenBlocks=[];render();say('Все удалённые блоки возвращены.')});
 Object.entries(editableMap).forEach(([id,key])=>{const el=$(id);if(!el)return;el.contentEditable='true';el.addEventListener('input',()=>{cur()[key]=el.textContent;const input=$(key);if(input)input.value=el.textContent;save()});el.addEventListener('blur',()=>{cur()[key]=el.textContent;save()})});
@@ -127,7 +188,7 @@ function photoStart(e){if(!photoCropMode)return;const tile=e.target.closest('.ph
 function photoMove(e){if(!photoDrag)return;const t=e.changedTouches?e.changedTouches[0]:e,p=cur().photos[photoDrag.idx];if(!p)return;p.x=Math.max(0,Math.min(100,photoDrag.baseX-(t.clientX-photoDrag.x)/Math.max(1,photoDrag.w)*100));p.y=Math.max(0,Math.min(100,photoDrag.baseY-(t.clientY-photoDrag.y)/Math.max(1,photoDrag.h)*100));const im=$('photoLayer').children[photoDrag.idx]?.querySelector('img');if(im){im.style.objectPosition=p.x+'% '+p.y+'%'}$('photoX').value=p.x;$('photoY').value=p.y;$('xOut').textContent=Math.round(p.x)+'%';$('yOut').textContent=Math.round(p.y)+'%';save();e.preventDefault()}
 function photoEnd(){if(photoDrag){photoDrag=null;persist();say('Кадр фотографии обновлён.')}}
 $('photoLayer').addEventListener('pointerdown',photoStart,{passive:false});document.addEventListener('pointermove',photoMove,{passive:false});document.addEventListener('pointerup',photoEnd);document.addEventListener('pointercancel',photoEnd);
-$('photoLayer').addEventListener('touchstart',photoStart,{passive:false});document.addEventListener('touchmove',photoMove,{passive:false});document.addEventListener('touchend',photoEnd);document.addEventListener('touchcancel',photoEnd);
+/* Pointer Events provide one consistent drag path across touch and mouse. */
 $('photoSelect').addEventListener('change',()=>{selectedPhoto=Number($('photoSelect').value);render()});
 ['photoX','photoY','photoZoom'].forEach(id=>$(id).addEventListener('input',()=>{const p=cur().photos[selectedPhoto];if(!p)return;p.x=Number($('photoX').value);p.y=Number($('photoY').value);p.zoom=Number($('photoZoom').value);$('xOut').textContent=p.x+'%';$('yOut').textContent=p.y+'%';$('zoomOut').textContent=p.zoom+'%';const im=$('photoLayer').children[selectedPhoto]?.querySelector('img');if(im){im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+(p.zoom/100)+')'}persist()}));
 $('removePhoto').addEventListener('click',()=>{if(selectedPhoto<0||!cur().photos.length)return;cur().photos.splice(selectedPhoto,1);selectedPhoto=Math.max(0,selectedPhoto-1);persist();render()});
