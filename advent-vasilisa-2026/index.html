@@ -1085,6 +1085,7 @@
               <span aria-hidden="true">✉️</span>
             </button>
             <span class="text-[11px] text-[#C5AB95]">Письмо сохранится в твоём дневнике и улетит эльфам ✨</span>
+            <span id="elfLetterSendStatus" role="status" aria-live="polite" class="w-full text-xs text-[#F7C66E]"></span>
           </div>
         </form>
 
@@ -1291,6 +1292,8 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
   <script>
     (function () {
       // Snapshot pristine initial HTML BEFORE any DOM mutations so Mom can export a clean updated index.html!
@@ -1336,6 +1339,11 @@
       // Load embedded JSON data + ensure all 31 days exist
       const rawJsonEl = document.getElementById('elf-data');
       const elfData = JSON.parse(rawJsonEl.textContent);
+
+      const adventSupabaseConfig = window.ADVENT_CONFIG || {};
+      const adventSupabase = (window.supabase && adventSupabaseConfig.SUPABASE_URL && adventSupabaseConfig.SUPABASE_ANON_KEY)
+        ? window.supabase.createClient(adventSupabaseConfig.SUPABASE_URL, adventSupabaseConfig.SUPABASE_ANON_KEY)
+        : null;
 
       const STORAGE_KEY = 'vasilisa_secret_post_2026_v2';
       const MOM_DRAFT_KEY = 'vasilisa_mom_draft_2026_v2';
@@ -1895,20 +1903,29 @@
         saveState();
         renderSentLetters();
 
-        if (elfData.formspreeUrl && elfData.formspreeUrl.startsWith('https://')) {
-          try {
-            await fetch(elfData.formspreeUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify({ from: 'Василиса', to, mood, message: text, sentAt: nowStr })
-            });
-          } catch (err) {}
+        const sendStatus = document.getElementById('elfLetterSendStatus');
+        if (!adventSupabase) {
+          if (sendStatus) sendStatus.textContent = 'Письмо осталось в этом браузере: почтовый сервер ещё не подключён.';
+          btn.disabled = false;
+          return;
         }
 
-        input.value = '';
-        btn.disabled = false;
-        playChimeSparkle();
-        showSnuziToast('Ура! Письмо улетело прямо в красный почтовый ящик — мы прочтём его сегодня ночью! ✉️✨', 'Снузи и Нори:');
+        try {
+          const { error } = await adventSupabase.from('child_messages').insert({
+            recipient: to,
+            mood,
+            message: text
+          });
+          if (error) throw error;
+          if (sendStatus) sendStatus.textContent = 'Письмо доставлено в тайный почтовый ящик эльфов ✨';
+          input.value = '';
+          btn.disabled = false;
+          playChimeSparkle();
+          showSnuziToast('Ура! Письмо долетело до нашего тайного почтового ящика. Мы прочтём его сегодня ночью! ✉️✨', 'Снузи и Нори:');
+        } catch (err) {
+          if (sendStatus) sendStatus.textContent = 'Не удалось доставить письмо. Оно сохранено в этом браузере, попробуй отправить ещё раз.';
+          btn.disabled = false;
+        }
       });
 
       /* =====================================================================
