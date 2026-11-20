@@ -154,7 +154,7 @@ const p=s.photos[selectedPhoto];$('photoX').value=p?p.x||50:50;$('photoY').value
 
 $('counter').textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
 document.querySelectorAll('[data-format]').forEach(b=>b.classList.toggle('active',b.dataset.format===format));document.querySelectorAll('[data-template]').forEach(b=>b.classList.toggle('active',b.dataset.template===template));document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.bg===s.bg&&b.dataset.text===s.text));
-$('thumbs').replaceChildren();slides.forEach((sl,i)=>{const b=document.createElement('button');b.type='button';b.className='thumb'+(i===index?' active':'');b.textContent='Слайд '+(i+1);b.addEventListener('click',()=>{persist();index=i;selectedPhoto=0;photoData=cur().photo||'';render()});$('thumbs').appendChild(b)});applyPositions();save();requestAnimationFrame(renderDragHandles)
+$('thumbs').replaceChildren();slides.forEach((sl,i)=>{const b=document.createElement('button');b.type='button';b.className='thumb'+(i===index?' active':'');b.textContent='Слайд '+(i+1);b.addEventListener('click',()=>{persist();index=i;selectedPhoto=0;photoData=cur().photo||'';render()});$('thumbs').appendChild(b)});applyPositions();save()
 }
 
 let dragState=null;
@@ -191,7 +191,7 @@ $('photoLayer').addEventListener('pointerdown',photoStart,{passive:false});docum
 /* Pointer Events provide one consistent drag path across touch and mouse. */
 $('photoSelect').addEventListener('change',()=>{selectedPhoto=Number($('photoSelect').value);render()});
 ['photoX','photoY','photoZoom'].forEach(id=>$(id).addEventListener('input',()=>{const p=cur().photos[selectedPhoto];if(!p)return;p.x=Number($('photoX').value);p.y=Number($('photoY').value);p.zoom=Number($('photoZoom').value);$('xOut').textContent=p.x+'%';$('yOut').textContent=p.y+'%';$('zoomOut').textContent=p.zoom+'%';const im=$('photoLayer').children[selectedPhoto]?.querySelector('img');if(im){im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transform='scale('+(p.zoom/100)+')'}persist()}));
-$('removePhoto').addEventListener('click',()=>{if(selectedPhoto<0||!cur().photos.length)return;cur().photos.splice(selectedPhoto,1);selectedPhoto=Math.max(0,selectedPhoto-1);persist();render()});
+$('removePhoto').addEventListener('click',()=>{persist();const photos=cur().photos||[];if(selectedPhoto<0||selectedPhoto>=photos.length){say('Сначала выбери фотографию для удаления.');return}photos.splice(selectedPhoto,1);selectedPhoto=Math.min(selectedPhoto,photos.length-1);photoData='';cur().photo='';save();render();say(photos.length?'Фотография удалена.':'Все фотографии удалены с этого слайда.')});
 $('photoFit').addEventListener('click',()=>{const p=cur().photos[selectedPhoto];if(!p)return;p.x=50;p.y=50;p.zoom=100;render()});
 $('addSlide').addEventListener('click',()=>{persist();slides.push({rubric:cur().rubric,heading:'',body:'',accent:'',bg:cur().bg,text:cur().text,photo:'',photos:[],phone:cur().phone,address:cur().address,repostText:'',positions:{}});index=slides.length-1;photoData='';selectedPhoto=0;render();say('Новый слайд добавлен.')});
 $('duplicate').addEventListener('click',()=>{persist();slides.splice(index+1,0,JSON.parse(JSON.stringify(cur())));index++;photoData=cur().photo||'';selectedPhoto=0;render();say('Слайд продублирован.')});
@@ -213,7 +213,7 @@ async function zip(entries){const enc=new TextEncoder(),parts=[],central=[];let 
 $('download').addEventListener('click',async()=>{const b=$('download');b.disabled=true;try{await downloadOne(index);say('PNG текущего слайда подготовлен.')}catch(e){say('Ошибка экспорта PNG: '+e.message)}finally{b.disabled=false}});
 $('downloadAll').addEventListener('click',async()=>{const b=$('downloadAll');persist();b.disabled=true;const old=b.textContent;b.textContent='Готовим архив…';try{const entries=[];for(let i=0;i<slides.length;i++)entries.push({name:'zagryazhskoe-'+String(i+1).padStart(2,'0')+'.png',blob:await makePNG(slides[i],i)});saveBlob(await zip(entries),'zagryazhskoe-carousel.zip');say('ZIP-архив со всеми слайдами подготовлен.')}catch(e){say('Ошибка сборки архива: '+e.message)}finally{b.disabled=false;b.textContent=old}});
 try{const d=JSON.parse(localStorage.getItem('zagryazhskoeStudioV2')||'null');if(d&&Array.isArray(d.slides)&&d.slides.length){slides=d.slides;index=Math.min(d.index||0,slides.length-1);format=d.format||'post';template=['photo','phone','repost'].includes(d.template)?d.template:'background';slides.forEach(s=>{if(!s.photos)s.photos=s.photo?[{src:s.photo,x:50,y:50,zoom:100}]:[];if(!s.positions)s.positions={};if(s.phone==='+7 (901) 147-54-54')s.phone='8 (925) 167-72-55'});selectedPhoto=0;photoData=cur().photo||''}}catch(e){}
-render();
 window.addEventListener('error',e=>say('Ошибка скрипта: '+e.message));
+render();
 })();
 </script></body></html>
