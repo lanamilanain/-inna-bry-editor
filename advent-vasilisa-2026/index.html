@@ -1398,7 +1398,7 @@
             if (row.title && row.title.trim()) item.title = row.title.trim();
             if (row.letter_title && row.letter_title.trim()) item.letterTitle = row.letter_title.trim();
             if (row.letter_body && row.letter_body.trim()) {
-              item.letter = row.letter_body.split(/\\n\\s*\\n/).map((part) => part.trim()).filter(Boolean);
+              item.letter = row.letter_body.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
             }
             if (row.task && row.task.trim()) item.mission = row.task.trim();
             if (row.extra_text && row.extra_text.trim()) item.extraText = row.extra_text.trim();
