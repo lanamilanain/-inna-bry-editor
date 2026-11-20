@@ -1084,15 +1084,11 @@
               <span>Отправить в красный ящик</span>
               <span aria-hidden="true">✉️</span>
             </button>
-            <span class="text-[11px] text-[#C5AB95]">Письмо сохранится в твоём дневнике и улетит эльфам ✨</span>
+            <span class="text-[11px] text-[#C5AB95]">Письмо отправится в тайный почтовый ящик эльфов ✨</span>
             <span id="elfLetterSendStatus" role="status" aria-live="polite" class="w-full text-xs text-[#F7C66E]"></span>
           </div>
         </form>
 
-        <div id="sentLettersWrap" class="mt-6 pt-5 border-t border-[#F7C66E]/15" style="display:none;">
-          <h3 class="text-xs uppercase tracking-[0.2em] text-[#F7C66E] mb-3">📬 Твои отправленные письма</h3>
-          <div id="sentLettersList" class="space-y-2.5 max-h-56 overflow-y-auto pr-1"></div>
-        </div>
       </div>
     </div>
   </section>
@@ -1871,22 +1867,6 @@
       /* =====================================================================
          SENT LETTERS ARCHIVE & FORM SUBMISSION
       ===================================================================== */
-      function renderSentLetters() {
-        const wrap = document.getElementById('sentLettersWrap');
-        const list = document.getElementById('sentLettersList');
-        if (state.sentLetters.length === 0) { wrap.style.display = 'none'; return; }
-        wrap.style.display = 'block';
-        list.innerHTML = state.sentLetters.slice().reverse().map((item) => `
-          <div class="rounded-xl bg-[#160608]/85 border border-[#F7C66E]/20 p-3">
-            <div class="flex items-center justify-between gap-2 text-[11px] text-[#F7C66E]">
-              <span>Кому: ${item.to} · ${item.mood}</span>
-              <span class="text-[#B99F8B]">${item.date}</span>
-            </div>
-            <p class="text-xs sm:text-sm text-[#F8EEDB] font-light mt-1.5 whitespace-pre-wrap">${item.text}</p>
-          </div>
-        `).join('');
-      }
-
       document.getElementById('elfLetterForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const to = document.getElementById('letterToSelect').value;
@@ -1899,9 +1879,6 @@
         btn.disabled = true;
 
         const nowStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-        state.sentLetters.push({ to, mood, text, date: nowStr });
-        saveState();
-        renderSentLetters();
 
         const sendStatus = document.getElementById('elfLetterSendStatus');
         if (!adventSupabase) {
@@ -2159,7 +2136,6 @@
       renderEnvelopes();
       renderMissions();
       renderFeaturedVideo();
-      renderSentLetters();
     })();
   </script>
 </body>
