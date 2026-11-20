@@ -722,6 +722,38 @@
     },
     {
       "day": 31,
+      "title": "Миссия «Спасибо за год»",
+      "sender": "Снузи и Нори",
+      "videoUrl": "",
+      "letter": [
+        "Мы почти закончили наше дело № 31. В эльфийском отчёте осталось самое важное — поблагодарить тех, кто был рядом.",
+        "В этом году было много разных дней, и каждый чему-то научил. Даже если что-то не получилось, это не отменяет всего хорошего.",
+        "Мы гордимся тобой за то, что ты продолжаешь мечтать и пробовать."
+      ],
+      "mission": "Поблагодари близкого человека за что-то конкретное, что он сделал для тебя в этом году. Можно сказать лично или написать записку.",
+      "watchTitle": "Клаус (2019)",
+      "watchNote": "Самое время вспомнить историю о доброте, которая меняет целый город.",
+      "recipeTitle": "Чай и любимое печенье",
+      "recipeNote": "Устрой спокойное чаепитие с близкими."
+    },
+    {
+      "day": 32,
+      "title": "Тайна последнего конверта",
+      "sender": "Нори",
+      "videoUrl": "",
+      "letter": [
+        "В нашем сундуке остался последний конверт. На нём нет даты, только маленькая снежинка.",
+        "Снузи говорит, что внутри спрятан секрет. А я знаю: секрет не в бумаге, а во всём, что ты успела пережить за эти дни.",
+        "Сегодня собери свои любимые воспоминания и приготовься к финалу миссии."
+      ],
+      "mission": "Собери в одном месте рисунки, записки и маленькие памятные вещи декабря. Выбери одну, которая особенно дорога, и расскажи почему.",
+      "watchTitle": "Энканто (2021)",
+      "watchNote": "Тёплая история о доме, семье и уникальности каждого.",
+      "recipeTitle": "Десерт из йогурта и фруктов",
+      "recipeNote": "Собери простой десерт из йогурта, фруктов и хлопьев."
+    },
+    {
+      "day": 33,
       "title": "Миссия завершена. До встречи!",
       "sender": "Снузи и Нори",
       "videoUrl": "",
@@ -1099,7 +1131,7 @@
   <!-- FOOTER -->
   <footer class="relative z-10 border-t border-[#F7C66E]/15 py-8 text-center text-xs text-[#B99F8B]">
     <p class="font-serif-magic text-lg text-[#F7C66E]">Тайная почта Рождества · для Василисы</p>
-    <p class="mt-1">Снузи и Нори · Секретное дело № 31</p>
+    <p class="mt-1">Сделано с любовью и волшебством · ТАЙНАЯ ПОЧТА · 2026</p>
   </footer>
 
   <!-- WAX SEAL BREAKING OVERLAY -->
@@ -1411,10 +1443,739 @@
         const now = new Date();
         const m = now.getMonth();
         if (m === 11) return dayNum <= now.getDate();
-        if (m === 0 || m === 1) return true;
+        if (m === 0 || m === 1) return false;
         return false;
       }
 
       /* =====================================================================
          SNUZI MISCHIEVOUS TOAST
+      ===================================================================== */      const SNUZI_LOCKED_LINES = [
+        (d) => `Эй, Вася, не подглядывай! 😜 Это письмо ещё греется у камина до ${d} декабря!`,
+        (d) => `Кот Рыжий, держи её! Кто-то пытается открыть конверт раньше ${d} декабря!`,
+        (d) => `Тссс! Нори спрятала ключ под ёлкой до ${d} декабря — приходи в свой день ✨`,
+        (d) => `Даже в Гравити Фолз не открывают секретные конверты раньше ${d} декабря!`,
+        (d) => `Ой-ой, печать ещё горячая! Снузи только дописывает шутку к ${d} декабря 🎄`
+      ];
+
+      function showSnuziToast(text, speaker = 'Снузи шепчет:') {
+        const el = document.getElementById('snuziToast');
+        document.getElementById('toastSpeaker').textContent = speaker;
+        document.getElementById('toastText').textContent = text;
+        el.classList.remove('translate-y-28', 'opacity-0');
+        el.classList.add('translate-y-0', 'opacity-100');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          el.classList.add('translate-y-28', 'opacity-0');
+          el.classList.remove('translate-y-0', 'opacity-100');
+        }, 3600);
+      }
+
+      /* =====================================================================
+         MAGICAL CELESTA MELODY (WEB AUDIO API)
       ===================================================================== */
+      let audioCtx = null;
+      let musicPlaying = false;
+      let musicTimer = null;
+      let noteIdx = 0;
+
+      const MELODY_NOTES = [
+        659.25, 783.99, 987.77, 1318.51, 987.77, 783.99,
+        587.33, 739.99, 880.00, 1174.66, 880.00, 739.99,
+        523.25, 659.25, 783.99, 1046.50, 783.99, 659.25,
+        493.88, 659.25, 783.99, 987.77, 739.99, 587.33
+      ];
+
+      function ensureAudio() {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) audioCtx = new AC();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      }
+
+      function playBellNote(freq, duration = 1.1, gainPeak = 0.045) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const overtone = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const overGain = audioCtx.createGain();
+        osc.type = 'sine';
+        overtone.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        overtone.frequency.setValueAtTime(freq * 2, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(gainPeak, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        overGain.gain.setValueAtTime(0.22, now);
+        osc.connect(gain);
+        overtone.connect(overGain);
+        overGain.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        overtone.start(now);
+        osc.stop(now + duration + 0.05);
+        overtone.stop(now + duration + 0.05);
+      }
+
+      function playChimeSparkle() {
+        ensureAudio();
+        [880, 1108.73, 1318.51, 1760].forEach((f, i) => setTimeout(() => playBellNote(f, 0.75, 0.05), i * 75));
+      }
+
+      function playPlayfulBoing() {
+        ensureAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(520, now + 0.09);
+        osc.frequency.exponentialRampToValueAtTime(260, now + 0.22);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.24);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      function toggleMusic() {
+        ensureAudio();
+        musicPlaying = !musicPlaying;
+        const icon = document.getElementById('musicIcon');
+        const btn = document.getElementById('musicToggleBtn');
+        if (musicPlaying) {
+          icon.textContent = '🎵';
+          btn.classList.add('border-[#FFAF46]', 'bg-[#3D161A]');
+          playBellNote(MELODY_NOTES[noteIdx % MELODY_NOTES.length], 1.4, 0.045);
+          noteIdx++;
+          clearInterval(musicTimer);
+          musicTimer = setInterval(() => {
+            if (!musicPlaying) return;
+            playBellNote(MELODY_NOTES[noteIdx % MELODY_NOTES.length], 1.4, 0.04);
+            noteIdx++;
+          }, 560);
+          showSnuziToast('Включили волшебную музыкальную шкатулку 🎵', 'Нори улыбается:');
+        } else {
+          icon.textContent = '🔇';
+          btn.classList.remove('border-[#FFAF46]', 'bg-[#3D161A]');
+          clearInterval(musicTimer);
+        }
+      }
+
+      /* =====================================================================
+         COUNTDOWN & CONTROLS SYNC
+      ===================================================================== */
+      function updateCountdown() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const dec1 = new Date(year, 11, 1, 0, 0, 0);
+        const label = document.getElementById('countdownLabel');
+        const dEl = document.getElementById('cdDays');
+        const hEl = document.getElementById('cdHours');
+        const mEl = document.getElementById('cdMins');
+
+        if (now.getMonth() === 0 || now.getMonth() === 1) {
+          label.textContent = 'все 31 письмо открыты';
+          dEl.textContent = '31'; hEl.textContent = '00'; mEl.textContent = '00';
+          return;
+        }
+        const target = now.getMonth() === 11
+          ? new Date(year, 11, 31, 23, 59, 59)
+          : (now < dec1 ? dec1 : new Date(year + 1, 11, 1, 0, 0, 0));
+
+        const diff = Math.max(0, target - now);
+        dEl.textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
+        hEl.textContent = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
+        mEl.textContent = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
+        label.textContent = now.getMonth() === 11 ? 'до Нового года' : 'до первого письма';
+      }
+
+      function syncControls() {
+        const momBar = document.getElementById('momActiveBar');
+        momBar.style.display = momUnlocked ? 'block' : 'none';
+        const previewBtn = document.getElementById('momTogglePreviewBtn');
+        previewBtn.textContent = momPreviewAll ? 'Вернуть вид Василисы' : 'Показать все 31 день';
+
+        const subnote = document.getElementById('calendarSubnote');
+        const now = new Date();
+        if (momUnlocked && momPreviewAll) {
+          subnote.textContent = 'Режим просмотра мамы: все 31 окошко открыты, чтобы ты могла проверить каждую иллюстрацию и письмо.';
+        } else if (now.getMonth() === 11) {
+          subnote.textContent = `Сегодня открыты окошки с 1 по ${now.getDate()} декабря. Остальные запечатаны Снузи до своего дня!`;
+        } else {
+          subnote.textContent = 'Первое окошко откроется 1 декабря. Если нажать на конверт раньше срока — Снузи сразу заметит!';
+        }
+
+        const doneCount = state.doneMissions.length;
+        const pct = Math.round((doneCount / 31) * 100);
+        document.getElementById('headerMiracleCount').textContent = `${doneCount}/31`;
+        document.getElementById('miraclePercentText').textContent = `${pct}%`;
+        document.getElementById('miracleBarFill').style.width = `${pct}%`;
+        document.getElementById('miracleCountDetail').textContent = `${doneCount} из 31 миссий`;
+
+        let rank = 'Ждём первую искорку ✨';
+        if (doneCount >= 31) rank = 'Настоящее Новогоднее Чудо! 🎄✨';
+        else if (doneCount >= 20) rank = 'Мастер зимних чудес 🌟';
+        else if (doneCount >= 10) rank = 'Волшебный снегопад ❄️';
+        else if (doneCount >= 3) rank = 'Огонёк на ёлке зажёгся 🕯️';
+        else if (doneCount >= 1) rank = 'Первая искорка поймана ✨';
+        document.getElementById('miracleRankLabel').textContent = `Статус: ${rank}`;
+      }
+
+      /* =====================================================================
+         RENDER 31 ILLUSTRATED ADVENT WINDOWS
+      ===================================================================== */
+      function renderEnvelopes() {
+        const grid = document.getElementById('envelopesGrid');
+        grid.innerHTML = elfData.days.map((item) => {
+          const unlocked = isDayUnlocked(item.day);
+          const opened = state.openedDays.includes(item.day);
+          const done = state.doneMissions.includes(item.day);
+          const isWide = item.day === 31;
+          const tileImg = DAY_TILES[item.day];
+
+          return `
+            <button type="button" data-envelope-day="${item.day}"
+              class="advent-window ${unlocked ? 'is-unlocked' : 'is-locked'} ${isWide ? 'is-wide col-span-2 sm:col-span-2' : ''} text-left flex flex-col justify-between p-3">
+              <img src="${tileImg}" alt="${item.day} декабря" class="tile-art" loading="lazy" />
+
+              ${unlocked
+                ? `<div class="absolute inset-0 bg-gradient-to-t from-[#150608]/90 via-[#150608]/15 to-transparent pointer-events-none"></div>
+                   <div class="relative z-10 flex justify-end w-full">
+                     <span class="wax-seal ${opened ? 'opacity-80 scale-90' : ''}" title="Открыть письмо">
+                       ${opened ? '💌' : '🎄'}
+                     </span>
+                   </div>
+                   <div class="relative z-10 w-full mt-auto">
+                     <p class="text-xs font-medium text-[#F8EEDB] drop-shadow line-clamp-2 leading-snug">${item.title}</p>
+                     <span class="block text-[10px] text-[#FFAF46] mt-0.5">
+                       ${done ? '✓ Миссия выполнена' : (opened ? 'Открыть снова' : 'Сломать печать →')}
+                     </span>
+                   </div>`
+                : `<div class="absolute inset-0 bg-[#1B080B]/55 backdrop-blur-[2px] pointer-events-none"></div>
+                   <div class="relative z-10 flex items-start justify-between w-full">
+                     <span class="font-serif-magic text-3xl font-bold text-[#F8EEDB] drop-shadow leading-none">${item.day}</span>
+                     <span class="text-[10px] uppercase tracking-wider text-[#F7C66E]/80 bg-[#150608]/60 px-2 py-0.5 rounded-full">дек</span>
+                   </div>
+                   <div class="relative z-10 flex flex-col items-center justify-center my-auto">
+                     <span class="wax-seal">🔒</span>
+                   </div>
+                   <div class="relative z-10 w-full text-center">
+                     <span class="text-[10px] text-[#E6D3BE]/85">Откроется ${item.day} декабря</span>
+                   </div>`
+              }
+            </button>
+          `;
+        }).join('');
+      }
+
+      /* =====================================================================
+         VIDEO EMBED HELPER & SINGLE FEATURED VIDEO BLOCK
+      ===================================================================== */
+      function buildVideoEmbed(url) {
+        const clean = (url || '').trim();
+        if (!clean) return '';
+        if (/\.(mp4|webm|mov)(\?.*)?$/i.test(clean)) {
+          return `<video src="${clean}" controls playsinline class="w-full h-full object-cover"></video>`;
+        }
+        const yt = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+        if (yt) {
+          return `<iframe src="https://www.youtube.com/embed/${yt[1]}" class="w-full h-full" allowfullscreen frameborder="0"></iframe>`;
+        }
+        return `<iframe src="${clean}" class="w-full h-full" allowfullscreen frameborder="0"></iframe>`;
+      }
+
+      function renderFeaturedVideo() {
+        const box = document.getElementById('singleVideoContainer');
+        const v = elfData.featuredVideo || { title: 'Видео от Снузи и Нори', caption: '', videoUrl: '' };
+        const hasUrl = Boolean((v.videoUrl || '').trim());
+
+        if (hasUrl) {
+          box.innerHTML = `
+            <div class="aspect-video bg-black">${buildVideoEmbed(v.videoUrl)}</div>
+            <div class="p-5 sm:p-6 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="font-serif-magic text-2xl sm:text-3xl font-semibold text-[#F8EEDB]">${v.title}</h3>
+                <p class="text-xs sm:text-sm text-[#D4BCA4] font-light mt-1">${v.caption}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-[#3A161B] border border-[#FFAF46]/40 text-xs text-[#FFAF46]">🎬 Эфир эльфов</span>
+            </div>
+          `;
+        } else {
+          box.innerHTML = `
+            <div class="relative h-64 sm:h-80 overflow-hidden bg-[#160608]">
+              <img src="${COVER_THUMB}" alt="Видео от Снузи и Нори" class="w-full h-full object-cover object-[50%_25%] opacity-55 blur-[1px]" />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#1A070A] via-[#1A070A]/45 to-transparent flex flex-col items-center justify-center p-6 text-center">
+                <button id="emptyVideoHintBtn" type="button"
+                  class="w-16 h-16 rounded-full bg-[#FFAF46]/90 hover:scale-105 text-[#150608] flex items-center justify-center text-2xl shadow-[0_0_32px_rgba(255,175,70,0.65)] transition mb-4">
+                  🎬
+                </button>
+                <h3 class="font-serif-magic text-2xl sm:text-3xl font-semibold text-[#F8EEDB]">${v.title}</h3>
+                <p class="text-xs sm:text-sm text-[#E5D2BC] font-light mt-1.5 max-w-md">${v.caption}</p>
+              </div>
+            </div>
+          `;
+          const btn = document.getElementById('emptyVideoHintBtn');
+          if (btn) {
+            btn.addEventListener('click', () => {
+              playPlayfulBoing();
+              showSnuziToast('Снузи и Нори прямо сейчас монтируют для тебя новый ролик — заглядывай сюда в декабре! 🎬✨', 'Эфир эльфов:');
+            });
+          }
+        }
+      }
+
+      /* =====================================================================
+         OPEN LETTER WITH WAX SEAL BREAK ANIMATION
+      ===================================================================== */
+      function openEnvelope(dayNum) {
+        const item = elfData.days.find((d) => d.day === dayNum);
+        if (!item) return;
+
+        if (!state.openedDays.includes(dayNum)) {
+          state.openedDays.push(dayNum);
+          saveState();
+        }
+
+        const showLetterNow = () => {
+          currentLetterDay = dayNum;
+          document.getElementById('modalDayBadge').textContent = `${item.day} декабря · Письмо №${item.day}`;
+          document.getElementById('modalSenderBadge').textContent = `от ${item.sender}`;
+          document.getElementById('modalLetterTitle').textContent = item.title;
+          document.getElementById('modalTileArtImg').src = DAY_TILES[item.day];
+
+          const videoWrap = document.getElementById('modalVideoWrap');
+          if (item.videoUrl && item.videoUrl.trim()) {
+            videoWrap.innerHTML = `<div class="aspect-video">${buildVideoEmbed(item.videoUrl)}</div>`;
+            videoWrap.classList.remove('hidden');
+          } else {
+            videoWrap.innerHTML = '';
+            videoWrap.classList.add('hidden');
+          }
+
+          document.getElementById('modalLetterBody').innerHTML = (item.letter || [])
+            .map((p) => `<p>${p}</p>`).join('');
+
+          document.getElementById('modalMissionText').textContent = item.mission || '';
+          document.getElementById('modalWatchTitle').textContent = item.watchTitle || '';
+          document.getElementById('modalWatchNote').textContent = item.watchNote || '';
+          document.getElementById('modalRecipeTitle').textContent = item.recipeTitle || '';
+          document.getElementById('modalRecipeSteps').textContent = item.recipeNote || '';
+
+          syncModalMissionButton();
+
+          const modal = document.getElementById('letterModal');
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          document.body.style.overflow = 'hidden';
+
+          renderEnvelopes();
+          renderMissions();
+          syncControls();
+        };
+
+        const overlay = document.getElementById('sealBreakOverlay');
+        const left = document.getElementById('sealLeftEl');
+        const right = document.getElementById('sealRightEl');
+        const burst = document.getElementById('sealBurstEl');
+
+        left.classList.remove('seal-half-left');
+        right.classList.remove('seal-half-right');
+        burst.classList.remove('seal-burst');
+        void left.offsetWidth;
+
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+        left.classList.add('seal-half-left');
+        right.classList.add('seal-half-right');
+        burst.classList.add('seal-burst');
+        playChimeSparkle();
+
+        setTimeout(() => {
+          overlay.classList.add('hidden');
+          overlay.classList.remove('flex');
+          showLetterNow();
+        }, 680);
+      }
+
+      function syncModalMissionButton() {
+        const btn = document.getElementById('modalToggleMissionBtn');
+        const isDone = state.doneMissions.includes(currentLetterDay);
+        if (isDone) {
+          btn.textContent = '✓ Выполнено!';
+          btn.className = 'shrink-0 px-3.5 py-2 rounded-full text-xs font-semibold transition border bg-[#2E6B3E] text-white border-[#2E6B3E]';
+        } else {
+          btn.textContent = 'Отметить ✓';
+          btn.className = 'shrink-0 px-3.5 py-2 rounded-full text-xs font-semibold transition border bg-[#8E1D26] text-[#F8EEDB] border-[#8E1D26] hover:bg-[#A8242F]';
+        }
+      }
+
+      function toggleMissionDone(dayNum) {
+        const idx = state.doneMissions.indexOf(dayNum);
+        if (idx === -1) {
+          state.doneMissions.push(dayNum);
+          playChimeSparkle();
+          showSnuziToast(`Ура! Миссия ${dayNum} декабря выполнена — запас новогоднего чуда вырос! ✨`, 'Нори радуется:');
+        } else {
+          state.doneMissions.splice(idx, 1);
+        }
+        saveState();
+        syncControls();
+        renderEnvelopes();
+        renderMissions();
+        if (currentLetterDay === dayNum) syncModalMissionButton();
+      }
+
+      /* =====================================================================
+         RENDER MISSIONS STICKER BOARD (STRICTLY ONLY UNLOCKED DAYS!)
+      ===================================================================== */
+      function renderMissions() {
+        const board = document.getElementById('missionsBoard');
+        const tilts = ['-1.2deg', '0.9deg', '-0.6deg', '1.1deg', '-0.8deg', '0.7deg'];
+
+        const unlockedItems = elfData.days.filter((d) => isDayUnlocked(d.day));
+        const items = missionFilter === 'done'
+          ? unlockedItems.filter((d) => state.doneMissions.includes(d.day))
+          : unlockedItems;
+
+        document.querySelectorAll('[data-mfilter]').forEach((btn) => {
+          const key = btn.getAttribute('data-mfilter');
+          btn.className = missionFilter === key
+            ? 'px-4 py-1.5 rounded-full text-xs font-medium bg-[#FFAF46] text-[#150608] transition'
+            : 'px-4 py-1.5 rounded-full text-xs border border-[#F7C66E]/30 text-[#D4BCA4] hover:text-[#F8EEDB] transition';
+        });
+
+        if (items.length === 0) {
+          board.innerHTML = `
+            <div class="col-span-full rounded-2xl bg-[#180709]/80 border border-[#F7C66E]/20 p-8 text-center">
+              <p class="font-serif-magic text-2xl text-[#F8EEDB]">
+                ${missionFilter === 'done' ? 'Пока нет выполненных миссий' : 'Первая миссия появится 1 декабря ✨'}
+              </p>
+              <p class="text-xs sm:text-sm text-[#D4BCA4] mt-1.5">
+                ${missionFilter === 'done'
+                  ? 'Открой письмо сегодняшнего дня и отметь задание — здесь появятся твои победы!'
+                  : 'Как только откроется первое окошко декабря, на доске появится первый стикер от Снузи и Нори.'}
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        board.innerHTML = items.map((item, idx) => {
+          const done = state.doneMissions.includes(item.day);
+          const tilt = tilts[idx % tilts.length];
+          return `
+            <div class="mission-sticker ${done ? 'is-done' : ''} p-4 pt-5 flex flex-col justify-between" style="transform: rotate(${tilt})">
+              <span class="sticker-pin" aria-hidden="true"></span>
+              <div>
+                <div class="flex items-center justify-between gap-2 text-[11px] font-semibold uppercase tracking-wider text-[#8E1D26]">
+                  <span>${item.day} декабря</span>
+                  <span>${done ? '✓ Выполнено' : 'Открыто'}</span>
+                </div>
+                <p class="text-sm font-medium mt-2 leading-snug ${done ? 'line-through opacity-75' : ''}">${item.mission}</p>
+              </div>
+              <div class="mt-4 pt-2.5 border-t border-[#8B5E34]/20 flex items-center justify-between gap-2">
+                <button type="button" data-toggle-mission="${item.day}"
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold ${done ? 'text-[#255C34]' : 'text-[#8E1D26] hover:underline'}">
+                  <span>${done ? '☑ Готово!' : '☐ Выполнила!'}</span>
+                </button>
+                <button type="button" data-open-from-mission="${item.day}"
+                  class="text-[11px] text-[#6B4423] hover:text-[#2E1A12] underline">
+                  К письму →
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      /* =====================================================================
+         SENT LETTERS ARCHIVE & FORM SUBMISSION
+      ===================================================================== */
+      function renderSentLetters() {
+        const wrap = document.getElementById('sentLettersWrap');
+        const list = document.getElementById('sentLettersList');
+        if (state.sentLetters.length === 0) { wrap.style.display = 'none'; return; }
+        wrap.style.display = 'block';
+        list.innerHTML = state.sentLetters.slice().reverse().map((item) => `
+          <div class="rounded-xl bg-[#160608]/85 border border-[#F7C66E]/20 p-3">
+            <div class="flex items-center justify-between gap-2 text-[11px] text-[#F7C66E]">
+              <span>Кому: ${item.to} · ${item.mood}</span>
+              <span class="text-[#B99F8B]">${item.date}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-[#F8EEDB] font-light mt-1.5 whitespace-pre-wrap">${item.text}</p>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('elfLetterForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const to = document.getElementById('letterToSelect').value;
+        const mood = document.getElementById('letterMoodSelect').value;
+        const input = document.getElementById('letterMessageInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        const btn = document.getElementById('sendLetterBtn');
+        btn.disabled = true;
+
+        const nowStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+        state.sentLetters.push({ to, mood, text, date: nowStr });
+        saveState();
+        renderSentLetters();
+
+        if (elfData.formspreeUrl && elfData.formspreeUrl.startsWith('https://')) {
+          try {
+            await fetch(elfData.formspreeUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ from: 'Василиса', to, mood, message: text, sentAt: nowStr })
+            });
+          } catch (err) {}
+        }
+
+        input.value = '';
+        btn.disabled = false;
+        playChimeSparkle();
+        showSnuziToast('Ура! Письмо улетело прямо в красный почтовый ящик — мы прочтём его сегодня ночью! ✉️✨', 'Снузи и Нори:');
+      });
+
+      /* =====================================================================
+         HIDDEN MOM EDITOR LOGIC (5 TAPS ON LOGO OR ?mama=1)
+      ===================================================================== */
+      let logoTapCount = 0;
+      let logoTapTimer = null;
+
+      document.getElementById('secretLogoBtn').addEventListener('click', () => {
+        logoTapCount++;
+        clearTimeout(logoTapTimer);
+        logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 1600);
+        if (logoTapCount >= 5) {
+          logoTapCount = 0;
+          momUnlocked = true;
+          syncControls();
+          showSnuziToast('Секретный кабинет мамы открыт в верхней полоске! Василиса его не видит.', 'Кабинет эльфов:');
+        }
+      });
+
+      document.getElementById('momTogglePreviewBtn').addEventListener('click', () => {
+        momPreviewAll = !momPreviewAll;
+        syncControls();
+        renderEnvelopes();
+        renderMissions();
+      });
+
+      document.getElementById('exitMomModeBtn').addEventListener('click', () => {
+        momUnlocked = false;
+        momPreviewAll = false;
+        syncControls();
+        renderEnvelopes();
+        renderMissions();
+      });
+
+      // Populate day selector in Mom Editor
+      const edDaySelect = document.getElementById('edDaySelect');
+      edDaySelect.innerHTML = elfData.days.map((d) => `<option value="${d.day}">${d.day} декабря</option>`).join('');
+
+      function loadDayIntoEditor(dayNum) {
+        const d = elfData.days.find((x) => x.day === dayNum);
+        if (!d) return;
+        document.getElementById('edSender').value = d.sender || '';
+        document.getElementById('edTitle').value = d.title || '';
+        document.getElementById('edLetter').value = (d.letter || []).join('\n\n');
+        document.getElementById('edMission').value = d.mission || '';
+        document.getElementById('edWatchTitle').value = d.watchTitle || '';
+        document.getElementById('edWatchNote').value = d.watchNote || '';
+        document.getElementById('edRecipeTitle').value = d.recipeTitle || '';
+        document.getElementById('edRecipeNote').value = d.recipeNote || '';
+        document.getElementById('edDayVideo').value = d.videoUrl || '';
+      }
+
+      function saveEditorFieldsToData() {
+        const dayNum = Number(edDaySelect.value);
+        const d = elfData.days.find((x) => x.day === dayNum);
+        if (d) {
+          d.sender = document.getElementById('edSender').value.trim() || 'Снузи и Нори';
+          d.title = document.getElementById('edTitle').value.trim() || `Письмо ${dayNum} декабря`;
+          d.letter = document.getElementById('edLetter').value
+            .split(/\n+/)
+            .map((s) => s.trim())
+            .filter(Boolean);
+          d.mission = document.getElementById('edMission').value.trim();
+          d.watchTitle = document.getElementById('edWatchTitle').value.trim();
+          d.watchNote = document.getElementById('edWatchNote').value.trim();
+          d.recipeTitle = document.getElementById('edRecipeTitle').value.trim();
+          d.recipeNote = document.getElementById('edRecipeNote').value.trim();
+          d.videoUrl = document.getElementById('edDayVideo').value.trim();
+        }
+        elfData.featuredVideo = {
+          title: document.getElementById('edFeatVidTitle').value.trim() || 'Видео от Снузи и Нори',
+          caption: document.getElementById('edFeatVidCaption').value.trim(),
+          videoUrl: document.getElementById('edFeatVidUrl').value.trim()
+        };
+        elfData.formspreeUrl = document.getElementById('edFormspreeUrl').value.trim();
+
+        try { localStorage.setItem(MOM_DRAFT_KEY, JSON.stringify(elfData)); } catch (e) {}
+      }
+
+      edDaySelect.addEventListener('change', () => loadDayIntoEditor(Number(edDaySelect.value)));
+
+      document.getElementById('openMomEditorBtn').addEventListener('click', () => {
+        loadDayIntoEditor(Number(edDaySelect.value) || 1);
+        document.getElementById('edFeatVidTitle').value = elfData.featuredVideo.title || '';
+        document.getElementById('edFeatVidCaption').value = elfData.featuredVideo.caption || '';
+        document.getElementById('edFeatVidUrl').value = elfData.featuredVideo.videoUrl || '';
+        document.getElementById('edFormspreeUrl').value = elfData.formspreeUrl || '';
+        const m = document.getElementById('momEditorModal');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      });
+
+      document.getElementById('closeMomEditorBtn').addEventListener('click', () => {
+        const m = document.getElementById('momEditorModal');
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      });
+
+      document.querySelectorAll('.mom-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-momtab');
+          document.getElementById('momTabDay').classList.toggle('hidden', tab !== 'day');
+          document.getElementById('momTabGlobal').classList.toggle('hidden', tab !== 'global');
+          document.querySelectorAll('.mom-tab-btn').forEach((b) => {
+            const active = b.getAttribute('data-momtab') === tab;
+            b.className = active
+              ? 'mom-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-[#FFAF46] text-[#150608]'
+              : 'mom-tab-btn px-4 py-1.5 rounded-full text-xs border border-[#F7C66E]/35 text-[#D4BCA4]';
+          });
+        });
+      });
+
+      document.getElementById('saveMomEditsBtn').addEventListener('click', () => {
+        saveEditorFieldsToData();
+        renderEnvelopes();
+        renderMissions();
+        renderFeaturedVideo();
+        showSnuziToast('Сохранено! Теперь можешь проверить правки прямо здесь или скачать обновлённый index.html.', 'Кабинет эльфов:');
+      });
+
+      document.getElementById('downloadUpdatedHtmlBtn').addEventListener('click', () => {
+        saveEditorFieldsToData();
+        const safeJson = JSON.stringify(elfData, null, 2).replace(/<\/script>/gi, '<\\/script>');
+        const updatedHtml = PRISTINE_HTML_SNAPSHOT.replace(
+          /<script id="elf-data" type="application\/json">[\s\S]*?<\/script>/,
+          `<script id="elf-data" type="application/json">\n${safeJson}\n  <\/script>`
+        );
+        const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'index.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        showSnuziToast('Файл index.html скачан — загрузи его в GitHub, и Василиса увидит все обновления! ✨', 'Кабинет эльфов:');
+      });
+
+      /* =====================================================================
+         MAIN INTERACTIONS
+      ===================================================================== */
+      document.getElementById('envelopesGrid').addEventListener('click', (e) => {
+        const tile = e.target.closest('button[data-envelope-day]');
+        if (!tile) return;
+        const dayNum = Number(tile.getAttribute('data-envelope-day'));
+        if (isDayUnlocked(dayNum)) {
+          openEnvelope(dayNum);
+        } else {
+          tile.classList.remove('animate-wiggle');
+          void tile.offsetWidth;
+          tile.classList.add('animate-wiggle');
+          playPlayfulBoing();
+          const lineFn = SNUZI_LOCKED_LINES[dayNum % SNUZI_LOCKED_LINES.length];
+          showSnuziToast(lineFn(dayNum), 'Снузи поймал тебя:');
+        }
+      });
+
+      document.getElementById('missionsBoard').addEventListener('click', (e) => {
+        const toggleBtn = e.target.closest('[data-toggle-mission]');
+        if (toggleBtn) { toggleMissionDone(Number(toggleBtn.getAttribute('data-toggle-mission'))); return; }
+        const openBtn = e.target.closest('[data-open-from-mission]');
+        if (openBtn) openEnvelope(Number(openBtn.getAttribute('data-open-from-mission')));
+      });
+
+      document.querySelectorAll('[data-mfilter]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          missionFilter = btn.getAttribute('data-mfilter');
+          renderMissions();
+        });
+      });
+
+      document.getElementById('modalToggleMissionBtn').addEventListener('click', () => {
+        if (currentLetterDay) toggleMissionDone(currentLetterDay);
+      });
+
+      function closeLetterModal() {
+        const modal = document.getElementById('letterModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.getElementById('modalVideoWrap').innerHTML = '';
+        document.body.style.overflow = '';
+      }
+      document.getElementById('closeLetterModalBtn').addEventListener('click', closeLetterModal);
+      document.getElementById('letterModal').addEventListener('click', (e) => {
+        if (e.target.id === 'letterModal') closeLetterModal();
+      });
+
+      document.getElementById('musicToggleBtn').addEventListener('click', toggleMusic);
+
+      /* =====================================================================
+         MAGICAL SNOW & GOLDEN DUST CANVAS
+      ===================================================================== */
+      const canvas = document.getElementById('magicCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      function initParticles() {
+        particles = Array.from({ length: 55 }, (_, i) => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2.2 + 0.8,
+          vy: Math.random() * 0.55 + 0.2,
+          vx: (Math.random() - 0.5) * 0.35,
+          gold: i % 3 === 0,
+          alpha: Math.random() * 0.55 + 0.2
+        }));
+      }
+      function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const p of particles) {
+          p.y += p.vy; p.x += p.vx;
+          if (p.y > canvas.height + 6) { p.y = -6; p.x = Math.random() * canvas.width; }
+          if (p.x > canvas.width + 6) p.x = -6;
+          if (p.x < -6) p.x = canvas.width + 6;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.gold ? `rgba(255, 198, 108, ${p.alpha})` : `rgba(255, 248, 238, ${p.alpha * 0.75})`;
+          ctx.fill();
+        }
+        requestAnimationFrame(animateParticles);
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas(); initParticles(); animateParticles();
+
+      // Init
+      updateCountdown();
+      setInterval(updateCountdown, 30000);
+      syncControls();
+      renderEnvelopes();
+      renderMissions();
+      renderFeaturedVideo();
+      renderSentLetters();
+    })();
+  </script>
+</body>
+</html>
