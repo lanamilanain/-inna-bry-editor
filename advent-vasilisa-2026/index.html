@@ -784,6 +784,7 @@
           class="px-3.5 py-1 rounded-full bg-[#FFAF46] text-[#150608] hover:bg-[#FFC46E] transition font-semibold">
           ✏️ Наполнить письма и видео
         </button>
+        <a href="./admin.html" class="px-3 py-1 rounded-full border border-[#FFAF46]/70 text-[#FFAF46] hover:bg-[#FFAF46]/15 transition font-medium">☁️ Облачный редактор</a>
         <button id="exitMomModeBtn" type="button"
           class="px-2.5 py-1 rounded-full border border-[#F7C66E]/30 text-[#D4BCA4] hover:text-white transition">
           Скрыть ✕
@@ -1381,6 +1382,37 @@
       }
       elfData.days = fullDays;
 
+      // Published content from the cloud editor takes priority over the built-in
+      // story defaults. Unpublished days keep their original illustrated stories.
+      async function loadCloudPublishedDays() {
+        if (!adventSupabase) return;
+        try {
+          const { data, error } = await adventSupabase
+            .from('advent_days')
+            .select('day_number,title,letter_title,letter_body,task,extra_text,image_url,video_url,audio_url,is_published')
+            .eq('is_published', true);
+          if (error) throw error;
+          (data || []).forEach((row) => {
+            const item = elfData.days.find((day) => day.day === Number(row.day_number));
+            if (!item) return;
+            if (row.title && row.title.trim()) item.title = row.title.trim();
+            if (row.letter_title && row.letter_title.trim()) item.letterTitle = row.letter_title.trim();
+            if (row.letter_body && row.letter_body.trim()) {
+              item.letter = row.letter_body.split(/\\n\\s*\\n/).map((part) => part.trim()).filter(Boolean);
+            }
+            if (row.task && row.task.trim()) item.mission = row.task.trim();
+            if (row.extra_text && row.extra_text.trim()) item.extraText = row.extra_text.trim();
+            if (row.image_url) item.imageUrl = row.image_url;
+            if (row.video_url) item.videoUrl = row.video_url;
+            if (row.audio_url) item.audioUrl = row.audio_url;
+          });
+          renderEnvelopes();
+          renderMissions();
+        } catch (error) {
+          console.warn('Не удалось загрузить опубликованные письма из облака:', error);
+        }
+      }
+
       function loadState() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
@@ -1716,19 +1748,23 @@
           currentLetterDay = dayNum;
           document.getElementById('modalDayBadge').textContent = `${item.day} декабря · Письмо №${item.day}`;
           document.getElementById('modalSenderBadge').textContent = `от ${item.sender}`;
-          document.getElementById('modalLetterTitle').textContent = item.title;
-          document.getElementById('modalTileArtImg').src = DAY_TILES[item.day];
+          document.getElementById('modalLetterTitle').textContent = item.letterTitle || item.title;
+          document.getElementById('modalTileArtImg').src = item.imageUrl || DAY_TILES[item.day];
 
           const videoWrap = document.getElementById('modalVideoWrap');
+          const mediaParts = [];
           if (item.videoUrl && item.videoUrl.trim()) {
-            videoWrap.innerHTML = `<div class="aspect-video">${buildVideoEmbed(item.videoUrl)}</div>`;
-            videoWrap.classList.remove('hidden');
-          } else {
-            videoWrap.innerHTML = '';
-            videoWrap.classList.add('hidden');
+            mediaParts.push(`<div class="aspect-video">${buildVideoEmbed(item.videoUrl)}</div>`);
           }
+          if (item.audioUrl && item.audioUrl.trim()) {
+            mediaParts.push(`<audio class="w-full mt-3" controls preload="none" src="${item.audioUrl}"></audio>`);
+          }
+          videoWrap.innerHTML = mediaParts.join('');
+          videoWrap.classList.toggle('hidden', mediaParts.length === 0);
 
-          document.getElementById('modalLetterBody').innerHTML = (item.letter || [])
+          const letterParagraphs = [...(item.letter || [])];
+          if (item.extraText) letterParagraphs.push(item.extraText);
+          document.getElementById('modalLetterBody').innerHTML = letterParagraphs
             .map((p) => `<p>${p}</p>`).join('');
 
           document.getElementById('modalMissionText').textContent = item.mission || '';
@@ -2136,6 +2172,7 @@
       renderEnvelopes();
       renderMissions();
       renderFeaturedVideo();
+      loadCloudPublishedDays();
     })();
   </script>
 </body>
