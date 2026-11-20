@@ -57,3 +57,8 @@ create policy "Admins update advent media" on storage.objects
 for update to authenticated using (bucket_id='advent-media' and public.is_advent_admin()) with check (bucket_id='advent-media' and public.is_advent_admin());
 create policy "Admins delete advent media" on storage.objects
 for delete to authenticated using (bucket_id='advent-media' and public.is_advent_admin());
+
+-- Почта Василисы: отдельные письма эльфам, доступные маме из закрытого кабинета.
+alter table public.child_messages alter column day_number drop not null;
+alter table public.child_messages add column if not exists recipient text not null default 'Снузи и Нори';
+alter table public.child_messages add column if not exists mood text not null default '✨ Волшебное';
