@@ -17,7 +17,7 @@ async function loadDays(){
   fetch("./content.json").then(r=>r.ok?r.json():[]).catch(()=>[])
  ]);
  if(error){status("saveStatus",error.message);return;}
- const cloudRows=(data||[]).filter(row=>row.updated_at && new Date(row.updated_at)>new Date('2026-11-21T08:24:00Z'));
+ const cloudRows=(data||[]).filter(row=>row.updated_at && new Date(row.updated_at)>new Date('2026-11-21T10:15:42.432Z'));
  days=(defaultsResponse||[]).map(base=>{
   const row=cloudRows.find(x=>x.day_number===base.day_number);
   if(!row)return {...base};
