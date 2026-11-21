@@ -1824,7 +1824,7 @@
             .select('day_number,title,letter_title,letter_body,task,extra_text,image_url,video_url,audio_url,is_published,updated_at')
             .eq('is_published', true);
           if (error) throw error;
-          (data || []).filter((row) => row.updated_at && new Date(row.updated_at) > new Date('2026-11-21T08:24:00Z')).forEach((row) => {
+          (data || []).filter((row) => row.updated_at && new Date(row.updated_at) > new Date('2026-11-21T10:15:42.432Z')).forEach((row) => {
             const item = elfData.days.find((day) => day.day === Number(row.day_number));
             if (!item) return;
             if (row.title && row.title.trim()) item.title = row.title.trim();
