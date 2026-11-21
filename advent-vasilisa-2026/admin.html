@@ -11,7 +11,26 @@ function status(id,s){$(id).textContent=s}
 function escape(s){return String(s||"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));}
 function renderDays(){ $("days").innerHTML="";for(let i=1;i<=31;i++){const d=days.find(x=>x.day_number===i);const b=document.createElement("button");b.className="day"+(selected===i?" active":"");b.innerHTML="<b>"+String(i).padStart(2,"0")+"</b><br><span class='small'>"+(d&&d.is_published?"Опубликовано":"Черновик")+"</span>";b.onclick=()=>selectDay(i);$("days").appendChild(b);}}
 function selectDay(n){selected=n;const d=days.find(x=>x.day_number===n)||{day_number:n};$("formTitle").textContent="День "+n;for(const f of fields)$(f).type==="checkbox"?$(f).checked=!!d[f]:$(f).value=d[f]||"";$("imageInfo").textContent=d.image_url?"Текущий файл: "+d.image_url:"";$("videoInfo").textContent=d.video_url?"Текущий файл: "+d.video_url:"";$("audioInfo").textContent=d.audio_url?"Текущий файл: "+d.audio_url:"";renderDays();}
-async function loadDays(){const {data,error}=await sb.from("advent_days").select("*").order("day_number");if(error){status("saveStatus",error.message);return;}days=data||[];renderDays();selectDay(selected);}
+async function loadDays(){
+ const [{data,error},defaultsResponse]=await Promise.all([
+  sb.from("advent_days").select("*").order("day_number"),
+  fetch("./content.json").then(r=>r.ok?r.json():[]).catch(()=>[])
+ ]);
+ if(error){status("saveStatus",error.message);return;}
+ const cloudRows=data||[];
+ days=(defaultsResponse||[]).map(base=>{
+  const row=cloudRows.find(x=>x.day_number===base.day_number);
+  if(!row)return {...base};
+  const merged={...base,...row};
+  for(const field of ["title","letter_title","letter_body","task","extra_text","image_url","video_url","audio_url"]){
+   if(row[field]===null||row[field]===undefined||String(row[field]).trim()==="")merged[field]=base[field]??row[field];
+  }
+  const hasCloudContent=["title","letter_title","letter_body","task"].some(k=>String(row[k]||"").trim());
+  merged.is_published=hasCloudContent?!!row.is_published:true;
+  return merged;
+ });
+ renderDays();selectDay(selected);
+}
 async function upload(file,kind){if(!file)return null;const ext=file.name.split(".").pop().toLowerCase();const path="day-"+selected+"/"+kind+"-"+Date.now()+"."+ext;const {error}=await sb.storage.from("advent-media").upload(path,file,{upsert:true,contentType:file.type});if(error)throw error;const {data}=sb.storage.from("advent-media").getPublicUrl(path);return data.publicUrl;}
 $("login").onclick=async()=>{if(!sb){status("loginStatus","Сначала заполни config.js данными Supabase.");return;}status("loginStatus","Проверяем доступ...");const {error}=await sb.auth.signInWithPassword({email:$("email").value,password:$("password").value});if(error){status("loginStatus",error.message);return;}await checkSession();};
 async function checkSession(){if(!sb)return;const {data}=await sb.auth.getSession();if(data.session){$("loginPanel").classList.add("hidden");$("app").classList.remove("hidden");await loadDays();}else{$("loginPanel").classList.remove("hidden");$("app").classList.add("hidden");}}
