@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2e1d14">
+<title>Загряжское · Студия</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Overpass:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f4eadb;--cream:#f1e5d2;--choc:#3b261b;--deep:#28180f;--wood:#b98a61;--gold:#cba15b;--muted:#876c54;--line:#cbb69a}
+*{box-sizing:border-box}body{margin:0;background:#e9decc;color:var(--choc);font-family:Overpass,Arial,sans-serif;font-weight:300}
+header{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0;z-index:5}
+.brand{font:500 28px/1 'Cormorant Garamond',serif}.brand small{display:block;font:300 10px/1.5 Overpass,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--choc);border-radius:10px;padding:10px 14px}
+button.primary{background:var(--gold);border-color:var(--gold);font-weight:600}
+main{max-width:1100px;margin:auto;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px}
+.preview-area{display:flex;align-items:center;justify-content:center;min-height:65vh;background:#e4d8c6;border:1px solid var(--line);border-radius:16px;padding:18px}
+canvas{display:block;width:min(100%,540px);height:auto;max-height:76vh;object-fit:contain;box-shadow:0 12px 35px #3b261b22;background:var(--paper);touch-action:pan-y}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px;height:max-content}
+h2{font:500 26px/1 'Cormorant Garamond',serif;margin:0 0 2px}
+.field{display:grid;gap:6px}.field label,.cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+textarea{width:100%;min-height:110px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fffaf2;color:var(--choc);font-size:16px;line-height:1.4}
+select,input[type=color],input[type=range]{width:100%}select{padding:10px;border:1px solid var(--line);border-radius:10px;background:#fffaf2;color:var(--choc)}
+input[type=color]{height:42px;border:1px solid var(--line);border-radius:10px;background:#fffaf2;padding:4px}
+input[type=range]{accent-color:#9d7545}
+.mode,.palette{display:flex;gap:7px;flex-wrap:wrap}.mode button{flex:1}.mode button.active{background:var(--choc);color:var(--cream);border-color:var(--choc)}
+.swatch{width:34px;height:34px;padding:0;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.swatch.active{box-shadow:0 0 0 2px var(--gold)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{font-size:12px;line-height:1.4;color:var(--muted)}
+#photoInput{display:none}.upload{display:block;text-align:center;border:1px dashed var(--wood);padding:12px;border-radius:10px;background:#efe2d0}
+footer{text-align:center;padding:12px 18px 26px;color:var(--muted);font-size:11px;letter-spacing:.16em}
+@media(max-width:760px){main{grid-template-columns:1fr;padding:12px;gap:12px}.preview-area{min-height:0;padding:10px}.preview-area canvas{width:min(100%,390px);max-height:52vh}.panel{padding:14px}.brand{font-size:25px}header{padding:12px 14px}}
+</style>
+</head>
+<body>
+<header><div class="brand">Загряжское<small>студия оформления</small></div><button class="primary" id="download">Скачать PNG</button></header>
+<main>
+<section class="preview-area"><canvas id="art" width="1080" height="1440" aria-label="Предпросмотр макета"></canvas></section>
+<aside class="panel">
+<h2>Новый макет</h2>
+<div class="mode"><button class="active" data-mode="photo">Фото + текст</button><button data-mode="plain">Фон + текст</button></div>
+<div id="photoControls" class="field"><label>Фотография</label><label class="upload" for="photoInput">＋ Добавить фотографию</label><input id="photoInput" type="file" accept="image/*"><span class="hint">Одна фотография на весь макет. Текст будет располагаться поверх неё.</span></div>
+<div class="field"><label>Текст публикации</label><textarea id="copy" placeholder="Введите заголовок или текст…">Загряжское — место, куда хочется возвращаться</textarea></div>
+<div class="field"><label>Фирменный шрифт</label><select id="font"><option value="overpass">Overpass Thin</option><option value="overpassLight">Overpass Light</option><option value="overpassRegular">Overpass Regular</option><option value="cormorant">Cormorant Garamond</option></select></div>
+<div class="row"><div class="field"><label>Формат</label><select id="format"><option value="post">Пост 3:4</option><option value="story">Сториз 9:16</option></select></div><div class="field"><label>Выравнивание</label><select id="align"><option value="left">Слева</option><option value="center">По центру</option><option value="right">Справа</option></select></div></div>
+<div class="field"><label>Цвет фона</label><div class="palette" id="palette"></div><input type="color" id="bgColor" value="#3b261b"></div>
+<div class="field"><label>Цвет шрифта</label><div class="palette" id="textPalette"></div><input type="color" id="textColor" value="#f1e5d2"></div>
+<div class="field"><label>Размер текста <span id="sizeLabel">64</span></label><input id="size" type="range" min="28" max="112" value="64"></div>
+<div class="field"><label>Затемнение фотографии <span id="shadeLabel">28%</span></label><input id="shade" type="range" min="0" max="75" value="28"></div>
+<div class="hint">Фирменная палитра: тёмный шоколад, сливочный, древесный, тёплое золото и песочный. После скачивания PNG можно сразу отправить заказчику или использовать в публикации.</div>
+</aside>
+</main>
+<footer>ЗАГРЯЖСКОЕ · ФИРМЕННАЯ СТУДИЯ</footer>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), c=$('art'),ctx=c.getContext('2d');
+const palette=[['Шоколад','#3b261b'],['Тёмный','#28180f'],['Сливочный','#f4eadb'],['Молочный','#f1e5d2'],['Древесный','#b98a61'],['Золото','#cba15b'],['Песочный','#d6bf9a'],['Тёплый серый','#b9ad9d']];
+let mode='photo',photo=null;
+const swatches=[['#3b261b','#28180f','#4b3021','#f4eadb','#f1e5d2','#d6bf9a','#b98a61','#cba15b']];
+function addSwatches(target,input){const host=$(target);swatches[0].forEach(color=>{const b=document.createElement('button');b.className='swatch';b.style.background=color;b.title=color;b.onclick=()=>{ $(input).value=color;host.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');draw()};host.append(b)});}
+addSwatches('palette','bgColor');addSwatches('textPalette','textColor');
+function dims(){return $('format').value==='story'?{w:1080,h:1920}:{w:1080,h:1440}}
+function wrap(text,max,font){ctx.font=font;const out=[];String(text).split('\n').forEach(p=>{let line='';p.split(/\s+/).forEach(word=>{const test=line?line+' '+word:word;if(line&&ctx.measureText(test).width>max){out.push(line);line=word}else line=test});if(line)out.push(line)});return out}
+function draw(){const d=dims();c.width=d.w;c.height=d.h;const bg=$('bgColor').value,fg=$('textColor').value;ctx.fillStyle=bg;ctx.fillRect(0,0,d.w,d.h);
+if(mode==='photo'&&photo){const scale=Math.max(d.w/photo.width,d.h/photo.height),w=photo.width*scale,h=photo.height*scale;ctx.drawImage(photo,(d.w-w)/2,(d.h-h)/2,w,h);ctx.fillStyle='rgba(25,15,10,'+(+$('shade').value/100)+')';ctx.fillRect(0,0,d.w,d.h)}
+const raw=$('copy').value||'',size=+$('size').value,align=$('align').value,ff=$('font').value;
+const family=ff==='cormorant'?'"Cormorant Garamond",Georgia,serif':'Overpass,Arial,sans-serif';
+const weight=ff==='overpass'?'300':ff==='overpassLight'?'300':'400';
+const font=weight+' '+size+'px '+family;ctx.font=font;ctx.fillStyle=fg;ctx.textAlign=align;ctx.textBaseline='top';
+const max=d.w*.82,lines=wrap(raw,max,font),lineH=size*(ff==='cormorant'?1.08:1.28),blockH=lines.length*lineH;
+let y=(d.h-blockH)/2;const x=align==='left'?d.w*.09:align==='right'?d.w*.91:d.w/2;
+lines.forEach(line=>{ctx.fillText(line,x,y,max);y+=lineH});
+$('sizeLabel').textContent=size;$('shadeLabel').textContent=$('shade').value+'%';
+}
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));$('photoControls').hidden=mode!=='photo';draw()});
+$('photoInput').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{photo=im;draw()};im.src=URL.createObjectURL(f)};
+['copy','font','format','align','bgColor','textColor','size','shade'].forEach(id=>$(id).addEventListener('input',draw));
+$('download').onclick=()=>{document.fonts.ready.then(()=>{draw();const a=document.createElement('a');a.download='zagryazhskoe-post.png';a.href=c.toDataURL('image/png');a.click()})};
+$('photoControls').hidden=false;draw();
+})();
+</script>
+</body>
+</html>
