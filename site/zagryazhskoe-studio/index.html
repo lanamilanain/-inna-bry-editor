@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#2E1D14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Загряжское Студия</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Montserrat:wght@500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Montserrat:wght@500;600;700&family=Overpass:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap">
 <style>
 /* Layout: linen workspace, the preview is the hero. Mobile: header / slide strip / preview / tool panel / dock.
    Desktop (>=900px): preview on the left, dock + tool panel in a right column. */
@@ -103,6 +103,7 @@ textarea#txt{width:100%;min-height:60px;resize:none;border-radius:12px;border:1p
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .seg .btn{border:0;border-radius:0;background:var(--surface2);min-width:44px}
 .seg .btn+.btn{border-left:1px solid var(--line)}
+.seg[aria-label="Шрифт"]{display:flex;flex-wrap:wrap;gap:6px;overflow:visible;border:0}.seg[aria-label="Шрифт"] .btn{border:1px solid var(--line);border-radius:10px;min-width:0}.seg[aria-label="Шрифт"] .btn+.btn{border-left:1px solid var(--line)}
 .step{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}
 .step b{min-width:30px;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}
 .sw{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);padding:0;flex:none}
@@ -204,10 +205,11 @@ const TEMPLATES = {
   plainText: { name: 'Фон + текст', note: 'Однотонный фон и текст', max: 0, plain: true, blocks: ['rubric','title','body','accent','sign'], bands: { post: [0,0], story: [0,0] } }
 };
 const FONTS = {
-  serif:  { css: 'Cormorant Garamond', fb: 'Georgia, serif', label: 'Cormorant' },
-  serif2: { css: 'Playfair Display', fb: 'Georgia, serif', label: 'Playfair' },
-  sans:   { css: 'Overpass', fb: 'system-ui, sans-serif', label: 'Overpass' },
-  sans2:  { css: 'Overpass', fb: 'system-ui, sans-serif', label: 'Overpass Light' }
+  serif:    { css: 'Cormorant Garamond', fb: 'Georgia, serif', label: 'Cormorant' },
+  serif2:   { css: 'Playfair Display', fb: 'Georgia, serif', label: 'Playfair' },
+  sansThin: { css: 'Overpass', fb: 'system-ui, sans-serif', label: 'Overpass Thin', weight: 200 },
+  sans2:    { css: 'Overpass', fb: 'system-ui, sans-serif', label: 'Overpass Light', weight: 300 },
+  sans:     { css: 'Overpass', fb: 'system-ui, sans-serif', label: 'Overpass Regular', weight: 400 }
 };
 const COLORS = { cream: '#F3E8D3', sand: '#D6BF9A', gold: '#C9A45C', wood: '#A78362', white: '#F8F2E8', chocolate: '#4B3022', dark: '#2B190F', brown: '#332018', taupe: '#8F6B50' };
 const COLOR_NAMES = { cream: 'Сливочный', sand: 'Песочный', gold: 'Тёплое золото', wood: 'Древесный', white: 'Молочный', chocolate: 'Шоколадный', dark: 'Тёмный шоколад', brown: 'Коричневый', taupe: 'Тауп' };
@@ -243,7 +245,7 @@ function cloneSlide(s) { const c = JSON.parse(JSON.stringify(s)); c.id = newId('
 
 function fontSpec(b, t, size) {
   const f = FONTS[t.font] || FONTS.sans;
-  const weight = t.font === 'sans2' ? 300 : (t.font === 'sans' ? 400 : b.weight);
+  const weight = f.weight || b.weight;
   return (t.italic ? 'italic ' : '') + weight + ' ' + (size || t.size) + 'px "' + f.css + '", ' + f.fb;
 }
 function textWidth(ctx, str, track) {
